@@ -624,71 +624,12 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
 
-1. **Current Concepts** (1500-2000 words minimum)
-   The Current Concepts section must include ALL of the following components in order:
-   
-   a) **Introduction of Concept** (200-300 words)
-      - Clear introduction to the main concept(s) from the PDF
-      - Engaging opening that sets the context
-      - Brief overview of what students will learn
-   
-   b) **Key Points** (300-400 words)
-      - List and explain 5-8 key points related to the concept
-      - Use bullet points or numbered lists for clarity
-      - Provide detailed explanations for each point
-   
-   c) **Think About It (Related Real Life)** (150-200 words)
-      - Present 2-3 real-life scenarios that connect to the concept
-      - Encourage students to think critically about applications
-      - Use relatable examples from students' daily experiences
-   
-   d) **Sub-concept List** (100-150 words)
-      - Identify and list all major sub-concepts
-      - Provide brief descriptions of each sub-concept
-      - Show how sub-concepts relate to the main concept
-   
-   e) **Content Related Sub-concept with Image Prompt** (400-500 words)
-      - Detailed explanation of each sub-concept
-      - Include specific image prompts for visual learning
-      - Format image prompts as: [PROMPT FOR NEW IMAGE: detailed description]
-      - Connect sub-concepts to real-world applications
-   
-   f) **Summary in Table Format** (200-250 words)
-      - Create a comprehensive table summarizing key information
-      - Include columns for: Concept, Definition, Example, Application
-      - Use Markdown table formatting
-   
-   g) **Common Misconceptions** (200-300 words)
-      - Identify 3-5 common misconceptions about the concept
-      - Explain why these misconceptions occur
-      - Provide correct explanations to address each misconception
-   
-   h) **Activity** (150-200 words)
-      - Design 1-2 hands-on activities related to the concept
-      - Include materials needed and step-by-step instructions
-      - Connect activities to learning objectives
-   
-   i) **Key Terms with Definitions** (200-300 words)
-      - List 8-12 important terms from the concept
-      - Provide clear, age-appropriate definitions
-      - Include pronunciation guides where necessary
-   
-   j) **Real World Applications** (250-350 words)
-      - Provide 4-6 specific real-world applications
-      - Include examples from technology, medicine, environment, etc.
-      - Explain how the concept impacts society and daily life
-   
-   k) **Did You Know** (100-150 words)
-      - Include 3-4 interesting facts related to the concept
-      - Use surprising or fascinating information to engage students
-      - Connect facts to the main learning objectives
-   
-   l) **Check Your Understanding Questions:**
-      - 2 MCQ with Bloom's Taxonomy tagging (specify level: Remember, Understand, Apply, Analyze, Evaluate, Create)
-      - 2 Short Answer Questions with Bloom's Taxonomy tagging
-      - 1 HOT (Higher Order Thinking) Question based on real life
-      - 1 Riddle type question related to the concept
-      - Include answer keys and explanations for all questions
+1. **Current Concepts** (500-800 words minimum)
+   - Provide detailed explanations of ALL key concepts from the PDF
+   - Include multiple examples for each concept
+   - Use analogies and real-world connections to explain complex ideas
+   - Break down concepts into sub-concepts with clear explanations
+   - Include scientific principles, formulas, or definitions where applicable
 
 2. **Hook (with Image Prompt)** (200-300 words)
    - Create an engaging opening that captures student interest
