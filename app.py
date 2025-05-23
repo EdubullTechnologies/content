@@ -631,31 +631,28 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Break down concepts into sub-concepts with clear explanations
    - Include scientific principles, formulas, or definitions where applicable
 
-2. **Hook (with Image Prompt)** (200-300 words)
+2. **Hook (with Image Prompt)** (100-150 words)
    - Create an engaging opening that captures student interest
    - Use storytelling, surprising facts, or thought-provoking questions
    - Connect to students' daily experiences or current events
    - Include a detailed image prompt for a compelling visual
 
-3. **Learning Outcome** (150-200 words)
+3. **Learning Outcome** (100-150 words)
    - List specific, measurable learning objectives
    - Use action verbs (analyze, evaluate, create, etc.)
    - Align with Bloom's Taxonomy levels
    - Connect to CBSE curriculum standards
 
-4. **Real World Connection** (400-600 words)
+4. **Real World Connection** (250-300 words)
    - Provide multiple real-world applications of the concepts
    - Include current examples from technology, environment, health, etc.
    - Explain how the concepts impact daily life
    - Connect to career opportunities and future studies
 
-5. **Previous Class Concept** (300-400 words)
-   - Thoroughly review prerequisite knowledge
-   - Explain how previous concepts build to current learning
-   - Provide clear connections and progressions
-   - Include brief refresher explanations of key prior concepts
+5. **Previous Class Concept** (50-100 words)
+   - Give the concept name and the previous class it was studied in according to NCERT textbooks.
 
-6. **History** (400-500 words)
+6. **History** (150-200 words)
    - Provide comprehensive historical background
    - Include key scientists, inventors, or historical figures
    - Explain the timeline of discoveries or developments
