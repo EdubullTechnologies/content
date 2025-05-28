@@ -629,7 +629,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 ## I. Chapter Opener (Following Model Chapter Progression + Math Enhancement)
 
 1. **Chapter Title** - Engaging and mathematically focused
-2. **Hook (with Image Prompt)** (100-150 words)
+2. **Hook (with Image Prompt)** (80-100 words)
    - Create an engaging mathematical opening that captures student interest
    - Use real-life mathematical scenarios, surprising mathematical facts, or thought-provoking mathematical questions
    - Connect to students' daily mathematical experiences
@@ -656,7 +656,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
    - Show mathematical progressions and connections
    - Include brief explanations of how concepts build upon each other
 
-6. **Meet the Character (EeeBee)** (100-150 words)
+6. **Meet the Character (EeeBee)** (50-100 words)
    - Introduce EeeBee as a mathematical guide/helper throughout the chapter
    - Show how EeeBee will assist with mathematical problem-solving and exploration
 
@@ -685,8 +685,9 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
      * Engage students right at the beginning
    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
-10. **Current Concepts** (2500-3000 words minimum)
+10. **Current Concepts** (4000-5000 words minimum)
     For each major concept in the chapter, include ALL of the following:
+    (Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding (like how a foundation book has them))
     
     **A. Concept Introduction** (200-300 words per concept)
     - Clear introduction to each mathematical concept
@@ -777,11 +778,6 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Include mathematical skills, concepts, and applications
     - Help students evaluate their own mathematical understanding
 
-17. **Mathematical Summary** (300-400 words)
-    - Bullet-point or infographic summary of mathematical concepts
-    - Include key mathematical formulas and important facts
-    - Organize by individual mathematical concepts covered
-
 18. **Chapter-wise Miscellaneous Exercise** (500-600 words)
     Create a comprehensive mix of mathematical question types:
     - **MCQs** (5 questions with detailed solutions)
@@ -827,6 +823,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 * Maintain consistency in mathematical notation and terminology
 * Integrate EeeBee character throughout for engagement
 * Balance theoretical mathematical understanding with practical applications
+* DO NOT use the same mathematical figures (numbers) from the pdf, change them according to you and also same goes for the name of the people mentioned in the book
 
 Analyze the PDF document thoroughly and create improved mathematical content that expands significantly on what's provided while maintaining all original mathematical concepts and terminology.
 
