@@ -800,7 +800,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Mathematical investigations and explorations
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 8000-10000 words for the complete mathematics chapter content
+* **Minimum Total Length**: 12000-15000 words for the complete mathematics chapter content
 * **Mathematical Accuracy**: Ensure all mathematical content is accurate and age-appropriate
 * **Clear Mathematical Language**: Use precise mathematical terminology suitable for {grade_level}
 * **Step-by-step Solutions**: Provide detailed mathematical working for all examples
