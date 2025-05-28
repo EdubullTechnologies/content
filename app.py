@@ -890,7 +890,8 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Give fun fact for each concept
    - Give key points for each concept
    - Give common misconceptions for each concept
-   - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding (out of the pdf for that whole chatper)
+   - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding (like how a foundation book has them)
+   - Make sure there is no repetition of concepts (even by just changing some words)
 
 2. **Hook (with Image Prompt)** (50-70 words)
    - Create an engaging opening that captures student interest
