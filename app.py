@@ -624,7 +624,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
 
-1. **Current Concepts** (500-800 words minimum)
+1. **Current Concepts** (1000-1200 words minimum)
    - Provide detailed explanations of ALL key concepts from the PDF
    - Include multiple examples for each concept
    - Use analogies and real-world connections to explain complex ideas
@@ -634,6 +634,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Give activity according to the concept
    - Give fun fact for each concept
    - Give key points for each concept
+   - Give common misconceptions for each concept
 
 2. **Hook (with Image Prompt)** (50-70 words)
    - Create an engaging opening that captures student interest
@@ -679,7 +680,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Ensure questions test understanding, not just observation
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 3000-4000 words for the complete chapter content
+* **Minimum Total Length**: 6000-7000 words for the complete chapter content
 * **Detailed Explanations**: Each concept should be explained thoroughly with multiple paragraphs
 * **Examples and Illustrations**: Include numerous examples, case studies, and practical applications
 * **Age-Appropriate Language**: Use vocabulary suitable for {grade_level} but don't oversimplify
