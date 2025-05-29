@@ -603,8 +603,30 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
     """Creates a prompt focused on a specific content type"""
     
     if subject_type == "Mathematics":
-        # Math-specific prompts that combine Model Chapter Progression with math-specific elements
-        base_prompt = f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
+        # Mathematics-specific prompts
+        if content_type == "chapter":
+            return create_math_chapter_prompt(grade_level, model_progression_text)
+        elif content_type == "exercises":
+            return create_math_exercises_prompt(grade_level, model_progression_text)
+        elif content_type == "skills":
+            return create_math_skills_prompt(grade_level, model_progression_text)
+        elif content_type == "art":
+            return create_math_art_prompt(grade_level, model_progression_text)
+    else:
+        # General subject prompts
+        if content_type == "chapter":
+            return create_general_chapter_prompt(grade_level, model_progression_text)
+        elif content_type == "exercises":
+            return create_general_exercises_prompt(grade_level, model_progression_text)
+        elif content_type == "skills":
+            return create_general_skills_prompt(grade_level, model_progression_text)
+        elif content_type == "art":
+            return create_general_art_prompt(grade_level, model_progression_text)
+
+# Mathematics-specific prompt functions
+def create_math_chapter_prompt(grade_level, model_progression_text):
+    """Creates a mathematics-specific chapter content prompt"""
+    return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
 IMPORTANT: This is the user's own copyright material, and they have explicitly authorized its analysis and transformation for educational purposes.
@@ -618,29 +640,25 @@ The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Mathe
 ---
 
 **Target Audience:** {grade_level} (CBSE Mathematics Syllabus)
-"""
-        
-        if content_type == "chapter":
-            prompt = base_prompt + f"""
+
 Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the Model Chapter Progression structure enhanced with mathematics-specific elements.
 
-**REQUIRED SECTIONS (Generate ALL with substantial content, combining Model Chapter Progression with Math-specific elements):**
+**REQUIRED SECTIONS (Generate ALL with substantial content):**
 
-## I. Chapter Opener (Following Model Chapter Progression + Math Enhancement)
+## I. Chapter Opener
 
 1. **Chapter Title** - Engaging and mathematically focused
+
 2. **Hook (with Image Prompt)** (80-100 words)
    - Create an engaging mathematical opening that captures student interest
    - Use real-life mathematical scenarios, surprising mathematical facts, or thought-provoking mathematical questions
    - Connect to students' daily mathematical experiences
    - Include a detailed image prompt for a compelling mathematical visual
-   - Follow the "Big Question or real-life problem" approach from Model Chapter Progression
 
 3. **Real-World Connection** (300-400 words)
    - Provide multiple real-world applications of the mathematical concepts
    - Show how math is used in everyday life situations
    - Include examples from technology, engineering, finance, science, etc.
-   - Link to students' lives and current events as per Model Chapter Progression
    - Connect to mathematical careers and future studies
 
 4. **Learning Outcomes + Previous Class Link** (200-300 words)
@@ -649,44 +667,31 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
    - Align with Bloom's Taxonomy levels for mathematics
    - Connect to CBSE mathematics curriculum standards
    - Link to prior mathematical knowledge from previous classes
-   - Make outcomes student-centered and action-oriented
 
 5. **Chapter Map/Overview** (150-200 words)
    - Visual layout of mathematical concepts (mind map or flowchart description)
    - Show mathematical progressions and connections
-   - Include brief explanations of how concepts build upon each other
 
 6. **Meet the Character (EeeBee)** (50-100 words)
    - Introduce EeeBee as a mathematical guide/helper throughout the chapter
-   - Show how EeeBee will assist with mathematical problem-solving and exploration
 
-## II. Core Content Sections (Enhanced with Math-Specific Elements)
+## II. Core Content Sections
 
 7. **Introduction of Chapter** (200-300 words)
    - Give a related chapter introduction that sets the mathematical context
    - Explain the importance of the mathematical concepts to be learned
    - Connect to the broader mathematical curriculum
-   - Motivate students about the mathematical journey ahead
-   - Activate prior mathematical knowledge with questions or scenarios
 
 8. **History of Chapter** (300-400 words)
    - Provide comprehensive historical background of the mathematical concepts
    - Include key mathematicians, their contributions, and discoveries
    - Explain the timeline of mathematical developments
-   - Connect historical context to modern mathematical understanding
-   - Show how mathematical concepts evolved over time
-   - Integrate directly into explanation as per Model Chapter Progression
 
 9. **Warm-up Questions** (200-250 words)
-   - Create 5-7 engaging warm-up questions that:
-     * Connect to prior mathematical knowledge
-     * Introduce the topic informally through real-life mathematical scenarios
-     * Spark mathematical curiosity and set the tone
-     * Engage students right at the beginning
+   - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
 10. **Current Concepts** (2500-3000 words minimum)
-    **IMPORTANT NOTE: Do NOT use the general format of "3 MCQs, 2 Short questions, 1 Long question" for mathematics. Use ONLY the specific mathematical question types defined in section D below.**
     
     For each major concept in the chapter, include ALL of the following:
     
@@ -694,189 +699,135 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Clear introduction to each mathematical concept
     - Simple, clear mathematical language
     - Use analogies and mathematical examples
-    - Explain the mathematical significance and applications
     
     **B. Mathematical Explanation** (400-500 words per concept)
-    - Multi-modal content (text + visual descriptions)
     - Detailed theoretical understanding of the mathematical concept
     - Include step-by-step mathematical reasoning and derivations
     - Show different mathematical approaches where applicable
-    - Connect to previous mathematical knowledge and build understanding
     
     **C. Solved Examples** (500-600 words per concept)
     - Provide 4-5 different worked examples for each concept
     - Include step-by-step solutions with clear explanations
     - Use varied difficulty levels and question formats
-    - Show different mathematical approaches and problem-solving strategies
-    - Include real-world mathematical applications in examples
-    - Demonstrate practical application of the mathematical concept
     
     **D. Concept-Based Exercise Questions** (400-500 words per concept)
-    Create the following specific question types for each concept:
+    Create the following specific mathematical question types for each concept:
     
     1. **Fill in the Blanks** - 3-4 questions
        - Mathematical formulas, definitions, and key concept completion
-       - Test recall and understanding of mathematical terminology
     
     2. **Conversion-Based Questions** - 2 questions
        - Unit conversions, mathematical transformations
-       - Practical mathematical conversions relevant to the concept
     
     3. **Word Problems (Real-life Context)** - 5 questions
        - Real-world mathematical scenarios applying the concept
        - Varied difficulty levels from basic to complex applications
-       - Connect to students' daily mathematical experiences
     
     4. **Match the Columns** - 1 question (5 matches)
        - Mathematical concepts with definitions, formulas with applications
-       - Visual mathematical elements with descriptions
     
     5. **Estimation Questions (Real-life Estimation)** - 5 questions
        - Practical mathematical estimation scenarios
        - Real-world mathematical approximation problems
-       - Develop mathematical reasoning and number sense
     
     6. **Miscellaneous Questions** - 3 questions
        - Mixed question types testing various aspects of the concept
        - Include higher-order thinking and application problems
-       - Creative mathematical problem-solving scenarios
     
     **E. Visuals** (Throughout each concept)
     - Include detailed image prompts for mathematical diagrams, graphs, and illustrations
-    - Labeled, relevant mathematical diagrams and infographics
-    - Visual descriptions for every mathematical concept
     
     **F. Mathematical Activities/Experiments** (200-250 words per concept)
     - Step-by-step mathematical experiments or investigations
     - Inquiry-based mathematical activities
-    - Real-life mathematical connections
-    - Use mathematical tools, software, or physical materials
     
     **G. Check Your Understanding** (150-200 words per concept)
     - Quick check questions (2-3 simple questions) to test immediate understanding
     - Brief conceptual questions or simple calculations
-    - NOT the main exercise questions (those are in section D above)
-    - Questions at basic Bloom's Taxonomy levels (Remember, Understand)
-    - Immediate feedback or answer explanations
     
     **H. Key Mathematical Terms** (100-150 words per concept)
     - Highlighted mathematical terminology in text
     - Clear mathematical definitions
-    - Include mathematical properties, formulas, and theorems
     
     **I. Mathematical Applications** (200-250 words per concept)
     - Show relevance to daily life, mathematical careers, technology
-    - Connect to other mathematical concepts and subjects
-    - Include mathematical innovations and discoveries
     
     **J. Fun Mathematical Facts** (100-150 words per concept)
     - Include interesting mathematical facts related to the concept
-    - Share surprising mathematical discoveries or applications
-    - Connect to mathematical history or modern developments
     
     **K. Think About It! (Mathematical Exploration)** (100-150 words per concept)
     - Present thought-provoking mathematical questions or scenarios
-    - Include surprising mathematical connections or patterns
-    - Encourage mathematical thinking and exploration
     
     **L. Mental Mathematics** (150-200 words per concept)
     - Provide mental mathematics strategies and techniques
-    - Include quick calculation methods and shortcuts
-    - Create practice problems for mental math skills
 
-## III. Special Features (Integrated Across Chapter - Following Model Chapter Progression)
+## III. Special Features
 
 11. **Common Mathematical Misconceptions** (200-300 words)
     - 2-3 misconceptions per mathematical concept
     - Correct early mathematical misunderstandings
-    - Provide clear explanations of correct mathematical thinking
 
 12. **21st Century Skills Focus** (300-400 words)
-    - **Mathematical Design Challenge** (Creativity in problem-solving)
-    - **Mathematical Debate** (Communication & Critical Thinking about mathematical concepts)
-    - **Collaborate & Create** (Teamwork in mathematical projects)
+    - Mathematical Design Challenge
+    - Mathematical Debate
+    - Collaborate & Create
 
 13. **Differentiation** (200-300 words)
     - Challenge sections for advanced mathematical learners
-    - Support sections for mathematical revision/simplified tasks
-    - Multiple approaches to mathematical problem-solving
+    - Support sections for mathematical revision
 
 14. **Technology Integration** (150-200 words)
     - Mathematical software and tools
-    - Student tech-based mathematical exploration ideas
-    - Digital mathematical simulations and visualizations
+    - Digital mathematical simulations
 
 15. **Character Integration** (Throughout)
     - EeeBee appears throughout to ask mathematical questions
-    - Give mathematical hints and share fun mathematical facts
-    - Provide mathematical recaps and connections
 
-## IV. Chapter Wrap-Up (Following Model Chapter Progression)
+## IV. Chapter Wrap-Up
 
 16. **Self-Assessment Checklist** (200-250 words)
-    - Create a comprehensive self-assessment checklist for the whole mathematical chapter
-    - Use bullet points for easy checking
-    - Include mathematical skills, concepts, and applications
-    - Help students evaluate their own mathematical understanding
+    - Create a comprehensive self-assessment checklist
 
-18. **Chapter-wise Miscellaneous Exercise** (500-600 words)
-    Create a comprehensive mix of mathematical question types:
-    - **MCQs** (5 questions with detailed solutions)
-    - **Short/Long Answer** (3 short, 2 long mathematical problems)
-    - **Open-ended Mathematical Problems** (2 questions)
-    - **Assertion & Reason** (3 mathematical statements with reasoning)
-    - **Mathematical Concept Mapping** (1 comprehensive map)
-    - **True/False with Mathematical Justification** (5 statements)
-    - **Mathematical Case Studies** (1 real-world mathematical scenario)
-    - **Mathematical Puzzle** (1 engaging mathematical puzzle)
-    - **Thinking Based Mathematical Activities** including:
-      * Mathematical Crossword Puzzle
-      * Mathematical Sudoku or number puzzle
-      * Mathematical Project ideas
-      * Research and Presentation topics on mathematical concepts
+17. **Chapter-wise Miscellaneous Exercise** (500-600 words)
+    - MCQs (5 questions)
+    - Short/Long Answer (3 short, 2 long)
+    - Open-ended Mathematical Problems (2 questions)
+    - Assertion & Reason (3 statements)
+    - Mathematical Concept Mapping (1 map)
+    - True/False with Justification (5 statements)
+    - Mathematical Case Studies (1 scenario)
+    - Mathematical Puzzle (1 puzzle)
+    - Thinking Based Activities
 
-19. **Apply Your Mathematical Knowledge** (200-300 words)
+18. **Apply Your Mathematical Knowledge** (200-300 words)
     - Real-world mathematical application tasks
-    - Project-based mathematical problems encouraging synthesis and creativity
-    - Mathematical investigations and explorations
+    - Project-based mathematical problems
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 12000-15000 words for the complete mathematics chapter content
-* **Mathematical Accuracy**: Ensure all mathematical content is accurate and age-appropriate
-* **Clear Mathematical Language**: Use precise mathematical terminology suitable for {grade_level}
-* **Step-by-step Solutions**: Provide detailed mathematical working for all examples
-* **Visual Integration**: Include detailed image prompts for mathematical diagrams, graphs, and illustrations
-* **Progressive Difficulty**: Structure content from basic to advanced mathematical concepts
-* **Model Chapter Progression Compliance**: Follow the structure and principles from the Model Chapter Progression
-
-**FORMATTING REQUIREMENTS:**
-* Use Markdown formatting with clear headings (# ## ###)
-* Include mathematical expressions using appropriate notation
-* Use **bold** for key mathematical terms and *italics* for emphasis
-* Create well-structured mathematical explanations
-* Include image prompts marked as: [PROMPT FOR NEW IMAGE: detailed mathematical diagram description]
-* Follow the visual variety and layout principles from Model Chapter Progression
-
-**QUALITY STANDARDS:**
-* Each section should be mathematically rigorous and comprehensive
-* Ensure mathematical concepts flow logically from one to the next
-* Include multiple mathematical approaches and problem-solving strategies
-* Maintain consistency in mathematical notation and terminology
-* Integrate EeeBee character throughout for engagement
-* Balance theoretical mathematical understanding with practical applications
-* DO NOT use the same mathematical figures (numbers) from the pdf, change them according to you and also same goes for the name of the people mentioned in the book
-
-Analyze the PDF document thoroughly and create improved mathematical content that expands significantly on what's provided while maintaining all original mathematical concepts and terminology.
+* **Minimum Total Length**: 12000-15000 words
+* **Mathematical Accuracy**: Ensure all mathematical content is accurate
+* **Clear Mathematical Language**: Use precise mathematical terminology
+* **Step-by-step Solutions**: Provide detailed mathematical working
+* **Visual Integration**: Include detailed image prompts
+* **Progressive Difficulty**: Structure content from basic to advanced
+* DO NOT use the same mathematical figures (numbers) from the pdf
 
 Provide ONLY the comprehensive mathematics chapter content in Markdown format.
 """
-        
-        elif content_type == "exercises":
-            prompt = base_prompt + f"""
-Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapter content in the PDF, following the Model Chapter Progression principles for review and assessment.
 
-**Following Model Chapter Progression Review Structure:**
-Create a comprehensive mix of mathematical question types that align with the Model Chapter Progression's approach to review questions:
+def create_math_exercises_prompt(grade_level, model_progression_text):
+    """Creates a mathematics-specific exercises prompt"""
+    return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapter content in the PDF.
 
 **Core Mathematical Exercise Types:**
 1. **MCQ (Multiple Choice Questions)** - at least 12 questions with detailed solutions
@@ -890,7 +841,7 @@ Create a comprehensive mix of mathematical question types that align with the Mo
 9. **Mathematical Case Studies** - at least 2 scenarios
 10. **Open-ended Mathematical Problems** - at least 3 questions
 
-**Special Mathematical Features (Following Model Chapter Progression):**
+**Special Mathematical Features:**
 - **EeeBee Integration**: Include questions where EeeBee guides mathematical thinking
 - **Technology Integration**: Questions involving mathematical software, calculators, or digital tools
 - **Differentiation**: Include challenge problems for advanced learners and support questions for revision
@@ -898,228 +849,143 @@ Create a comprehensive mix of mathematical question types that align with the Mo
 
 Ensure that:
 * Questions cover ALL important mathematical concepts from the PDF
-* Questions follow Bloom's Taxonomy at various levels (Remember, Understand, Apply, Analyze, Evaluate, Create)
+* Questions follow Bloom's Taxonomy at various levels
 * Mathematical language is clear and appropriate for {grade_level}
-* Questions increase in difficulty from basic recall to higher-order mathematical thinking
+* Questions increase in difficulty progressively
 * All exercises include detailed mathematical solutions with step-by-step working
 * Content is formatted in Markdown with proper mathematical notation
-* Include EeeBee character integration throughout exercises
-* Follow Model Chapter Progression principles for comprehensive assessment
 
 Provide ONLY the comprehensive mathematical exercises in Markdown format.
 """
-        
-        elif content_type == "skills":
-            prompt = base_prompt + f"""
-Your task is to generate MATHEMATICAL SKILL-BASED ACTIVITIES and STEM projects based on the chapter content in the PDF, following the Model Chapter Progression approach to hands-on learning and real-world applications.
 
-**Following Model Chapter Progression Activity Structure:**
+def create_math_skills_prompt(grade_level, model_progression_text):
+    """Creates a mathematics-specific skills and STEM activities prompt"""
+    return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
-## Mathematical Skill-Based Activities (Hands-on Mathematical Learning)
+You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)**.
 
-Create at least 3 comprehensive mathematical activities that follow the Model Chapter Progression principles:
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate MATHEMATICAL SKILL-BASED ACTIVITIES and STEM projects.
+
+## Mathematical Skill-Based Activities
+
+Create at least 3 comprehensive mathematical activities:
 
 **Activity Structure for Each:**
-1. **Clear Mathematical Objective** - Specific learning goals aligned with chapter concepts
-2. **Materials Required** - Mathematical tools, manipulatives, technology, or everyday items
-3. **Step-by-Step Mathematical Procedure** - Detailed instructions with mathematical reasoning
-4. **Inquiry-Based Mathematical Exploration** - Questions that guide mathematical discovery
-5. **Real-Life Mathematical Connections** - How the activity relates to daily mathematical applications
-6. **EeeBee Integration** - How EeeBee guides or assists in the mathematical activity
-7. **Mathematical Reflection Questions** - Encourage deeper mathematical thinking
-8. **Expected Mathematical Outcomes** - What students should learn or discover
+1. **Clear Mathematical Objective**
+2. **Materials Required**
+3. **Step-by-Step Mathematical Procedure**
+4. **Inquiry-Based Mathematical Exploration**
+5. **Real-Life Mathematical Connections**
+6. **EeeBee Integration**
+7. **Mathematical Reflection Questions**
+8. **Expected Mathematical Outcomes**
 
 **Types of Mathematical Activities:**
-- **Mathematical Experiments/Investigations** - Hands-on exploration of mathematical concepts
-- **Mathematical Manipulative Activities** - Using physical or digital tools to understand concepts
-- **Mathematical Problem-Solving Challenges** - Real-world mathematical scenarios
-- **Mathematical Pattern Recognition Activities** - Discovering mathematical relationships
-- **Mathematical Measurement and Data Collection** - Practical mathematical applications
+- Mathematical Experiments/Investigations
+- Mathematical Manipulative Activities
+- Mathematical Problem-Solving Challenges
+- Mathematical Pattern Recognition Activities
+- Mathematical Measurement and Data Collection
 
-## Mathematical STEM Projects (Integration Focus)
+## Mathematical STEM Projects
 
 Create at least 2 comprehensive projects that integrate mathematics with Science, Technology, and Engineering:
 
 **Project Structure for Each:**
-1. **Mathematical Integration Focus** - How math connects with other STEM fields
-2. **Real-World Mathematical Application** - Authentic mathematical problem-solving scenarios
-3. **Technology Integration** - Mathematical software, apps, or digital tools
-4. **Collaborative Mathematical Work** - Teamwork and mathematical communication
-5. **Mathematical Design Challenge** - Creative problem-solving with mathematical constraints
-6. **Mathematical Analysis and Calculations** - Detailed mathematical work required
-7. **Mathematical Presentation Component** - Sharing mathematical findings and reasoning
-8. **Assessment Criteria** - How mathematical understanding will be evaluated
+1. **Mathematical Integration Focus**
+2. **Real-World Mathematical Application**
+3. **Technology Integration**
+4. **Collaborative Mathematical Work**
+5. **Mathematical Design Challenge**
+6. **Mathematical Analysis and Calculations**
+7. **Mathematical Presentation Component**
+8. **Assessment Criteria**
 
 **STEM Integration Examples:**
-- **Mathematical Modeling in Science** - Using math to understand scientific phenomena
-- **Engineering Design with Mathematical Constraints** - Applying mathematical principles to design
-- **Technology-Enhanced Mathematical Problem Solving** - Using digital tools for mathematical exploration
-- **Mathematical Data Analysis Projects** - Real-world data collection and mathematical interpretation
+- Mathematical Modeling in Science
+- Engineering Design with Mathematical Constraints
+- Technology-Enhanced Mathematical Problem Solving
+- Mathematical Data Analysis Projects
 
-## Special Features (Following Model Chapter Progression)
-
-**21st Century Mathematical Skills Development:**
-- **Mathematical Communication** - Explaining mathematical reasoning clearly
-- **Mathematical Collaboration** - Working together on mathematical problems
-- **Mathematical Critical Thinking** - Analyzing and evaluating mathematical solutions
-- **Mathematical Creativity** - Finding innovative approaches to mathematical problems
-
-**Differentiation in Mathematical Activities:**
-- **Challenge Extensions** - Advanced mathematical explorations for gifted learners
-- **Support Modifications** - Simplified mathematical approaches for struggling learners
-- **Multiple Mathematical Approaches** - Different ways to engage with the same mathematical concepts
-
-**Technology Integration:**
-- **Mathematical Software and Apps** - Specific tools for mathematical exploration
-- **Digital Mathematical Simulations** - Virtual mathematical experiments
-- **Mathematical Visualization Tools** - Software for creating mathematical diagrams and models
-
-**Character Integration:**
-- **EeeBee's Mathematical Challenges** - Special problems or investigations led by EeeBee
-- **EeeBee's Mathematical Tips** - Helpful hints and strategies for mathematical success
-- **EeeBee's Mathematical Discoveries** - Fun mathematical facts and connections
-
-**Differentiation in Creative Mathematical Projects:**
-- **Multiple Artistic Approaches** - Different ways to express the same mathematical concepts
-- **Varied Complexity Levels** - Projects suitable for different mathematical skill levels
-- **Choice in Creative Expression** - Students select their preferred artistic medium for mathematical exploration
-
-**Assessment and Reflection:**
-- **Mathematical Understanding Criteria** - How mathematical learning is demonstrated through art
-- **Creative Expression Evaluation** - Assessing artistic quality and mathematical integration
-- **Mathematical Communication Assessment** - Evaluating explanation of mathematical-artistic connections
-- **Peer Mathematical-Artistic Appreciation** - Students analyzing and appreciating each other's mathematical art
-
-**Content Requirements:**
-* Projects connect mathematical concepts to various art forms appropriately for {grade_level}
-* Allow for creative expression while reinforcing mathematical learning
-* Can be completed with commonly available art supplies and mathematical tools
-* Include clear mathematical learning objectives and artistic goals
-* Encourage mathematical problem-solving through creative expression
-* Connect to real-world mathematical applications and careers
-
-**Quality Standards:**
-* Ensure mathematical accuracy within artistic expression
-* Balance creative freedom with mathematical learning objectives
-* Include multiple approaches to mathematical-artistic integration
-* Maintain consistency in mathematical notation and terminology
-* Integrate seamlessly with chapter mathematical content
-* Respect diverse artistic abilities while maintaining mathematical rigor
-
-Format the content in Markdown with proper mathematical notation and organization.
+Format the content in Markdown with proper mathematical notation.
 
 Provide ONLY the Mathematical Skill Activities and STEM Projects in Markdown format.
 """
-        
-        elif content_type == "art":
-            prompt = base_prompt + f"""
-Your task is to generate MATHEMATICS-INTEGRATED CREATIVE LEARNING projects based on the chapter content in the PDF, following the Model Chapter Progression approach to creative expression and art integration.
 
-**Following Model Chapter Progression Creative Integration Structure:**
+def create_math_art_prompt(grade_level, model_progression_text):
+    """Creates a mathematics-specific art integration prompt"""
+    return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
-## Mathematical Art Projects (Creative Mathematical Expression)
+You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)**.
 
-Create at least 3 creative projects that connect mathematical concepts to various art forms, following Model Chapter Progression principles:
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate MATHEMATICS-INTEGRATED CREATIVE LEARNING projects.
+
+## Mathematical Art Projects
+
+Create at least 3 creative projects that connect mathematical concepts to various art forms:
 
 **Project Structure for Each:**
-1. **Mathematical Learning Objective** - Clear mathematical goals through artistic expression
-2. **Art Form Integration** - Visual arts, music, drama, digital art, or multimedia
-3. **Mathematical Concepts Highlighted** - Specific mathematical ideas explored through art
-4. **Materials and Tools** - Art supplies, mathematical tools, technology needed
-5. **Step-by-Step Mathematical-Artistic Process** - Detailed creative procedure with mathematical reasoning
-6. **EeeBee's Creative Guidance** - How EeeBee inspires and guides the artistic mathematical exploration
-7. **Mathematical Reflection and Analysis** - Questions connecting art creation to mathematical understanding
-8. **Showcase and Communication** - How students share their mathematical-artistic creations
+1. **Mathematical Learning Objective**
+2. **Art Form Integration**
+3. **Mathematical Concepts Highlighted**
+4. **Materials and Tools**
+5. **Step-by-Step Mathematical-Artistic Process**
+6. **EeeBee's Creative Guidance**
+7. **Mathematical Reflection and Analysis**
+8. **Showcase and Communication**
 
 **Types of Mathematical Art Integration:**
-- **Geometric Art and Patterns** - Using mathematical shapes, symmetry, and patterns in visual art
-- **Mathematical Music and Rhythm** - Exploring mathematical relationships in musical composition
-- **Mathematical Drama and Storytelling** - Acting out mathematical concepts and problem-solving scenarios
-- **Mathematical Digital Art** - Using technology to create mathematical visualizations and designs
-- **Mathematical Sculpture and 3D Models** - Building mathematical concepts through physical construction
+- Geometric Art and Patterns
+- Mathematical Music and Rhythm
+- Mathematical Drama and Storytelling
+- Mathematical Digital Art
+- Mathematical Sculpture and 3D Models
 
-## Mathematical Case Studies (Real-World Mathematical Scenarios)
+## Mathematical Case Studies
 
 **Case Study – Level 1 (Accessible Mathematical Analysis):**
 Create at least 1 simpler case study that:
 - Presents a real-world mathematical scenario appropriate for {grade_level}
 - Includes guided mathematical analysis questions
 - Is accessible to all students with basic mathematical skills
-- Connects to students' daily mathematical experiences
-- Follows Model Chapter Progression principles of real-world connection
 
 **Case Study – Level 2 (Advanced Mathematical Challenge):**
 Create at least 1 more complex case study that:
 - Challenges students with multi-step mathematical problems
-- Requires deeper application of mathematical concepts from the chapter
+- Requires deeper application of mathematical concepts
 - Encourages higher-order mathematical thinking skills
-- Integrates multiple mathematical concepts and problem-solving strategies
-- Follows Model Chapter Progression principles of differentiated challenge
 
 **Case Study Structure for Each:**
-1. **Real-World Mathematical Context** - Authentic scenario requiring mathematical analysis
-2. **Mathematical Background Information** - Relevant data, facts, and mathematical context
-3. **Guided Mathematical Questions** - Progressive questions leading to deeper understanding
-4. **Mathematical Analysis Requirements** - Specific mathematical skills and concepts to apply
-5. **Creative Mathematical Solutions** - Encouraging innovative mathematical approaches
-6. **Mathematical Communication Component** - Presenting mathematical findings clearly
-7. **EeeBee's Mathematical Insights** - Character guidance and mathematical connections
-8. **Extension Mathematical Challenges** - Additional mathematical explorations for interested students
+1. **Real-World Mathematical Context**
+2. **Mathematical Background Information**
+3. **Guided Mathematical Questions**
+4. **Mathematical Analysis Requirements**
+5. **Creative Mathematical Solutions**
+6. **Mathematical Communication Component**
+7. **EeeBee's Mathematical Insights**
+8. **Extension Mathematical Challenges**
 
-## Special Creative Features (Following Model Chapter Progression)
-
-**21st Century Mathematical-Creative Skills:**
-- **Mathematical Design Thinking** - Creative problem-solving with mathematical constraints
-- **Mathematical Communication through Art** - Expressing mathematical ideas creatively
-- **Mathematical Collaboration in Creative Projects** - Teamwork in mathematical-artistic endeavors
-- **Mathematical Innovation and Creativity** - Finding new ways to represent mathematical concepts
-
-**Technology Integration in Mathematical Art:**
-- **Mathematical Design Software** - Programs for creating mathematical art and visualizations
-- **Digital Mathematical Storytelling** - Using technology to tell mathematical stories
-- **Mathematical Animation and Simulation** - Creating moving mathematical representations
-- **Mathematical Virtual Reality** - Immersive mathematical experiences
-
-**Character Integration in Creative Projects:**
-- **EeeBee's Art Gallery** - Showcasing mathematical art inspired by EeeBee
-- **EeeBee's Mathematical Stories** - Creative narratives featuring mathematical adventures
-- **EeeBee's Design Challenges** - Creative mathematical problems posed by the character
-
-**Differentiation in Creative Mathematical Projects:**
-- **Multiple Artistic Approaches** - Different ways to express the same mathematical concepts
-- **Varied Complexity Levels** - Projects suitable for different mathematical skill levels
-- **Choice in Creative Expression** - Students select their preferred artistic medium for mathematical exploration
-
-**Assessment and Reflection:**
-- **Mathematical Understanding Criteria** - How mathematical learning is demonstrated through art
-- **Creative Expression Evaluation** - Assessing artistic quality and mathematical integration
-- **Mathematical Communication Assessment** - Evaluating explanation of mathematical-artistic connections
-- **Peer Mathematical-Artistic Appreciation** - Students analyzing and appreciating each other's mathematical art
-
-**Content Requirements:**
-* Projects connect mathematical concepts to various art forms appropriately for {grade_level}
-* Allow for creative expression while reinforcing mathematical learning
-* Can be completed with commonly available art supplies and mathematical tools
-* Include clear mathematical learning objectives and artistic goals
-* Encourage mathematical problem-solving through creative expression
-* Connect to real-world mathematical applications and careers
-
-**Quality Standards:**
-* Ensure mathematical accuracy within artistic expression
-* Balance creative freedom with mathematical learning objectives
-* Include multiple approaches to mathematical-artistic integration
-* Maintain consistency in mathematical notation and terminology
-* Integrate seamlessly with chapter mathematical content
-* Respect diverse artistic abilities while maintaining mathematical rigor
-
-Format the content in Markdown with proper mathematical notation and organization.
+Format the content in Markdown with proper mathematical notation.
 
 Provide ONLY the Mathematics-Integrated Creative Learning content in Markdown format.
 """
-    
-    else:
-        # Original general subject prompts (existing code)
-        base_prompt = f"""You are an expert in educational content development, specifically for CBSE curriculum.
+
+# General subject prompt functions
+def create_general_chapter_prompt(grade_level, model_progression_text):
+    """Creates a general subject chapter content prompt"""
+    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
 IMPORTANT: This is the user's own copyright material, and they have explicitly authorized its analysis and transformation for educational purposes.
@@ -1133,10 +999,7 @@ The book is intended to align with NCERT, NCF, and NEP 2020 guidelines.
 ---
 
 **Target Audience:** {grade_level} (CBSE Syllabus)
-"""
-    
-    if content_type == "chapter":
-        prompt = base_prompt + f"""
+
 Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equivalent to a complete textbook chapter.
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
@@ -1152,8 +1015,8 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Give fun fact for each concept
    - Give key points for each concept
    - Give common misconceptions for each concept
-   - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding (like how a foundation book has them)
-   - Make sure there is no repetition of concepts (even by just changing some words)
+   - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding
+   - Make sure there is no repetition of concepts
 
 2. **Hook (with Image Prompt)** (50-70 words)
    - Create an engaging opening that captures student interest
@@ -1174,7 +1037,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Connect to career opportunities and future studies
 
 5. **Previous Class Concept** (50-100 words)
-   - Give the concept name and the previous class it was studied in according to NCERT textbooks.
+   - Give the concept name and the previous class it was studied in according to NCERT textbooks
 
 6. **History** (70-100 words)
    - Provide comprehensive historical background
@@ -1221,15 +1084,23 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
 * Ensure content flows logically from one section to the next
 * Maintain consistency in terminology and explanations
 
-**IMPORTANT**: This should read like a complete, professional textbook chapter that a teacher could use directly in class. Do NOT provide brief or summary-style content. Each section should be fully developed with rich, detailed explanations.
-
 Analyze the PDF document thoroughly and create improved content that expands significantly on what's provided while maintaining all original concept names and terminology.
 
 Provide ONLY the comprehensive chapter content in Markdown format. Do not include exercises, activities, or art projects.
 """
-    
-    elif content_type == "exercises":
-        prompt = base_prompt + f"""
+
+def create_general_exercises_prompt(grade_level, model_progression_text):
+    """Creates a general subject exercises prompt"""
+    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
 Your task is to generate COMPREHENSIVE EXERCISES based on the chapter content in the PDF.
 
 Create the following exercise types:
@@ -1255,9 +1126,19 @@ Do NOT directly copy questions from the PDF. Create new, original questions base
 
 Provide ONLY the exercises in Markdown format.
 """
-    
-    elif content_type == "skills":
-        prompt = base_prompt + f"""
+
+def create_general_skills_prompt(grade_level, model_progression_text):
+    """Creates a general subject skills and STEM activities prompt"""
+    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
 Your task is to generate SKILL-BASED ACTIVITIES and STEM projects based on the chapter content in the PDF.
 
 Create the following:
@@ -1285,9 +1166,19 @@ Format the content in Markdown with proper headings, lists, and organization.
 
 Provide ONLY the Skill Activities and STEM Projects in Markdown format.
 """
-    
-    elif content_type == "art":
-        prompt = base_prompt + f"""
+
+def create_general_art_prompt(grade_level, model_progression_text):
+    """Creates a general subject art integration prompt"""
+    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
 Your task is to generate ART-INTEGRATED LEARNING projects based on the chapter content in the PDF.
 
 Create the following:
@@ -1318,8 +1209,6 @@ Format the content in Markdown with proper headings, lists, and organization.
 
 Provide ONLY the Art-Integrated Learning content in Markdown format.
 """
-    
-    return prompt
 
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="General", use_chunked=False):
     """Generates specific content based on content type"""
