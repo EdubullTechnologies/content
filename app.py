@@ -108,7 +108,7 @@ def analyze_with_llm(pdf_file_bytes, pdf_filename, model_progression_text, grade
         # It's good practice to use the File API for documents, especially if they might be large.
         # Files are stored for 48 hours.
         uploaded_file = genai.upload_file(path=temp_pdf_path, display_name=pdf_filename, mime_type="application/pdf")
-        st.success(f"'{pdf_filename}' uploaded successfully to EeeBee (URI: {uploaded_file.uri})")
+        st.success(f"'{pdf_filename}' uploaded successfully to Gemini (URI: {uploaded_file.uri})")
 
     except Exception as e:
         st.error(f"Error uploading PDF to EeeBee: {e}")
@@ -209,7 +209,7 @@ Provide the complete, rewritten chapter text in Markdown format, incorporating a
         # Use the uploaded file in the prompt
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=65536, # Explicitly set max output tokens
-            temperature=0.7,  # Add some creativity to avoid direct copying
+            temperature=0.3,  # Add some creativity to avoid direct copying
         )
         response = model.generate_content(
             [uploaded_file, prompt_content],
@@ -340,7 +340,7 @@ def analyze_with_chunked_approach(pdf_file_bytes, pdf_filename, model_progressio
         # Upload the entire PDF file to Gemini
         st.info(f"Uploading '{pdf_filename}' to EeeBee for chunked analysis...")
         uploaded_file = genai.upload_file(path=temp_pdf_path, display_name=pdf_filename, mime_type="application/pdf")
-        st.success(f"'{pdf_filename}' uploaded successfully to Gemini (URI: {uploaded_file.uri})")
+        st.success(f"'{pdf_filename}' uploaded successfully to EeeBee (URI: {uploaded_file.uri})")
         
         # Extract text from PDF for determining page chunks
         doc = fitz.open(stream=pdf_file_bytes, filetype="pdf")
@@ -421,7 +421,7 @@ Do not include analysis or explanations - just the rewritten content.
             try:
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=32768,
-                    temperature=0.7,
+                    temperature=0.3,
                 )
                 
                 # Send the full PDF but instruct to focus on specific pages
@@ -634,6 +634,8 @@ IMPORTANT: This is the user's own copyright material, and they have explicitly a
 You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)**.
 The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Mathematics education.
 
+**CRITICAL INSTRUCTION**: The PDF may contain MULTIPLE MAJOR SECTIONS (e.g., Section 1, Section 2, Section 3, etc.). You MUST include ALL sections present in the PDF. Do NOT stop after completing just one or two sections. Generate comprehensive content for EVERY section found in the document.
+
 **Model Chapter Progression and Elements (Base Structure):**
 ---
 {model_progression_text}
@@ -643,7 +645,9 @@ The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Mathe
 
 Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the Model Chapter Progression structure enhanced with mathematics-specific elements.
 
-**REQUIRED SECTIONS (Generate ALL with substantial content):**
+**IMPORTANT**: If the PDF contains multiple sections (e.g., "Section 2: Place Value", "Section 3: Operations and Estimation with Large Numbers"), you MUST generate complete content for EACH section. The structure below should be applied to EACH major section in the PDF.
+
+**REQUIRED SECTIONS (Generate ALL with substantial content for EACH major section in the PDF):**
 
 ## I. Chapter Opener
 
@@ -675,25 +679,27 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 6. **Meet the Character (EeeBee)** (50-100 words)
    - Introduce EeeBee as a mathematical guide/helper throughout the chapter
 
-## II. Core Content Sections
+## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
 
-7. **Introduction of Chapter** (200-300 words)
-   - Give a related chapter introduction that sets the mathematical context
+**NOTE: If the PDF has Section 1, Section 2, Section 3, etc., create complete content for EACH section following this structure:**
+
+7. **Introduction of Section** (200-300 words per section)
+   - Give a related section introduction that sets the mathematical context
    - Explain the importance of the mathematical concepts to be learned
    - Connect to the broader mathematical curriculum
 
-8. **History of Chapter** (300-400 words)
+8. **History of Concepts in This Section** (300-400 words per section)
    - Provide comprehensive historical background of the mathematical concepts
    - Include key mathematicians, their contributions, and discoveries
    - Explain the timeline of mathematical developments
 
-9. **Warm-up Questions** (200-250 words)
+9. **Warm-up Questions** (200-250 words per section)
    - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
-10. **Current Concepts** (2500-3000 words minimum)
+10. **Current Concepts** (3500-4500 words minimum PER SECTION)
     
-    For each major concept in the chapter, include ALL of the following:
+    For each major concept in EACH section, include ALL of the following:
     
     **A. Concept Introduction** (200-300 words per concept)
     - Clear introduction to each mathematical concept
@@ -761,7 +767,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     **L. Mental Mathematics** (150-200 words per concept)
     - Provide mental mathematics strategies and techniques
 
-## III. Special Features
+## III. Special Features (Apply to the ENTIRE chapter, not just one section)
 
 11. **Common Mathematical Misconceptions** (200-300 words)
     - 2-3 misconceptions per mathematical concept
@@ -783,7 +789,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 15. **Character Integration** (Throughout)
     - EeeBee appears throughout to ask mathematical questions
 
-## IV. Chapter Wrap-Up
+## IV. Chapter Wrap-Up (For the ENTIRE chapter)
 
 16. **Self-Assessment Checklist** (200-250 words)
     - Create a comprehensive self-assessment checklist
@@ -804,7 +810,8 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Project-based mathematical problems
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 12000-15000 words
+* **Minimum Total Length**: 18000-25000 words (to accommodate multiple sections)
+* **CRITICAL**: Include ALL major sections from the PDF (e.g., if there are Sections 1, 2, and 3, generate complete content for ALL three)
 * **Mathematical Accuracy**: Ensure all mathematical content is accurate
 * **Clear Mathematical Language**: Use precise mathematical terminology
 * **Step-by-step Solutions**: Provide detailed mathematical working
@@ -812,7 +819,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 * **Progressive Difficulty**: Structure content from basic to advanced
 * DO NOT use the same mathematical figures (numbers) from the pdf
 
-Provide ONLY the comprehensive mathematics chapter content in Markdown format.
+Provide ONLY the comprehensive mathematics chapter content in Markdown format. Remember to include EVERY section found in the PDF document.
 """
 
 def create_math_exercises_prompt(grade_level, model_progression_text):
@@ -1228,10 +1235,18 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             
             # Generate content
             st.info(f"Generating {content_type} content for {grade_level}...")
-            generation_config = genai.types.GenerationConfig(
-                max_output_tokens=65536,
-                temperature=0.7,
-            )
+            
+            # Use higher token limit for mathematics chapter content
+            if subject_type == "Mathematics" and content_type == "chapter":
+                generation_config = genai.types.GenerationConfig(
+                    max_output_tokens=131072,  # Doubled for multi-section math chapters
+                    temperature=0.3,
+                )
+            else:
+                generation_config = genai.types.GenerationConfig(
+                    max_output_tokens=131072,
+                    temperature=0.3,
+                )
             
             response = model.generate_content(
                 [uploaded_file, prompt],
@@ -1344,7 +1359,7 @@ Format your analysis in Markdown. This is just an intermediate step - don't crea
             try:
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=32768,
-                    temperature=0.7,
+                    temperature=0.3,
                 )
                 
                 # Send the full PDF but instruct to focus on specific pages
@@ -1428,10 +1443,17 @@ Ensure it is cohesive, well-structured, and follows all the requirements for {co
         st.info(f"Creating final {content_type} content...")
         
         try:
-            integration_config = genai.types.GenerationConfig(
-                max_output_tokens=65536,
-                temperature=0.4,  # Lower temperature for more coherent integration
-            )
+            # Use higher token limit for mathematics chapter content
+            if subject_type == "Mathematics" and content_type == "chapter":
+                integration_config = genai.types.GenerationConfig(
+                    max_output_tokens=131072,  # Doubled for multi-section math chapters
+                    temperature=0.3,  # Lower temperature for more coherent integration
+                )
+            else:
+                integration_config = genai.types.GenerationConfig(
+                    max_output_tokens=131072,
+                    temperature=0.3,  # Lower temperature for more coherent integration
+                )
             
             final_response = model.generate_content(
                 [integration_prompt],
