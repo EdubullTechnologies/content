@@ -685,9 +685,8 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
      * Engage students right at the beginning
    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
-10. **Current Concepts** (4000-5000 words minimum)
+10. **Current Concepts** (2500-3000 words minimum)
     For each major concept in the chapter, include ALL of the following:
-    (Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding (like how a foundation book has them))
     
     **A. Concept Introduction** (200-300 words per concept)
     - Clear introduction to each mathematical concept
@@ -697,48 +696,86 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     
     **B. Mathematical Explanation** (400-500 words per concept)
     - Multi-modal content (text + visual descriptions)
-    - Provide 5 different worked examples for each concept
+    - Detailed theoretical understanding of the mathematical concept
+    - Include step-by-step mathematical reasoning and derivations
+    - Show different mathematical approaches where applicable
+    - Connect to previous mathematical knowledge and build understanding
+    
+    **C. Solved Examples** (500-600 words per concept)
+    - Provide 4-5 different worked examples for each concept
     - Include step-by-step solutions with clear explanations
     - Use varied difficulty levels and question formats
-    - Show different mathematical approaches where applicable
+    - Show different mathematical approaches and problem-solving strategies
+    - Include real-world mathematical applications in examples
+    - Demonstrate practical application of the mathematical concept
     
-    **C. Visuals** (Throughout each concept)
+    **D. Concept-Based Exercise Questions** (400-500 words per concept)
+    Create the following specific question types for each concept:
+    
+    1. **Fill in the Blanks** - 3-4 questions
+       - Mathematical formulas, definitions, and key concept completion
+       - Test recall and understanding of mathematical terminology
+    
+    2. **Conversion-Based Questions** - 2 questions
+       - Unit conversions, mathematical transformations
+       - Practical mathematical conversions relevant to the concept
+    
+    3. **Word Problems (Real-life Context)** - 5 questions
+       - Real-world mathematical scenarios applying the concept
+       - Varied difficulty levels from basic to complex applications
+       - Connect to students' daily mathematical experiences
+    
+    4. **Match the Columns** - 1 question (5 matches)
+       - Mathematical concepts with definitions, formulas with applications
+       - Visual mathematical elements with descriptions
+    
+    5. **Estimation Questions (Real-life Estimation)** - 5 questions
+       - Practical mathematical estimation scenarios
+       - Real-world mathematical approximation problems
+       - Develop mathematical reasoning and number sense
+    
+    6. **Miscellaneous Questions** - 3 questions
+       - Mixed question types testing various aspects of the concept
+       - Include higher-order thinking and application problems
+       - Creative mathematical problem-solving scenarios
+    
+    **E. Visuals** (Throughout each concept)
     - Include detailed image prompts for mathematical diagrams, graphs, and illustrations
     - Labeled, relevant mathematical diagrams and infographics
     - Visual descriptions for every mathematical concept
     
-    **D. Mathematical Activities/Experiments** (200-250 words per concept)
+    **F. Mathematical Activities/Experiments** (200-250 words per concept)
     - Step-by-step mathematical experiments or investigations
     - Inquiry-based mathematical activities
     - Real-life mathematical connections
     - Use mathematical tools, software, or physical materials
     
-    **E. Check Your Understanding** (150-200 words per concept)
+    **G. Check Your Understanding** (150-200 words per concept)
     - Short MCQs and short answers after each mathematical concept
     - Immediate feedback or answer explanations
     - Questions at various Bloom's Taxonomy levels
     
-    **F. Key Mathematical Terms** (100-150 words per concept)
+    **H. Key Mathematical Terms** (100-150 words per concept)
     - Highlighted mathematical terminology in text
     - Clear mathematical definitions
     - Include mathematical properties, formulas, and theorems
     
-    **G. Mathematical Applications** (200-250 words per concept)
+    **I. Mathematical Applications** (200-250 words per concept)
     - Show relevance to daily life, mathematical careers, technology
     - Connect to other mathematical concepts and subjects
     - Include mathematical innovations and discoveries
     
-    **H. Fun Mathematical Facts** (100-150 words per concept)
+    **J. Fun Mathematical Facts** (100-150 words per concept)
     - Include interesting mathematical facts related to the concept
     - Share surprising mathematical discoveries or applications
     - Connect to mathematical history or modern developments
     
-    **I. Think About It! (Mathematical Exploration)** (100-150 words per concept)
+    **K. Think About It! (Mathematical Exploration)** (100-150 words per concept)
     - Present thought-provoking mathematical questions or scenarios
     - Include surprising mathematical connections or patterns
     - Encourage mathematical thinking and exploration
     
-    **J. Mental Mathematics** (150-200 words per concept)
+    **L. Mental Mathematics** (150-200 words per concept)
     - Provide mental mathematics strategies and techniques
     - Include quick calculation methods and shortcuts
     - Create practice problems for mental math skills
