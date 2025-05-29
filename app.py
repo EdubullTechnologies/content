@@ -686,6 +686,8 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
 10. **Current Concepts** (2500-3000 words minimum)
+    **IMPORTANT NOTE: Do NOT use the general format of "3 MCQs, 2 Short questions, 1 Long question" for mathematics. Use ONLY the specific mathematical question types defined in section D below.**
+    
     For each major concept in the chapter, include ALL of the following:
     
     **A. Concept Introduction** (200-300 words per concept)
@@ -751,9 +753,11 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Use mathematical tools, software, or physical materials
     
     **G. Check Your Understanding** (150-200 words per concept)
-    - Short MCQs and short answers after each mathematical concept
+    - Quick check questions (2-3 simple questions) to test immediate understanding
+    - Brief conceptual questions or simple calculations
+    - NOT the main exercise questions (those are in section D above)
+    - Questions at basic Bloom's Taxonomy levels (Remember, Understand)
     - Immediate feedback or answer explanations
-    - Questions at various Bloom's Taxonomy levels
     
     **H. Key Mathematical Terms** (100-150 words per concept)
     - Highlighted mathematical terminology in text
