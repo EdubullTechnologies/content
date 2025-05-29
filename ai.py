@@ -112,14 +112,24 @@ def extract_units_from_curriculum(curriculum_text):
     
     return units
 
-def generate_uae_curriculum(level, cycle_info, specific_grade=None):
+def generate_uae_curriculum(level, cycle_info, specific_grade=None, language="English"):
     """Generates UAE-aligned AI curriculum for a specific level"""
     
     # Prepare grade-specific context
     grade_context = f"for Grade {specific_grade}" if specific_grade else f"for {level}"
     
+    # Language-specific instructions
+    language_instruction = f"""
+**IMPORTANT LANGUAGE REQUIREMENT:**
+Generate this entire curriculum in {language}. 
+{"Use Arabic language throughout, including headings, content, and examples. Provide Arabic equivalents for technical AI terms." if language == "Arabic" else "Use clear, simple English suitable for UAE context."}
+All content must be culturally appropriate for UAE schools.
+"""
+    
     prompt = f"""You are an expert in educational curriculum development, specifically for AI education in UAE schools.
 You need to create a comprehensive AI curriculum {grade_context} following UAE's AI curriculum framework.
+
+{language_instruction}
 
 **UAE AI CURRICULUM FRAMEWORK:**
 The UAE AI curriculum encompasses seven core areas:
@@ -151,7 +161,7 @@ The UAE AI curriculum encompasses seven core areas:
 
 ## 3. **Units/Modules** (Generate 6-8 units)
 For each unit:
-- Unit title (English and Arabic consideration)
+- Unit title {"(in Arabic)" if language == "Arabic" else "(English and Arabic consideration)"}
 - Duration (in weeks)
 - Key concepts aligned with UAE framework
 - Learning outcomes
@@ -176,7 +186,7 @@ Based on the level:
 - Digital tools and platforms
 - Unplugged activities
 - Local AI examples (UAE context)
-- Bilingual resources consideration
+- {"Arabic language resources" if language == "Arabic" else "Bilingual resources consideration"}
 
 ## 7. **Ethical AI Focus**
 - Age-appropriate discussions on AI ethics
@@ -205,6 +215,7 @@ Based on the level:
 Generate a comprehensive curriculum that aligns with UAE's AI education vision, is culturally appropriate, and builds progressive AI literacy {grade_context}.
 
 Format the output in Markdown with clear headings and structure.
+{"Remember: Generate all content in Arabic language." if language == "Arabic" else ""}
 """
     
     try:
@@ -227,7 +238,7 @@ Format the output in Markdown with clear headings and structure.
         st.error(f"Error generating curriculum: {e}")
         return None
 
-def generate_uae_textbook_unit(level, unit_info, curriculum_context, specific_grade=None):
+def generate_uae_textbook_unit(level, unit_info, curriculum_context, specific_grade=None, language="English"):
     """Generates a textbook unit for UAE AI curriculum"""
     
     # Get example structure from Kindergarten
@@ -244,8 +255,18 @@ Example from UAE Kindergarten AI Textbook:
     # Prepare grade-specific context
     grade_context = f"Grade {specific_grade}" if specific_grade else level
     
+    # Language-specific instructions
+    language_instruction = f"""
+**IMPORTANT LANGUAGE REQUIREMENT:**
+Generate this entire textbook unit in {language}. 
+{"Use Arabic language throughout, including stories, activities, instructions, and assessments. Provide Arabic names for characters and examples." if language == "Arabic" else "Use clear, simple English suitable for UAE students."}
+Ensure all content is culturally appropriate for UAE schools.
+"""
+    
     prompt = f"""You are an expert in creating educational content for AI education in UAE schools.
 Create a complete textbook unit for **{grade_context}** following UAE's AI curriculum approach.
+
+{language_instruction}
 
 **UNIT INFORMATION:**
 {unit_info}
@@ -258,11 +279,11 @@ Create a complete textbook unit for **{grade_context}** following UAE's AI curri
 **TEXTBOOK UNIT REQUIREMENTS:**
 
 ## 1. **Unit Opening**
-- Unit title (consider bilingual needs)
+- Unit title {"(in Arabic)" if language == "Arabic" else "(consider bilingual needs)"}
 - Learning objectives (aligned with UAE curriculum)
 - Unit overview (age-appropriate introduction)
 - Connection to daily life in UAE
-- Visual mascot/character introduction
+- Visual mascot/character introduction {"(with Arabic name)" if language == "Arabic" else ""}
 
 ## 2. **Core Content Structure**
 
@@ -326,11 +347,11 @@ Include 3-4 activities appropriate for the level:
 - Family engagement ideas
 
 ## 8. **Additional Resources**
-- Vocabulary list (English/Arabic)
+- Vocabulary list {"(Arabic AI terms)" if language == "Arabic" else "(English/Arabic)"}
 - Visual aids descriptions
-- Songs/rhymes (if applicable)
+- Songs/rhymes (if applicable) {"in Arabic" if language == "Arabic" else ""}
 - Digital resources links
-- Teacher notes
+- Teacher notes {"(in Arabic)" if language == "Arabic" else ""}
 
 ## 9. **Unit Summary**
 - Key concepts recap
@@ -345,11 +366,12 @@ Include 3-4 activities appropriate for the level:
 4. Balance digital and unplugged activities
 5. Focus on ethical AI use
 6. Make content engaging and interactive
-7. Consider bilingual needs
+7. {"Use Arabic throughout the unit" if language == "Arabic" else "Consider bilingual needs"}
 
 Generate a complete textbook unit that aligns with UAE's AI curriculum vision and engages students effectively.
 
 Format in Markdown with clear sections and visual descriptions.
+{"Remember: All content must be in Arabic." if language == "Arabic" else ""}
 """
     
     try:
@@ -406,10 +428,17 @@ def create_combined_units_document(level, units_dict):
     # Add title page
     doc.add_heading(f"UAE AI Curriculum - {level}", level=1)
     doc.add_paragraph(f"Complete Textbook Units")
+    
+    # Add language info if present
+    if "Arabic" in level:
+        doc.add_paragraph("النسخة العربية")
+    elif "English" in level:
+        doc.add_paragraph("English Version")
+        
     doc.add_page_break()
     
     # Add table of contents
-    doc.add_heading("Table of Contents", level=1)
+    doc.add_heading("Table of Contents" if "English" in level or "English" not in level and "Arabic" not in level else "جدول المحتويات", level=1)
     for i, (unit_name, _) in enumerate(units_dict.items(), 1):
         doc.add_paragraph(f"{i}. {unit_name}", style='List Number')
     doc.add_page_break()
@@ -502,6 +531,14 @@ with tab1:
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        # Language selection
+        language = st.radio(
+            "Select Language / اختر اللغة:",
+            ["English", "Arabic"],
+            horizontal=True,
+            key="curriculum_language"
+        )
+        
         selected_level = st.selectbox(
             "Select Education Level:",
             ["Kindergarten", "Cycle 1 (Grades 1-4)", "Cycle 2 (Grades 5-8)", "Cycle 3 (Grades 9-12)"]
@@ -544,23 +581,24 @@ with tab1:
         if generate_curriculum_btn:
             # Create display name for the level
             display_level = f"Grade {specific_grade}" if specific_grade else selected_level
+            display_level_with_lang = f"{display_level} ({language})"
             
-            with st.spinner(f"Generating UAE AI curriculum for {display_level}..."):
-                curriculum = generate_uae_curriculum(selected_level, cycle_info, specific_grade)
+            with st.spinner(f"Generating UAE AI curriculum for {display_level} in {language}..."):
+                curriculum = generate_uae_curriculum(selected_level, cycle_info, specific_grade, language)
                 
                 if curriculum:
-                    # Save to session state with grade-specific key
+                    # Save to session state with grade-specific and language-specific key
                     if 'uae_curricula' not in st.session_state:
                         st.session_state.uae_curricula = {}
-                    st.session_state.uae_curricula[display_level] = curriculum
+                    st.session_state.uae_curricula[display_level_with_lang] = curriculum
                     
                     # Extract and save units
                     units = extract_units_from_curriculum(curriculum)
                     if 'uae_curriculum_units' not in st.session_state:
                         st.session_state.uae_curriculum_units = {}
-                    st.session_state.uae_curriculum_units[display_level] = units
+                    st.session_state.uae_curriculum_units[display_level_with_lang] = units
                     
-                    st.success(f"✅ Curriculum generated successfully for {display_level}!")
+                    st.success(f"✅ Curriculum generated successfully for {display_level} in {language}!")
                     if units:
                         st.info(f"📚 Found {len(units)} units in the curriculum")
                     
@@ -577,7 +615,7 @@ with tab1:
                     st.download_button(
                         label="📥 Download Curriculum as Word Document",
                         data=doc_io,
-                        file_name=f"UAE_AI_Curriculum_{display_level.replace(' ', '_').replace('(', '').replace(')', '')}.docx",
+                        file_name=f"UAE_AI_Curriculum_{display_level.replace(' ', '_').replace('(', '').replace(')', '')}_{language}.docx",
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
     
@@ -589,12 +627,15 @@ with tab1:
         - Integrated approach
         - Ethical focus
         - Local context
-        - Bilingual considerations
+        - Bilingual support (English/Arabic)
         """)
         
         if specific_grade:
             st.success(f"🎯 Selected: Grade {specific_grade}")
             st.caption("Perfect for CBSE, IB, American, and other boards")
+        
+        if language == "Arabic":
+            st.info("📝 سيتم إنشاء المنهج باللغة العربية")
 
 with tab2:
     st.header("Generate AI Textbook Units")
@@ -602,6 +643,14 @@ with tab2:
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        # Language selection
+        unit_language = st.radio(
+            "Select Language / اختر اللغة:",
+            ["English", "Arabic"],
+            horizontal=True,
+            key="unit_language"
+        )
+        
         textbook_level = st.selectbox(
             "Select Education Level:",
             ["Kindergarten", "Cycle 1 (Grades 1-4)", "Cycle 2 (Grades 5-8)", "Cycle 3 (Grades 9-12)"],
@@ -635,15 +684,16 @@ with tab2:
         
         # Create display level name
         display_level = f"Grade {textbook_grade}" if textbook_grade else textbook_level
+        display_level_with_lang = f"{display_level} ({unit_language})"
         
         # Check if curriculum and units exist
-        curriculum_exists = 'uae_curricula' in st.session_state and display_level in st.session_state.uae_curricula
-        units_exist = 'uae_curriculum_units' in st.session_state and display_level in st.session_state.uae_curriculum_units
+        curriculum_exists = 'uae_curricula' in st.session_state and display_level_with_lang in st.session_state.uae_curricula
+        units_exist = 'uae_curriculum_units' in st.session_state and display_level_with_lang in st.session_state.uae_curriculum_units
         
         if curriculum_exists and units_exist:
-            st.success(f"✓ Curriculum found for {display_level}")
-            curriculum_context = st.session_state.uae_curricula[display_level]
-            available_units = st.session_state.uae_curriculum_units[display_level]
+            st.success(f"✓ Curriculum found for {display_level} in {unit_language}")
+            curriculum_context = st.session_state.uae_curricula[display_level_with_lang]
+            available_units = st.session_state.uae_curriculum_units[display_level_with_lang]
             
             if available_units:
                 # Create unit selection dropdown
@@ -662,8 +712,8 @@ with tab2:
                 
                 # Check if unit already generated
                 unit_already_generated = False
-                if 'uae_units' in st.session_state and display_level in st.session_state.uae_units:
-                    if selected_unit['title'] in st.session_state.uae_units[display_level]:
+                if 'uae_units' in st.session_state and display_level_with_lang in st.session_state.uae_units:
+                    if selected_unit['title'] in st.session_state.uae_units[display_level_with_lang]:
                         unit_already_generated = True
                         st.warning("⚠️ This unit has already been generated. Generating again will replace the existing content.")
                 
@@ -674,19 +724,19 @@ with tab2:
                     # Prepare unit info
                     unit_info = f"{selected_unit['title']}\n{selected_unit['details']}"
                     
-                    with st.spinner(f"Generating textbook unit: {selected_unit['title']}..."):
-                        unit_content = generate_uae_textbook_unit(textbook_level, unit_info, curriculum_context, textbook_grade)
+                    with st.spinner(f"Generating textbook unit: {selected_unit['title']} in {unit_language}..."):
+                        unit_content = generate_uae_textbook_unit(textbook_level, unit_info, curriculum_context, textbook_grade, unit_language)
                         
                         if unit_content:
                             # Save to session state
                             if 'uae_units' not in st.session_state:
                                 st.session_state.uae_units = {}
-                            if display_level not in st.session_state.uae_units:
-                                st.session_state.uae_units[display_level] = {}
+                            if display_level_with_lang not in st.session_state.uae_units:
+                                st.session_state.uae_units[display_level_with_lang] = {}
                             
-                            st.session_state.uae_units[display_level][selected_unit['title']] = unit_content
+                            st.session_state.uae_units[display_level_with_lang][selected_unit['title']] = unit_content
                             
-                            st.success(f"✅ Textbook unit generated successfully!")
+                            st.success(f"✅ Textbook unit generated successfully in {unit_language}!")
                             
                             # Display unit
                             st.markdown("---")
@@ -701,15 +751,15 @@ with tab2:
                             st.download_button(
                                 label="📥 Download Unit as Word Document",
                                 data=doc_io,
-                                file_name=f"UAE_AI_{display_level.replace(' ', '_')}_{selected_unit['title'].replace(' ', '_').replace(':', '')}.docx",
+                                file_name=f"UAE_AI_{display_level.replace(' ', '_')}_{selected_unit['title'].replace(' ', '_').replace(':', '')}_{unit_language}.docx",
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                             )
                 
                 # Show generation progress
                 st.markdown("---")
                 st.subheader("📊 Generation Progress")
-                if 'uae_units' in st.session_state and display_level in st.session_state.uae_units:
-                    generated_units = st.session_state.uae_units[display_level]
+                if 'uae_units' in st.session_state and display_level_with_lang in st.session_state.uae_units:
+                    generated_units = st.session_state.uae_units[display_level_with_lang]
                     progress = len(generated_units) / len(available_units)
                     st.progress(progress)
                     st.write(f"Generated {len(generated_units)} out of {len(available_units)} units")
@@ -727,7 +777,7 @@ with tab2:
             else:
                 st.warning("No units found in the curriculum. Please regenerate the curriculum.")
         else:
-            st.warning(f"⚠️ No curriculum found for {display_level}. Please generate curriculum first in the 'Generate Curriculum' tab.")
+            st.warning(f"⚠️ No curriculum found for {display_level} in {unit_language}. Please generate curriculum first in the 'Generate Curriculum' tab.")
     
     with col2:
         st.info("""
@@ -744,6 +794,9 @@ with tab2:
             st.success(f"🎯 Selected: Grade {textbook_grade}")
             st.caption("Customized for specific grade level")
         
+        if unit_language == "Arabic":
+            st.info("📝 سيتم إنشاء الوحدة باللغة العربية")
+        
         # Add manual entry option
         with st.expander("📝 Manual Unit Entry (Optional)"):
             st.markdown("If you want to create a custom unit not in the curriculum:")
@@ -757,20 +810,20 @@ with tab2:
             if st.button("Generate Custom Unit", key="gen_custom_unit"):
                 if custom_unit_title and custom_unit_details:
                     unit_info = f"{custom_unit_title}\n{custom_unit_details}"
-                    curriculum_context = st.session_state.uae_curricula.get(display_level, "General UAE AI curriculum")
+                    curriculum_context = st.session_state.uae_curricula.get(display_level_with_lang, "General UAE AI curriculum")
                     
-                    with st.spinner(f"Generating custom unit: {custom_unit_title}..."):
-                        unit_content = generate_uae_textbook_unit(textbook_level, unit_info, curriculum_context, textbook_grade)
+                    with st.spinner(f"Generating custom unit: {custom_unit_title} in {unit_language}..."):
+                        unit_content = generate_uae_textbook_unit(textbook_level, unit_info, curriculum_context, textbook_grade, unit_language)
                         
                         if unit_content:
                             # Save to session state
                             if 'uae_units' not in st.session_state:
                                 st.session_state.uae_units = {}
-                            if display_level not in st.session_state.uae_units:
-                                st.session_state.uae_units[display_level] = {}
+                            if display_level_with_lang not in st.session_state.uae_units:
+                                st.session_state.uae_units[display_level_with_lang] = {}
                             
-                            st.session_state.uae_units[display_level][custom_unit_title] = unit_content
-                            st.success(f"✅ Custom unit generated!")
+                            st.session_state.uae_units[display_level_with_lang][custom_unit_title] = unit_content
+                            st.success(f"✅ Custom unit generated in {unit_language}!")
                             st.rerun()
 
 with tab3:
