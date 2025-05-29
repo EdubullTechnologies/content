@@ -25,126 +25,119 @@ except Exception as e:
     st.error(f"Error configuring Google Gemini client: {e}")
     st.stop()
 
+# UAE Curriculum Structure
+UAE_CURRICULUM_STRUCTURE = {
+    "Kindergarten": {
+        "age": "4-5",
+        "focus": "Introduction to AI through stories and play",
+        "themes": ["What is AI?", "People and Machines", "AI in Our World", "Talking to Machines", "Learning and Helping", "Be Kind with AI"]
+    },
+    "Cycle 1": {
+        "grades": "1-4",
+        "focus": "Understanding differences between machines and humans, digital thinking skills, AI applications",
+        "core_areas": ["Foundational concepts", "Digital thinking", "AI recognition", "Basic ethics"]
+    },
+    "Cycle 2": {
+        "grades": "5-8",
+        "focus": "Designing and evaluating AI systems, learning about bias and algorithms, ethical AI use",
+        "core_areas": ["AI design", "Algorithms", "Bias awareness", "Ethical considerations", "Data understanding"]
+    },
+    "Cycle 3": {
+        "grades": "9-12",
+        "focus": "Preparing for higher education and careers, command engineering, real-world scenarios",
+        "core_areas": ["Advanced AI concepts", "Command engineering", "Real-world applications", "Career preparation", "Innovation"]
+    }
+}
+
 # --- Helper Functions ---
 
-def generate_ai_curriculum(grade_level):
-    """Generates age-appropriate AI curriculum for a specific grade level"""
+def generate_uae_curriculum(level, cycle_info):
+    """Generates UAE-aligned AI curriculum for a specific level"""
     
-    # Official CBSE AI curriculum summary for reference
-    official_curriculum_9_12 = """
-**Official CBSE AI Curriculum (Classes 9-12):**
-- **Class 9 (AI Readiness)**: Introduction to AI, AI Project Cycle, Neural Networks, Python Basics
-- **Class 10 (AI Foundations)**: Advanced Python, Data Science, Computer Vision, NLP, Model Evaluation
-- **Class 11 (AI Explorer)**: Python Lv-2 (NumPy/Pandas/sklearn), ML Algorithms, Applied NLP, AI Ethics
-- **Class 12 (AI Innovate)**: Capstone Project, Model Lifecycle, Data Storytelling
+    prompt = f"""You are an expert in educational curriculum development, specifically for AI education in UAE schools.
+You need to create a comprehensive AI curriculum for **{level}** following UAE's AI curriculum framework.
 
-Our curriculum for Classes 1-8 must prepare students for this official progression.
-"""
-    
-    prompt = f"""You are an expert in educational curriculum development, specifically for AI education in schools.
-You need to create a comprehensive AI curriculum for **{grade_level} (CBSE)**.
+**UAE AI CURRICULUM FRAMEWORK:**
+The UAE AI curriculum encompasses seven core areas:
+1. Foundational concepts
+2. Data and algorithms
+3. Software usage
+4. Ethical awareness
+5. Real-world applications
+6. Innovation and project design
+7. Policies and community engagement
 
-**CRITICAL CONTEXT - Official CBSE AI Curriculum for Classes 9-12:**
-{official_curriculum_9_12}
+**SPECIFIC LEVEL INFORMATION:**
+{json.dumps(cycle_info, indent=2)}
 
-**YOUR TASK**: Create a curriculum for {grade_level} that will prepare students for the official CBSE AI curriculum starting in Class 9.
+**CURRICULUM REQUIREMENTS:**
 
-**IMPORTANT GUIDELINES:**
+## 1. **Course Overview**
+- Age group/grades covered
+- Integration with Computing, Creative Design, and Innovation subject
+- Total hours per week (within existing subject hours)
+- Assessment approach aligned with UAE standards
 
-1. **Age Appropriateness**: The content must be suitable for {grade_level} students' cognitive development level
-2. **Progressive Learning**: Build on concepts from previous grades (if applicable)
-3. **Practical Approach**: Include hands-on activities, projects, and real-world applications
-4. **NCERT/NEP 2020 Alignment**: Follow Indian education standards and 21st-century skills framework
-5. **Safety and Ethics**: Include age-appropriate discussions on AI ethics and digital citizenship
-6. **Pre-Python Foundation**: For grades 1-8, build computational thinking skills that will prepare students for Python programming in Class 9
+## 2. **Learning Objectives**
+- 8-10 specific, measurable objectives for this level
+- Aligned with UAE's seven core AI areas
+- Age-appropriate and culturally relevant
+- Focus on practical skills and ethical awareness
 
-**CURRICULUM STRUCTURE TO GENERATE:**
-
-## AI Curriculum for {grade_level}
-
-### 1. **Course Overview**
-- Total duration: Academic year (April to March)
-- Hours per week: 2 periods (suggested)
-- Assessment approach
-- Connection to future learning (how this prepares for Classes 9-12 AI curriculum)
-
-### 2. **Learning Objectives**
-- List 8-10 specific, measurable objectives appropriate for {grade_level}
-- Use action verbs aligned with Bloom's Taxonomy
-- Include both conceptual understanding and practical skills
-- Show clear progression towards Class 9 AI readiness
-
-### 3. **Units/Chapters** (Generate 6-8 units)
-For each unit, provide:
-- Unit Title
+## 3. **Units/Modules** (Generate 6-8 units)
+For each unit:
+- Unit title (English and Arabic consideration)
 - Duration (in weeks)
-- Key Concepts (3-5 concepts)
-- Learning Outcomes
-- Suggested Activities/Projects
-- Integration with other subjects (Math, Science, Language, etc.)
-- Connection to future AI concepts (Classes 9-12)
+- Key concepts aligned with UAE framework
+- Learning outcomes
+- Integration with existing subjects
+- Cultural relevance and local examples
 
-### 4. **Detailed Chapter Breakdown**
-For each chapter, include:
-- Chapter name and number
-- Subtopics to be covered
-- Estimated periods needed
-- Key vocabulary/terms
-- Prerequisite knowledge
-- How it builds towards Python/AI concepts in Class 9
+## 4. **Teaching Methodology**
+Based on the level:
+{"- Kindergarten: Stories, play-based learning, interactive activities" if level == "Kindergarten" else ""}
+{"- Cycle 1: Hands-on activities, digital thinking games, simple projects" if "Cycle 1" in level else ""}
+{"- Cycle 2: Project-based learning, AI system design, ethical discussions" if "Cycle 2" in level else ""}
+{"- Cycle 3: Real-world scenarios, career exploration, advanced projects" if "Cycle 3" in level else ""}
 
-### 5. **Practical Components**
-- List of hands-on activities
-- Project ideas (individual and group)
-- Tools/platforms to be used (age-appropriate)
-- Unplugged activities (no computer required)
-- Computational thinking exercises
-
-### 6. **Assessment Framework**
+## 5. **Assessment Framework**
 - Formative assessment strategies
-- Summative assessment ideas
 - Project-based assessments
-- Rubrics outline
-- Portfolio development (preparing for Class 9-12 requirements)
+- Skills demonstration
+- Portfolio development
+- Ethical reasoning evaluation
 
-### 7. **Resources Required**
-- Hardware requirements (minimal)
-- Software/apps (free/open-source preferred)
-- Other materials
-- Transition tools for Class 9 (if Grade 8)
+## 6. **Resources and Materials**
+- Digital tools and platforms
+- Unplugged activities
+- Local AI examples (UAE context)
+- Bilingual resources consideration
 
-### 8. **Teacher Guidelines**
-- Pedagogical approach
-- Differentiation strategies
-- Common misconceptions to address
-- Professional development suggestions
+## 7. **Ethical AI Focus**
+- Age-appropriate discussions on AI ethics
+- Bias awareness activities
+- Responsible AI usage
+- Digital citizenship in UAE context
 
-### 9. **Parent/Guardian Involvement**
-- How parents can support AI learning at home
-- Safety guidelines
-- Career awareness in AI field
+## 8. **Real-World Connections**
+- UAE's AI initiatives and vision
+- Local AI applications
+- Career pathways in UAE
+- Connection to UAE's digital transformation
 
-### 10. **Cross-curricular Connections**
-- Integration with Mathematics
-- Integration with Science
-- Integration with Languages
-- Integration with Social Studies
-- Integration with Arts
+## 9. **Innovation Projects**
+- Age-appropriate innovation challenges
+- Connection to UAE's innovation goals
+- Cross-curricular projects
+- Community engagement opportunities
 
-### 11. **Bridge to Class 9**
-- Skills that directly prepare for Python programming
-- Concepts that lead to understanding AI Project Cycle
-- Foundations for Neural Networks understanding
-- Preparation for formal AI education
+## 10. **Teacher Support**
+- Professional development needs
+- Lesson plan templates
+- Activity guides
+- Assessment rubrics
 
-**IMPORTANT NOTES:**
-- For Grades 1-3: Focus on AI awareness, pattern recognition, simple algorithms through games and stories
-- For Grades 4-5: Introduction to basic programming concepts, simple AI applications, flowcharts
-- For Grades 6-8: More structured programming, understanding AI concepts, creating simple AI projects, pre-Python logic
-
-**SPIRAL PROGRESSION**: Remember that the official CBSE curriculum follows spiral progression where "concepts seeded in 9 are coded in 10 and formalised in 11." Your curriculum should establish the earliest seeds of these concepts.
-
-Generate a comprehensive curriculum that is engaging, age-appropriate, and builds strong foundational understanding of AI concepts while preparing students for the official CBSE AI curriculum in Classes 9-12.
+Generate a comprehensive curriculum that aligns with UAE's AI education vision, is culturally appropriate, and builds progressive AI literacy.
 
 Format the output in Markdown with clear headings and structure.
 """
@@ -169,155 +162,126 @@ Format the output in Markdown with clear headings and structure.
         st.error(f"Error generating curriculum: {e}")
         return None
 
-def generate_ai_chapter(grade_level, chapter_info, curriculum_context):
-    """Generates a complete chapter for AI textbook based on curriculum"""
+def generate_uae_textbook_unit(level, unit_info, curriculum_context):
+    """Generates a textbook unit for UAE AI curriculum"""
     
-    # Extract grade number for conditional logic
-    grade_num = int(grade_level.split()[-1])
-    
-    # Official curriculum reference
-    official_curriculum_info = """
-**Official CBSE AI Progression (Classes 9-12):**
-- Class 9: Python basics, AI Project Cycle, Neural Networks introduction
-- Class 10: Data Science, Computer Vision, NLP basics
-- Class 11: NumPy/Pandas/sklearn, ML algorithms, AI Ethics
-- Class 12: Capstone projects, MLOps, Data Storytelling
+    # Get example structure from Kindergarten
+    kg_example = """
+Example from UAE Kindergarten AI Textbook:
+- Story-based learning (e.g., "Robo the Helper")
+- Interactive activities (coloring, matching, crafts)
+- Songs and movement
+- Visual aids and characters
+- Simple vocabulary introduction
+- Assessment through observation
 """
     
-    prompt = f"""You are an expert in creating educational content for AI education, specifically for school students.
-You need to create a complete chapter for an AI textbook for **{grade_level} (CBSE)**.
+    prompt = f"""You are an expert in creating educational content for AI education in UAE schools.
+Create a complete textbook unit for **{level}** following UAE's AI curriculum approach.
 
-**CHAPTER INFORMATION:**
-{chapter_info}
+**UNIT INFORMATION:**
+{unit_info}
 
 **CURRICULUM CONTEXT:**
 {curriculum_context}
 
-**IMPORTANT CONTEXT:**
-{official_curriculum_info}
+{"**KINDERGARTEN EXAMPLE STRUCTURE:**" + kg_example if level == "Kindergarten" else ""}
 
-This chapter must prepare students for the official CBSE AI curriculum starting in Class 9.
+**TEXTBOOK UNIT REQUIREMENTS:**
 
-**CHAPTER REQUIREMENTS:**
+## 1. **Unit Opening**
+- Unit title (consider bilingual needs)
+- Learning objectives (aligned with UAE curriculum)
+- Unit overview (age-appropriate introduction)
+- Connection to daily life in UAE
+- Visual mascot/character introduction
 
-Create a comprehensive chapter following this structure:
+## 2. **Core Content Structure**
 
-## 1. **Chapter Opening**
-- **Chapter Title**: Engaging and age-appropriate
-- **Learning Objectives**: 3-5 clear objectives using action verbs
-- **Chapter Overview**: Brief introduction (100-150 words)
-- **Real-world Connection**: How AI relates to students' daily life
-- **Future Learning Path**: Brief note on how this connects to Classes 9-12 AI learning
-- **Chapter Mascot Introduction**: Create a friendly AI character/mascot for this grade level
+{"### For Kindergarten (Ages 4-5):" if level == "Kindergarten" else ""}
+{"- Story-based lesson (like 'Robo the Helper')" if level == "Kindergarten" else ""}
+{"- Interactive elements (colors, shapes, sounds)" if level == "Kindergarten" else ""}
+{"- Simple vocabulary with visuals" if level == "Kindergarten" else ""}
+{"- Play-based activities" if level == "Kindergarten" else ""}
 
-## 2. **Warm-up Activity** (200-300 words)
-- An engaging unplugged activity to introduce the concept
-- Should be fun and require no computers
-- Include clear instructions
-- Connect to computational thinking skills
+{"### For Cycle 1 (Grades 1-4):" if "Cycle 1" in level else ""}
+{"- Engaging narratives with AI concepts" if "Cycle 1" in level else ""}
+{"- Hands-on activities and experiments" if "Cycle 1" in level else ""}
+{"- Digital thinking challenges" if "Cycle 1" in level else ""}
+{"- Simple coding concepts (unplugged)" if "Cycle 1" in level else ""}
 
-## 3. **Core Content Sections** (2000-3000 words total)
-For each main concept:
-- **Concept Introduction**: Simple, clear explanation with examples
-- **Let's Understand**: Detailed explanation with analogies
-- **Try It Out**: Hands-on activity or demonstration
-- **Real-life Examples**: Age-appropriate applications
-- **Visual Learning**: Detailed image/diagram descriptions
-- **Fun Facts**: Interesting AI facts for this age group
-- **Think and Discuss**: Questions to spark curiosity
-- **Future Connection**: How this concept relates to Classes 9-12 learning
+{"### For Cycle 2 (Grades 5-8):" if "Cycle 2" in level else ""}
+{"- Conceptual explanations with examples" if "Cycle 2" in level else ""}
+{"- AI system design activities" if "Cycle 2" in level else ""}
+{"- Bias and ethics discussions" if "Cycle 2" in level else ""}
+{"- Algorithm exploration" if "Cycle 2" in level else ""}
 
-## 4. **Activities Section** (1000-1500 words)
-Include 3-4 activities:
-- **Activity 1**: Unplugged activity (no computer)
-- **Activity 2**: Computer-based activity (if appropriate for grade)
-- **Activity 3**: Group project
-- **Activity 4**: Creative expression (art, story, etc.)
+{"### For Cycle 3 (Grades 9-12):" if "Cycle 3" in level else ""}
+{"- Advanced concepts and theories" if "Cycle 3" in level else ""}
+{"- Real-world case studies" if "Cycle 3" in level else ""}
+{"- Command engineering practice" if "Cycle 3" in level else ""}
+{"- Career exploration activities" if "Cycle 3" in level else ""}
 
-Each activity should have:
-- Clear objectives
+## 3. **Activities Section**
+Include 3-4 activities appropriate for the level:
+- Activity objectives
 - Materials needed
 - Step-by-step instructions
 - Expected outcomes
 - Extension ideas
-- Computational thinking skills developed
+- Group vs individual work
 
-## 5. **Let's Practice** (500-800 words)
-Age-appropriate exercises:
-- Fill in the blanks (5-8 questions)
-- True/False with explanations (5 questions)
-- Match the following (1 set)
-- Short answer questions (5-7 questions)
-- Think and apply questions (3-5 questions)
-- Creative tasks (2-3 tasks)
-- Pre-coding logic puzzles (for grades 6-8)
+## 4. **Technology Integration**
+- Digital tools usage (age-appropriate)
+- Unplugged alternatives
+- Screen time considerations
+- Safe online practices
 
-## 6. **Project Time** (300-500 words)
-One comprehensive project that:
-- Integrates chapter concepts
-- Encourages creativity
-- Can be done individually or in groups
-- Has clear rubrics
-- Builds skills needed for AI Project Cycle (Class 9)
+## 5. **Assessment Strategies**
+{"- Observation checklists" if level == "Kindergarten" else ""}
+{"- Simple skill demonstrations" if "Cycle 1" in level else ""}
+{"- Project-based assessments" if "Cycle 2" in level else ""}
+{"- Portfolio development" if "Cycle 3" in level else ""}
+- Formative assessment ideas
+- Self-assessment tools (age-appropriate)
 
-## 7. **AI Ethics Corner** (200-300 words)
-Age-appropriate discussion on:
-- Responsible AI use
-- Digital citizenship
-- Safety online
-- Respecting others' work
-- Bias awareness (grades 6-8)
+## 6. **Cultural Integration**
+- UAE context and examples
+- Local AI applications
+- Arabic language considerations
+- Cultural values integration
 
-## 8. **Cross-curricular Connections** (200-300 words)
-Show how this chapter connects to:
-- Mathematics (especially important for future Python/ML)
-- Science
-- Language
-- Social Studies
-- Arts
+## 7. **Home-School Connection**
+- Parent/guardian guidance
+- Home activities
+- Safety guidelines
+- Family engagement ideas
 
-## 9. **Parent/Guardian Section** (150-200 words)
-- How to support learning at home
-- Conversation starters
-- Safety tips
-- Career awareness in AI
+## 8. **Additional Resources**
+- Vocabulary list (English/Arabic)
+- Visual aids descriptions
+- Songs/rhymes (if applicable)
+- Digital resources links
+- Teacher notes
 
-## 10. **Chapter Summary** (200-300 words)
-- Key points recap
-- Visual summary/mind map description
-- What's coming next
-- How this prepares for next grade
-
-## 11. **Glossary**
-Define all technical terms in simple language
-Include pronunciation guides for technical terms
-
-## 12. **Additional Resources**
-- Recommended books (age-appropriate)
-- Safe websites
-- Educational apps/games
-- Future learning resources (Classes 9-12 preview for Grade 8)
+## 9. **Unit Summary**
+- Key concepts recap
+- Skills developed
+- Connection to next unit
+- Celebration of learning
 
 **IMPORTANT GUIDELINES:**
-1. **Language**: Use simple, clear language appropriate for {grade_level}
-2. **Examples**: Use examples from students' daily life
-3. **Engagement**: Include stories, games, and interactive elements
-4. **Visuals**: Describe many colorful, engaging illustrations
-5. **Safety**: Always emphasize safe and responsible AI use
-6. **Inclusivity**: Use diverse names and examples
-7. **No Prerequisites**: Don't assume prior technical knowledge
-8. **Progressive Skills**: Build computational thinking, pattern recognition, and logical reasoning
+1. Use age-appropriate language
+2. Include visual learning elements
+3. Ensure cultural sensitivity
+4. Balance digital and unplugged activities
+5. Focus on ethical AI use
+6. Make content engaging and interactive
+7. Consider bilingual needs
 
-**AGE-SPECIFIC NOTES:**
-- Grades 1-3: Use stories, games, simple patterns, lots of pictures
-- Grades 4-5: Introduce basic logic, simple programming concepts, flowcharts
-- Grades 6-8: More structured content, basic coding concepts, pre-Python activities
+Generate a complete textbook unit that aligns with UAE's AI curriculum vision and engages students effectively.
 
-**SPECIAL FOCUS FOR GRADE 8**: Include "Getting Ready for Class 9 AI" sections that preview Python concepts, AI Project Cycle, and formal AI education.
-
-Generate a complete, engaging chapter that makes AI learning fun and accessible for {grade_level} students while building foundations for the official CBSE AI curriculum.
-
-Format in Markdown with clear headings and sections.
+Format in Markdown with clear sections and visual descriptions.
 """
     
     try:
@@ -334,10 +298,10 @@ Format in Markdown with clear headings and sections.
         if hasattr(response, 'text') and response.text:
             return response.text
         else:
-            return "Error: Could not generate chapter"
+            return "Error: Could not generate textbook unit"
             
     except Exception as e:
-        st.error(f"Error generating chapter: {e}")
+        st.error(f"Error generating textbook unit: {e}")
         return None
 
 def create_word_document(content):
@@ -367,96 +331,91 @@ def create_word_document(content):
             
     return doc
 
-def save_curriculum_to_session(grade, curriculum):
-    """Saves curriculum to session state"""
-    if 'curricula' not in st.session_state:
-        st.session_state.curricula = {}
-    st.session_state.curricula[grade] = curriculum
-
-def save_chapter_to_session(grade, chapter_num, chapter_content):
-    """Saves chapter to session state"""
-    if 'chapters' not in st.session_state:
-        st.session_state.chapters = {}
-    if grade not in st.session_state.chapters:
-        st.session_state.chapters[grade] = {}
-    st.session_state.chapters[grade][chapter_num] = chapter_content
-
 # --- Streamlit App ---
-st.set_page_config(page_title="AI Curriculum Generator for CBSE", layout="wide")
+st.set_page_config(page_title="UAE AI Curriculum Generator", layout="wide")
 
-st.title("🤖 AI Curriculum & Textbook Generator for CBSE (Classes 1-8) 📚")
+st.title("🇦🇪 UAE AI Curriculum & Textbook Generator 🤖")
 
 st.markdown("""
-This tool helps create age-appropriate AI curriculum and textbook chapters for CBSE classes 1-8.
-Since CBSE already has curriculum for classes 9-12, we focus on the primary and middle school levels.
+This tool generates AI curriculum and textbook content aligned with the UAE's AI education framework.
+The UAE AI curriculum integrates into existing Computing, Creative Design, and Innovation subjects.
 """)
 
-# Add curriculum alignment information
-with st.expander("📌 How This Aligns with Official CBSE AI Curriculum (Classes 9-12)"):
+# UAE Curriculum Overview
+with st.expander("📋 UAE AI Curriculum Framework Overview"):
     st.markdown("""
-    ### 🎯 Progressive Learning Path
+    ### 🎯 Seven Core Areas
+    1. **Foundational concepts** - Basic AI understanding
+    2. **Data and algorithms** - How AI processes information
+    3. **Software usage** - Practical AI tools
+    4. **Ethical awareness** - Responsible AI use
+    5. **Real-world applications** - AI in daily life
+    6. **Innovation and project design** - Creating with AI
+    7. **Policies and community engagement** - AI in society
     
-    Our generated curriculum for Classes 1-8 builds essential foundations for the official CBSE AI curriculum:
+    ### 📚 Learning Cycles
     
-    **Classes 1-3: AI Awareness**
-    - Pattern recognition through games and stories
-    - Understanding AI in daily life
-    - Basic computational thinking
-    - → *Prepares for AI concepts in Class 9*
+    **🧸 Kindergarten (Ages 4-5)**
+    - Introduction through stories and play
+    - Simple concepts like "smart machines"
+    - Interactive, game-based learning
     
-    **Classes 4-5: Logical Thinking**
-    - Introduction to algorithms and flowcharts
-    - Simple programming concepts (unplugged)
-    - Problem-solving strategies
-    - → *Foundation for Python programming in Class 9*
+    **📖 Cycle 1 (Grades 1-4)**
+    - Understanding machines vs humans
+    - Developing digital thinking skills
+    - Exploring AI applications
     
-    **Classes 6-8: Pre-coding Skills**
-    - Structured programming logic
-    - Understanding data and patterns
-    - Introduction to AI applications
-    - → *Direct preparation for AI Project Cycle and Python basics*
+    **💻 Cycle 2 (Grades 5-8)**
+    - Designing and evaluating AI systems
+    - Learning about bias and algorithms
+    - Focusing on ethical AI use
     
-    **Grade 8 Special Focus:**
-    - Preview of Python concepts
-    - Introduction to AI Project Cycle methodology
-    - Preparation for formal AI education
+    **🚀 Cycle 3 (Grades 9-12)**
+    - Command engineering
+    - Real-world scenarios
+    - Career preparation
     
-    ### 🔄 Spiral Progression
-    Following CBSE's approach where "concepts seeded in 9 are coded in 10 and formalised in 11",
-    we introduce the earliest seeds of these concepts in Classes 1-8.
-    
-    ### ✅ Key Skills Developed
-    - **Computational Thinking**: Essential for programming
-    - **Pattern Recognition**: Core to understanding AI/ML
-    - **Ethical AI Use**: Foundation for responsible AI development
-    - **Problem Solving**: Preparation for AI Project Cycle
-    - **Data Literacy**: Understanding information and patterns
+    ### ✨ Key Features
+    - Integrated into existing subjects (no extra hours)
+    - Focus on ethical and practical skills
+    - Comprehensive teacher support materials
+    - Age-appropriate progression
     """)
 
 # Create tabs
-tab1, tab2, tab3 = st.tabs(["📋 Generate Curriculum", "📖 Generate Chapters", "📥 Download Materials"])
+tab1, tab2, tab3, tab4 = st.tabs(["📋 Generate Curriculum", "📖 Generate Textbook Units", "📥 Download Materials", "💡 Examples"])
 
 with tab1:
-    st.header("Generate AI Curriculum")
+    st.header("Generate UAE AI Curriculum")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        selected_grade = st.selectbox(
-            "Select Grade Level:",
-            [f"Grade {i}" for i in range(1, 9)],
-            help="Choose the grade for which you want to generate AI curriculum"
+        selected_level = st.selectbox(
+            "Select Education Level:",
+            ["Kindergarten", "Cycle 1 (Grades 1-4)", "Cycle 2 (Grades 5-8)", "Cycle 3 (Grades 9-12)"]
         )
         
-        generate_curriculum_btn = st.button("🎯 Generate Curriculum", key="gen_curr")
+        # Get cycle info
+        if selected_level == "Kindergarten":
+            cycle_info = UAE_CURRICULUM_STRUCTURE["Kindergarten"]
+        else:
+            cycle_key = selected_level.split(" ")[0] + " " + selected_level.split(" ")[1]
+            cycle_info = UAE_CURRICULUM_STRUCTURE[cycle_key]
+        
+        generate_curriculum_btn = st.button("🎯 Generate Curriculum", key="gen_curr_uae")
         
         if generate_curriculum_btn:
-            with st.spinner(f"Generating AI curriculum for {selected_grade}..."):
-                curriculum = generate_ai_curriculum(selected_grade)
+            with st.spinner(f"Generating UAE AI curriculum for {selected_level}..."):
+                curriculum = generate_uae_curriculum(selected_level, cycle_info)
                 
                 if curriculum:
-                    save_curriculum_to_session(selected_grade, curriculum)
-                    st.success(f"✅ Curriculum generated successfully for {selected_grade}!")
+                    # Save to session state
+                    if 'uae_curricula' not in st.session_state:
+                        st.session_state.uae_curricula = {}
+                    st.session_state.uae_curricula[selected_level] = curriculum
+                    
+                    st.success(f"✅ Curriculum generated successfully for {selected_level}!")
                     
                     # Display curriculum
                     st.markdown("---")
@@ -471,103 +430,101 @@ with tab1:
                     st.download_button(
                         label="📥 Download Curriculum as Word Document",
                         data=doc_io,
-                        file_name=f"AI_Curriculum_{selected_grade.replace(' ', '_')}.docx",
+                        file_name=f"UAE_AI_Curriculum_{selected_level.replace(' ', '_').replace('(', '').replace(')', '')}.docx",
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
-                else:
-                    st.error("Failed to generate curriculum. Please try again.")
     
     with col2:
         st.info("""
-        **Curriculum Features:**
+        **UAE Curriculum Features:**
+        - Seven core AI areas
         - Age-appropriate content
-        - Progressive learning path
-        - Hands-on activities
-        - Cross-curricular integration
-        - Safety and ethics focus
-        - NEP 2020 aligned
+        - Integrated approach
+        - Ethical focus
+        - Local context
+        - Bilingual considerations
         """)
 
 with tab2:
-    st.header("Generate AI Textbook Chapters")
+    st.header("Generate AI Textbook Units")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        chapter_grade = st.selectbox(
-            "Select Grade Level:",
-            [f"Grade {i}" for i in range(1, 9)],
-            key="chapter_grade",
-            help="Choose the grade for which you want to generate a chapter"
+        textbook_level = st.selectbox(
+            "Select Education Level:",
+            ["Kindergarten", "Cycle 1 (Grades 1-4)", "Cycle 2 (Grades 5-8)", "Cycle 3 (Grades 9-12)"],
+            key="textbook_level"
         )
         
-        # Check if curriculum exists for this grade
-        if 'curricula' in st.session_state and chapter_grade in st.session_state.curricula:
-            st.success(f"✓ Curriculum found for {chapter_grade}")
-            curriculum_context = st.session_state.curricula[chapter_grade][:1000] + "..."  # First 1000 chars
+        # Check if curriculum exists
+        if 'uae_curricula' in st.session_state and textbook_level in st.session_state.uae_curricula:
+            st.success(f"✓ Curriculum found for {textbook_level}")
+            curriculum_context = st.session_state.uae_curricula[textbook_level][:1000] + "..."
         else:
-            st.warning(f"⚠️ No curriculum found for {chapter_grade}. Please generate curriculum first in the 'Generate Curriculum' tab.")
-            curriculum_context = "General AI curriculum for this grade level"
+            st.warning(f"⚠️ No curriculum found for {textbook_level}. Please generate curriculum first.")
+            curriculum_context = "General UAE AI curriculum for this level"
         
-        chapter_info = st.text_area(
-            "Enter Chapter Information:",
+        unit_info = st.text_area(
+            "Enter Unit Information:",
             placeholder="""Example:
-Chapter 3: Understanding Patterns with AI
-- Introduction to patterns in daily life
-- How AI recognizes patterns
-- Simple pattern games and activities""",
+Unit 3: AI in Our Daily Life
+- Recognizing AI around us
+- Smart devices in UAE
+- How AI helps in school and home
+- Being safe with AI""",
             height=150
         )
         
-        generate_chapter_btn = st.button("📝 Generate Chapter", key="gen_chapter")
+        # Show example units based on level
+        if textbook_level == "Kindergarten":
+            st.caption("Example units: What Is AI?, People and Machines, AI in Our World, Talking to Machines")
         
-        if generate_chapter_btn and chapter_info:
-            with st.spinner(f"Generating AI chapter for {chapter_grade}..."):
-                chapter_content = generate_ai_chapter(chapter_grade, chapter_info, curriculum_context)
+        generate_unit_btn = st.button("📝 Generate Textbook Unit", key="gen_unit")
+        
+        if generate_unit_btn and unit_info:
+            with st.spinner(f"Generating textbook unit for {textbook_level}..."):
+                unit_content = generate_uae_textbook_unit(textbook_level, unit_info, curriculum_context)
                 
-                if chapter_content:
-                    # Extract chapter number from info if possible
-                    chapter_num = "1"  # Default
-                    if "Chapter" in chapter_info and ":" in chapter_info:
-                        try:
-                            chapter_num = chapter_info.split("Chapter")[1].split(":")[0].strip()
-                        except:
-                            pass
+                if unit_content:
+                    # Save to session state
+                    if 'uae_units' not in st.session_state:
+                        st.session_state.uae_units = {}
+                    if textbook_level not in st.session_state.uae_units:
+                        st.session_state.uae_units[textbook_level] = {}
                     
-                    save_chapter_to_session(chapter_grade, chapter_num, chapter_content)
-                    st.success(f"✅ Chapter generated successfully for {chapter_grade}!")
+                    # Extract unit name
+                    unit_name = unit_info.split('\n')[0] if unit_info else "Unit"
+                    st.session_state.uae_units[textbook_level][unit_name] = unit_content
                     
-                    # Display chapter
+                    st.success(f"✅ Textbook unit generated successfully!")
+                    
+                    # Display unit
                     st.markdown("---")
-                    st.markdown(chapter_content)
+                    st.markdown(unit_content)
                     
                     # Download button
-                    doc = create_word_document(chapter_content)
+                    doc = create_word_document(unit_content)
                     doc_io = io.BytesIO()
                     doc.save(doc_io)
                     doc_io.seek(0)
                     
                     st.download_button(
-                        label="📥 Download Chapter as Word Document",
+                        label="📥 Download Unit as Word Document",
                         data=doc_io,
-                        file_name=f"AI_Chapter_{chapter_num}_{chapter_grade.replace(' ', '_')}.docx",
+                        file_name=f"UAE_AI_{textbook_level.replace(' ', '_')}_{unit_name.replace(' ', '_').replace(':', '')}.docx",
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
-                else:
-                    st.error("Failed to generate chapter. Please try again.")
-        elif generate_chapter_btn:
-            st.error("Please enter chapter information before generating.")
     
     with col2:
         st.info("""
-        **Chapter Features:**
-        - Engaging opening
-        - Clear learning objectives
+        **Unit Features:**
+        - Story-based learning
         - Interactive activities
-        - Real-world connections
-        - Ethics corner
-        - Parent section
-        - Age-appropriate exercises
+        - Cultural integration
+        - Ethical discussions
+        - Assessment strategies
+        - Parent engagement
         """)
 
 with tab3:
@@ -577,9 +534,9 @@ with tab3:
     
     with col1:
         st.subheader("📋 Available Curricula")
-        if 'curricula' in st.session_state and st.session_state.curricula:
-            for grade, curriculum in st.session_state.curricula.items():
-                st.write(f"✓ {grade}")
+        if 'uae_curricula' in st.session_state and st.session_state.uae_curricula:
+            for level, curriculum in st.session_state.uae_curricula.items():
+                st.write(f"✓ {level}")
                 
                 doc = create_word_document(curriculum)
                 doc_io = io.BytesIO()
@@ -587,22 +544,22 @@ with tab3:
                 doc_io.seek(0)
                 
                 st.download_button(
-                    label=f"Download {grade} Curriculum",
+                    label=f"Download {level} Curriculum",
                     data=doc_io,
-                    file_name=f"AI_Curriculum_{grade.replace(' ', '_')}.docx",
+                    file_name=f"UAE_AI_Curriculum_{level.replace(' ', '_').replace('(', '').replace(')', '')}.docx",
                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    key=f"download_curr_{grade}"
+                    key=f"download_curr_{level}"
                 )
         else:
             st.info("No curricula generated yet.")
     
     with col2:
-        st.subheader("📖 Available Chapters")
-        if 'chapters' in st.session_state and st.session_state.chapters:
-            for grade, chapters in st.session_state.chapters.items():
-                st.write(f"**{grade}:**")
-                for chapter_num, content in chapters.items():
-                    st.write(f"  ✓ Chapter {chapter_num}")
+        st.subheader("📖 Available Textbook Units")
+        if 'uae_units' in st.session_state and st.session_state.uae_units:
+            for level, units in st.session_state.uae_units.items():
+                st.write(f"**{level}:**")
+                for unit_name, content in units.items():
+                    st.write(f"  ✓ {unit_name}")
                     
                     doc = create_word_document(content)
                     doc_io = io.BytesIO()
@@ -610,62 +567,96 @@ with tab3:
                     doc_io.seek(0)
                     
                     st.download_button(
-                        label=f"Download Chapter {chapter_num}",
+                        label=f"Download {unit_name}",
                         data=doc_io,
-                        file_name=f"AI_Chapter_{chapter_num}_{grade.replace(' ', '_')}.docx",
+                        file_name=f"UAE_AI_{level.replace(' ', '_')}_{unit_name.replace(' ', '_').replace(':', '')}.docx",
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        key=f"download_ch_{grade}_{chapter_num}"
+                        key=f"download_unit_{level}_{unit_name}"
                     )
         else:
-            st.info("No chapters generated yet.")
+            st.info("No textbook units generated yet.")
+
+with tab4:
+    st.header("📚 Examples from UAE AI Curriculum")
+    
+    st.subheader("🧸 Kindergarten Example: 'Robo the Helper'")
+    st.markdown("""
+    ### Story Summary
+    Robo is a friendly robot that helps Leo and his family at home. He turns on lights, 
+    reminds Leo to brush his teeth, plays music, and even helps find Leo's lost shoe!
+    
+    ### Learning Activities
+    1. **Color the AI Helpers** - Children color smart devices
+    2. **AI vs Not AI Game** - Identify smart helpers
+    3. **"I Am a Smart Machine" Song** - Music and movement
+    4. **Make Your Own Robo** - Craft activity
+    
+    ### Assessment
+    - Observation checklist
+    - "Junior AI Explorer" badges
+    - Portfolio of creative work
+    """)
+    
+    st.subheader("💡 Teaching Strategies by Level")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        **Kindergarten & Cycle 1:**
+        - Story-based learning
+        - Interactive play
+        - Visual aids
+        - Songs and rhymes
+        - Hands-on crafts
+        - Simple vocabulary
+        """)
+    
+    with col2:
+        st.markdown("""
+        **Cycle 2 & 3:**
+        - Project-based learning
+        - Ethical discussions
+        - Real-world applications
+        - Digital tools exploration
+        - Career connections
+        - Innovation challenges
+        """)
 
 # Sidebar
-st.sidebar.header("About This Tool")
+st.sidebar.header("About UAE AI Curriculum")
 st.sidebar.markdown("""
-This tool generates comprehensive AI curriculum and textbook content for CBSE classes 1-8.
+The UAE AI curriculum represents a pioneering educational initiative to prepare students for an AI-driven future.
 
-**Features:**
-- 🎯 Grade-specific curriculum
-- 📚 Complete chapter generation
-- 🎨 Age-appropriate content
-- 🔧 Hands-on activities
-- 🌐 Cross-curricular integration
-- 🛡️ Ethics and safety focus
+**Key Principles:**
+- 🌍 Culturally relevant
+- 🤝 Ethically focused
+- 💡 Innovation-oriented
+- 📚 Integrated learning
+- 🎯 Practical skills
+- 🌐 Bilingual approach
 
-**Workflow:**
-1. Generate curriculum for a grade
-2. Use curriculum to generate chapters
-3. Download materials as Word documents
+**Integration:**
+AI education is seamlessly integrated into existing subjects:
+- Computing
+- Creative Design
+- Innovation
 
-**Note:** This tool complements the official CBSE AI curriculum for classes 9-12.
+No additional teaching hours required!
 """)
 
 st.sidebar.markdown("---")
-st.sidebar.header("📊 Official CBSE AI Curriculum (9-12)")
+st.sidebar.header("🎯 Quick Start Guide")
 st.sidebar.markdown("""
-**Class 9 - AI Readiness**
-- Introduction to AI
-- AI Project Cycle
-- Neural Networks
-- Python Basics
+1. **Generate Curriculum** first for your chosen level
+2. **Create Units** using the curriculum as context
+3. **Download Materials** for classroom use
+4. **Check Examples** for inspiration
 
-**Class 10 - AI Foundations**
-- Advanced Python
-- Data Science
-- Computer Vision
-- NLP
-- Model Evaluation
-
-**Class 11 - AI Explorer**
-- NumPy/Pandas/sklearn
-- ML Algorithms
-- Applied NLP
-- AI Ethics & Bias
-
-**Class 12 - AI Innovate**
-- Capstone Project
-- Model Lifecycle
-- Data Storytelling
+**Recommended Workflow:**
+- Start with Kindergarten for foundational concepts
+- Progress through cycles for complete coverage
+- Customize units for local context
 """)
 
 st.sidebar.markdown("---")
