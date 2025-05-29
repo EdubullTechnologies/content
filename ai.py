@@ -919,48 +919,127 @@ with tab3:
 with tab4:
     st.header("📚 Examples from UAE AI Curriculum")
     
-    st.subheader("🧸 Kindergarten Example: 'Robo the Helper'")
-    st.markdown("""
-    ### Story Summary
-    Robo is a friendly robot that helps Leo and his family at home. He turns on lights, 
-    reminds Leo to brush his teeth, plays music, and even helps find Leo's lost shoe!
+    # Language toggle for examples
+    example_lang = st.radio(
+        "View Examples in:",
+        ["English", "Arabic عربي"],
+        horizontal=True,
+        key="example_language"
+    )
     
-    ### Learning Activities
-    1. **Color the AI Helpers** - Children color smart devices
-    2. **AI vs Not AI Game** - Identify smart helpers
-    3. **"I Am a Smart Machine" Song** - Music and movement
-    4. **Make Your Own Robo** - Craft activity
+    if example_lang == "English":
+        st.subheader("🧸 Kindergarten Example: 'Robo the Helper'")
+        st.markdown("""
+        ### Story Summary
+        Robo is a friendly robot that helps Leo and his family at home. He turns on lights, 
+        reminds Leo to brush his teeth, plays music, and even helps find Leo's lost shoe!
+        
+        ### Learning Activities
+        1. **Color the AI Helpers** - Children color smart devices
+        2. **AI vs Not AI Game** - Identify smart helpers
+        3. **"I Am a Smart Machine" Song** - Music and movement
+        4. **Make Your Own Robo** - Craft activity
+        
+        ### Assessment
+        - Observation checklist
+        - "Junior AI Explorer" badges
+        - Portfolio of creative work
+        """)
+    else:
+        st.subheader("🧸 مثال رياض الأطفال: 'روبو المساعد'")
+        st.markdown("""
+        ### ملخص القصة
+        روبو هو روبوت ودود يساعد ليو وعائلته في المنزل. يقوم بتشغيل الأضواء،
+        ويذكّر ليو بتنظيف أسنانه، ويشغّل الموسيقى، وحتى يساعد في العثور على حذاء ليو المفقود!
+        
+        ### الأنشطة التعليمية
+        1. **تلوين المساعدين الأذكياء** - يلون الأطفال الأجهزة الذكية
+        2. **لعبة الذكاء الاصطناعي أم لا** - تحديد المساعدين الأذكياء
+        3. **أغنية "أنا آلة ذكية"** - موسيقى وحركة
+        4. **اصنع روبو الخاص بك** - نشاط حرفي
+        
+        ### التقييم
+        - قائمة مراقبة الملاحظة
+        - شارات "مستكشف الذكاء الاصطناعي الصغير"
+        - ملف الأعمال الإبداعية
+        """)
     
-    ### Assessment
-    - Observation checklist
-    - "Junior AI Explorer" badges
-    - Portfolio of creative work
-    """)
-    
-    st.subheader("💡 Teaching Strategies by Level")
+    st.subheader("💡 Teaching Strategies by Level / استراتيجيات التدريس حسب المستوى")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("""
-        **Kindergarten & Cycle 1:**
-        - Story-based learning
-        - Interactive play
-        - Visual aids
-        - Songs and rhymes
-        - Hands-on crafts
-        - Simple vocabulary
-        """)
+        if example_lang == "English":
+            st.markdown("""
+            **Kindergarten & Cycle 1:**
+            - Story-based learning
+            - Interactive play
+            - Visual aids
+            - Songs and rhymes
+            - Hands-on crafts
+            - Simple vocabulary
+            """)
+        else:
+            st.markdown("""
+            **رياض الأطفال والحلقة الأولى:**
+            - التعلم القائم على القصص
+            - اللعب التفاعلي
+            - الوسائل البصرية
+            - الأغاني والقوافي
+            - الحرف اليدوية
+            - المفردات البسيطة
+            """)
     
     with col2:
+        if example_lang == "English":
+            st.markdown("""
+            **Cycle 2 & 3:**
+            - Project-based learning
+            - Ethical discussions
+            - Real-world applications
+            - Digital tools exploration
+            - Career connections
+            - Innovation challenges
+            """)
+        else:
+            st.markdown("""
+            **الحلقة الثانية والثالثة:**
+            - التعلم القائم على المشاريع
+            - المناقشات الأخلاقية
+            - التطبيقات الواقعية
+            - استكشاف الأدوات الرقمية
+            - الروابط المهنية
+            - تحديات الابتكار
+            """)
+    
+    # Add sample AI terms glossary
+    st.subheader("📚 Sample AI Terms / مصطلحات الذكاء الاصطناعي")
+    glossary_col1, glossary_col2 = st.columns(2)
+    
+    with glossary_col1:
         st.markdown("""
-        **Cycle 2 & 3:**
-        - Project-based learning
-        - Ethical discussions
-        - Real-world applications
-        - Digital tools exploration
-        - Career connections
-        - Innovation challenges
+        **English Terms:**
+        - Artificial Intelligence
+        - Machine Learning
+        - Algorithm
+        - Data
+        - Robot
+        - Smart Device
+        - Pattern Recognition
+        - Digital Assistant
+        """)
+    
+    with glossary_col2:
+        st.markdown("""
+        **المصطلحات العربية:**
+        - الذكاء الاصطناعي
+        - التعلم الآلي
+        - الخوارزمية
+        - البيانات
+        - الروبوت
+        - الجهاز الذكي
+        - التعرف على الأنماط
+        - المساعد الرقمي
         """)
 
 # Sidebar
@@ -974,7 +1053,13 @@ The UAE AI curriculum represents a pioneering educational initiative to prepare 
 - 💡 Innovation-oriented
 - 📚 Integrated learning
 - 🎯 Practical skills
-- 🌐 Bilingual approach
+- 🌐 **Bilingual Generation** (English/Arabic)
+
+**Language Support:**
+- 🇬🇧 **English**: Clear, simple language suitable for international schools
+- 🇦🇪 **Arabic**: Full Arabic content with appropriate terminology
+- 📝 All materials can be generated in either language
+- 🔄 Create parallel versions for bilingual programs
 
 **Grade-Specific Content:**
 - 📖 Generate for individual grades (1-12)
@@ -997,11 +1082,17 @@ No additional teaching hours required!
 st.sidebar.markdown("---")
 st.sidebar.header("🎯 Quick Start Guide")
 st.sidebar.markdown("""
-1. **Select Grade Level** - Choose cycle and specific grade
-2. **Generate Curriculum** first for your chosen grade
-3. **Create Units** using the curriculum as context
-4. **Download Materials** for classroom use
-5. **Check Examples** for inspiration
+1. **Select Language** - Choose English or Arabic
+2. **Select Grade Level** - Choose cycle and specific grade
+3. **Generate Curriculum** first for your chosen grade
+4. **Create Units** using the curriculum as context
+5. **Download Materials** for classroom use
+6. **Check Examples** for inspiration
+
+**Language Tips:**
+- Generate curriculum in your preferred language first
+- Units must match the curriculum language
+- Create parallel versions by generating in both languages
 
 **Recommended Workflow:**
 - Start with Kindergarten for foundational concepts
@@ -1011,4 +1102,4 @@ st.sidebar.markdown("""
 """)
 
 st.sidebar.markdown("---")
-st.sidebar.info("Powered by Google Gemini AI")
+st.sidebar.info("Powered by Google Gemini AI | دعم باللغة العربية")
