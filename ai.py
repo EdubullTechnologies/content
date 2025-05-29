@@ -56,33 +56,62 @@ def extract_units_from_curriculum(curriculum_text):
     units = []
     lines = curriculum_text.split('\n')
     
+    # Define keywords in both languages
+    units_section_keywords = [
+        "Units/Modules", "Units and Modules", "Units", "Modules",
+        "الوحدات", "الموديولات", "الوحدات/الموديولات", "الوحدات والموديولات",
+        "الوحدات التعليمية", "الوحدات الدراسية"
+    ]
+    
+    unit_keywords = ["Unit", "Module", "الوحدة", "الموديول", "وحدة"]
+    
     # Look for the Units/Modules section
     in_units_section = False
     current_unit = None
     
     for i, line in enumerate(lines):
         # Check if we're in the units section
-        if "Units/Modules" in line or "Units and Modules" in line:
+        if any(keyword in line for keyword in units_section_keywords):
             in_units_section = True
             continue
             
         # Check if we've left the units section
         if in_units_section and line.startswith("##") and not line.startswith("###"):
-            break
+            # But make sure it's not a subsection of units
+            if not any(keyword in line for keyword in unit_keywords):
+                break
             
         # Extract unit information
         if in_units_section:
-            # Look for unit titles (usually marked with ### or **Unit X:**)
-            if line.startswith("###") or ("Unit" in line and (":" in line or "-" in line)):
+            # Look for unit titles (usually marked with ### or **Unit X:** or Arabic equivalents)
+            is_unit_line = False
+            
+            # Check if line starts with ### (common for unit headers)
+            if line.startswith("###"):
+                is_unit_line = True
+            
+            # Check for unit keywords with various delimiters
+            for keyword in unit_keywords:
+                if keyword in line and any(char in line for char in [":", "-", "–", "٪", "."]):
+                    is_unit_line = True
+                    break
+            
+            if is_unit_line:
                 # Clean up the unit title
                 unit_title = line.replace("###", "").replace("**", "").strip()
                 if unit_title:
                     # Extract unit details from following lines
                     unit_details = []
                     j = i + 1
-                    while j < len(lines) and not (lines[j].startswith("###") or "Unit" in lines[j]):
-                        if lines[j].strip() and not lines[j].startswith("##"):
-                            unit_details.append(lines[j].strip())
+                    while j < len(lines):
+                        next_line = lines[j]
+                        # Stop if we hit another unit or section header
+                        if next_line.startswith("###") or any(kw in next_line for kw in unit_keywords):
+                            break
+                        if next_line.startswith("##"):
+                            break
+                        if next_line.strip() and not next_line.startswith("#"):
+                            unit_details.append(next_line.strip())
                         j += 1
                         if len(unit_details) >= 5:  # Limit details to prevent too much content
                             break
@@ -95,20 +124,22 @@ def extract_units_from_curriculum(curriculum_text):
     # If no units found with the above method, try alternative parsing
     if not units:
         for i, line in enumerate(lines):
-            if "Unit" in line and any(char in line for char in [":", "-", "–"]):
-                unit_title = line.strip()
-                # Get some context
-                unit_details = []
-                j = i + 1
-                while j < len(lines) and j < i + 6:
-                    if lines[j].strip():
-                        unit_details.append(lines[j].strip())
-                    j += 1
-                
-                units.append({
-                    "title": unit_title,
-                    "details": "\n".join(unit_details[:4])
-                })
+            for keyword in unit_keywords:
+                if keyword in line and any(char in line for char in [":", "-", "–", "٪", "."]):
+                    unit_title = line.strip()
+                    # Get some context
+                    unit_details = []
+                    j = i + 1
+                    while j < len(lines) and j < i + 6:
+                        if lines[j].strip() and not lines[j].startswith("#"):
+                            unit_details.append(lines[j].strip())
+                        j += 1
+                    
+                    units.append({
+                        "title": unit_title,
+                        "details": "\n".join(unit_details[:4])
+                    })
+                    break
     
     return units
 
