@@ -108,7 +108,7 @@ def analyze_with_llm(pdf_file_bytes, pdf_filename, model_progression_text, grade
         # It's good practice to use the File API for documents, especially if they might be large.
         # Files are stored for 48 hours.
         uploaded_file = genai.upload_file(path=temp_pdf_path, display_name=pdf_filename, mime_type="application/pdf")
-        st.success(f"'{pdf_filename}' uploaded successfully to Gemini (URI: {uploaded_file.uri})")
+        st.success(f"'{pdf_filename}' uploaded successfully to EeeBee (URI: {uploaded_file.uri})")
 
     except Exception as e:
         st.error(f"Error uploading PDF to EeeBee: {e}")
