@@ -659,49 +659,53 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
    - Connect to students' daily mathematical experiences
    - Include a detailed image prompt for a compelling mathematical visual
 
-3. **Real-World Connection** (300-400 words)
+3. **Real-World Connection** (100 words)
    - Provide multiple real-world applications of the mathematical concepts
    - Show how math is used in everyday life situations
    - Include examples from technology, engineering, finance, science, etc.
    - Connect to mathematical careers and future studies
 
-4. **Learning Outcomes + Previous Class Link** (200-300 words)
+4. **Learning Outcomes** (125 words)
    - List specific, measurable mathematical learning objectives
    - Use action verbs (define, explain, calculate, apply, analyze, solve, prove, etc.)
    - Align with Bloom's Taxonomy levels for mathematics
    - Connect to CBSE mathematics curriculum standards
-   - Link to prior mathematical knowledge from previous classes
 
-5. **Chapter Map/Overview** (150-200 words)
+5. **Previous Class Link** (100 words)
+   - Link to prior mathematical knowledge from previous classes
+   - Explain how previous concepts connect to current learning
+   - Provide a brief review of essential prerequisites
+
+6. **Chapter Map/Overview** (100 words)
    - Visual layout of mathematical concepts (mind map or flowchart description)
    - Show mathematical progressions and connections
 
-6. **Meet the Character (EeeBee)** (50-100 words)
+7. **Meet the Character (EeeBee)** (50-100 words)
    - Introduce EeeBee as a mathematical guide/helper throughout the chapter
 
 ## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
 
 **NOTE: If the PDF has Section 1, Section 2, Section 3, etc., create complete content for EACH section following this structure:**
 
-7. **Introduction of Section** (200-300 words per section)
+8. **Introduction of Section** (150 words per section)
    - Give a related section introduction that sets the mathematical context
    - Explain the importance of the mathematical concepts to be learned
    - Connect to the broader mathematical curriculum
 
-8. **History of Concepts in This Section** (300-400 words per section)
+9. **History of Concepts in This Section** (150 words per section)
    - Provide comprehensive historical background of the mathematical concepts
    - Include key mathematicians, their contributions, and discoveries
    - Explain the timeline of mathematical developments
 
-9. **Warm-up Questions** (200-250 words per section)
-   - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
-   - Include a mix of question types (mental math, real-world problems, pattern recognition)
+10. **Warm-up Questions** (100 words per section)
+    - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
+    - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
-10. **Current Concepts** (3500-4500 words minimum PER SECTION)
+11. **Current Concepts** (3500-4500 words minimum PER SECTION)
     
     For each major concept in EACH section, include ALL of the following:
     
-    **A. Concept Introduction** (200-300 words per concept)
+    **A. Concept Introduction** (100 words per concept)
     - Clear introduction to each mathematical concept
     - Simple, clear mathematical language
     - Use analogies and mathematical examples
@@ -769,32 +773,32 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 
 ## III. Special Features (Apply to the ENTIRE chapter, not just one section)
 
-11. **Common Mathematical Misconceptions** (200-300 words)
+12. **Common Mathematical Misconceptions** (200-300 words)
     - 2-3 misconceptions per mathematical concept
     - Correct early mathematical misunderstandings
 
-12. **21st Century Skills Focus** (300-400 words)
+13. **21st Century Skills Focus** (300-400 words)
     - Mathematical Design Challenge
     - Mathematical Debate
     - Collaborate & Create
 
-13. **Differentiation** (200-300 words)
+14. **Differentiation** (200-300 words)
     - Challenge sections for advanced mathematical learners
     - Support sections for mathematical revision
 
-14. **Technology Integration** (150-200 words)
+15. **Technology Integration** (150-200 words)
     - Mathematical software and tools
     - Digital mathematical simulations
 
-15. **Character Integration** (Throughout)
+16. **Character Integration** (Throughout)
     - EeeBee appears throughout to ask mathematical questions
 
 ## IV. Chapter Wrap-Up (For the ENTIRE chapter)
 
-16. **Self-Assessment Checklist** (200-250 words)
+17. **Self-Assessment Checklist** (200-250 words)
     - Create a comprehensive self-assessment checklist
 
-17. **Chapter-wise Miscellaneous Exercise** (500-600 words)
+18. **Chapter-wise Miscellaneous Exercise** (500-600 words)
     - MCQs (5 questions)
     - Short/Long Answer (3 short, 2 long)
     - Open-ended Mathematical Problems (2 questions)
@@ -805,7 +809,7 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Mathematical Puzzle (1 puzzle)
     - Thinking Based Activities
 
-18. **Apply Your Mathematical Knowledge** (200-300 words)
+19. **Apply Your Mathematical Knowledge** (200-300 words)
     - Real-world mathematical application tasks
     - Project-based mathematical problems
 
