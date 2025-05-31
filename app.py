@@ -1519,210 +1519,409 @@ Ensure it is cohesive, well-structured, and follows all the requirements for {co
         
         return None, f"Error during chunked analysis: {str(e)}"
 
+def generate_chat_response(user_prompt, chat_history, uploaded_files, grade_level, subject):
+    """Generate a response from EeeBee for the chat interface"""
+    try:
+        # Build context from chat history
+        conversation_context = ""
+        if len(chat_history) > 1:
+            recent_messages = chat_history[-6:]  # Keep last 6 messages for context
+            for msg in recent_messages[:-1]:  # Exclude the current message
+                conversation_context += f"{msg['role'].title()}: {msg['content']}\n"
+        
+        # Build system prompt for EeeBee
+        system_prompt = f"""You are EeeBee, an expert educational content development assistant specializing in CBSE curriculum.
+You help content teams create, modify, and improve educational materials that align with NCERT, NCF, and NEP 2020 guidelines.
+
+Context:
+- Target Grade: {grade_level}
+- Subject Area: {subject}
+- This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY
+
+Your expertise includes:
+- Content creation and improvement for CBSE curriculum
+- Curriculum alignment and standards compliance
+- Age-appropriate content development
+- Educational activity design
+- Assessment and exercise creation
+- Pedagogical best practices
+- Integration of 21st-century skills
+
+Guidelines:
+- Be helpful, friendly, and professional
+- Provide detailed, actionable advice
+- Reference educational standards and best practices
+- Suggest specific improvements or modifications
+- Ask clarifying questions when needed
+- Maintain consistency with CBSE/NCERT guidelines
+
+Previous conversation:
+{conversation_context}
+
+Current user question: {user_prompt}"""
+
+        # Prepare content for generation
+        content_parts = [system_prompt]
+        
+        # Add uploaded PDFs if any
+        uploaded_file_objects = []
+        if uploaded_files:
+            for uploaded_file in uploaded_files:
+                try:
+                    # Save uploaded file temporarily
+                    temp_path = pathlib.Path(f"temp_chat_{uploaded_file.name}")
+                    with open(temp_path, "wb") as f:
+                        f.write(uploaded_file.getvalue())
+                    
+                    # Upload to Gemini
+                    gemini_file = genai.upload_file(
+                        path=temp_path, 
+                        display_name=uploaded_file.name, 
+                        mime_type="application/pdf"
+                    )
+                    uploaded_file_objects.append(gemini_file)
+                    content_parts.append(gemini_file)
+                    
+                    # Clean up temp file
+                    temp_path.unlink()
+                    
+                except Exception as e:
+                    st.warning(f"Could not process {uploaded_file.name}: {e}")
+        
+        # Generate response
+        generation_config = genai.types.GenerationConfig(
+            max_output_tokens=8192,
+            temperature=0.7,  # Slightly higher temperature for more conversational responses
+        )
+        
+        response = model.generate_content(
+            content_parts,
+            generation_config=generation_config
+        )
+        
+        # Clean up uploaded files from Gemini
+        for gemini_file in uploaded_file_objects:
+            try:
+                genai.delete_file(gemini_file.name)
+            except Exception as e:
+                pass  # Ignore cleanup errors
+        
+        # Extract response text
+        if hasattr(response, 'text') and response.text:
+            return response.text
+        elif response.candidates and response.candidates[0].content:
+            parts = response.candidates[0].content.parts
+            if parts:
+                return ''.join([part.text for part in parts if hasattr(part, 'text')])
+            else:
+                return "I apologize, but I couldn't generate a proper response. Could you please rephrase your question?"
+        else:
+            return "I'm having trouble processing your request right now. Please try again."
+            
+    except Exception as e:
+        return f"I encountered an error: {str(e)}. Please try asking your question again or check if your uploaded files are valid PDFs."
+
 # --- Streamlit App ---
 st.set_page_config(layout="wide")
-st.title("📚 Book Chapter Improver Tool (with EeeBee) ✨")
+st.title("📚 EeeBee Content Development Suite ✨")
 
 st.markdown("""
-Upload your book chapter in PDF format. This tool will analyze it using EeeBee
-based on the 'Model Chapter Progression and Elements' and suggest improvements.
-Select which part of the content you want to generate.
+Welcome to the EeeBee Content Development Suite! Choose between improving existing chapters or chatting with EeeBee for content assistance.
 """)
 
-# Grade Level Selector
-grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
-selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8) # Default to Grade 9
+# Create tabs for different functionalities
+tab1, tab2 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee"])
 
-# Subject Type Selector
-subject_type = st.selectbox(
-    "Select Subject Type:",
-    ["General (Uses Model Chapter Progression)", "Mathematics"],
-    help="Choose 'Mathematics' for math-specific content structure or 'General' for other subjects."
-)
+with tab1:
+    st.header("📚 Book Chapter Improver Tool")
+    st.markdown("""
+    Upload your book chapter in PDF format. This tool will analyze it using EeeBee
+    based on the 'Model Chapter Progression and Elements' and suggest improvements.
+    Select which part of the content you want to generate.
+    """)
 
-# Analysis Method Selector
-analysis_method = st.radio(
-    "Choose Analysis Method:",
-    ["Standard (Full Document)", "Chunked (For Complex Documents)"],
-    help="Use 'Chunked' method if you encounter copyright errors with the standard method."
-)
+    # Grade Level Selector
+    grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
+    selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8, key="grade_selector_tab1") # Default to Grade 9
 
-# Load Model Chapter Progression
-model_progression = load_model_chapter_progression()
+    # Subject Type Selector
+    subject_type = st.selectbox(
+        "Select Subject Type:",
+        ["General (Uses Model Chapter Progression)", "Mathematics"],
+        help="Choose 'Mathematics' for math-specific content structure or 'General' for other subjects.",
+        key="subject_selector_tab1"
+    )
 
-if model_progression:
-    st.sidebar.subheader("Model Chapter Progression:")
-    st.sidebar.text_area("Model Details", model_progression, height=300, disabled=True)
+    # Analysis Method Selector
+    analysis_method = st.radio(
+        "Choose Analysis Method:",
+        ["Standard (Full Document)", "Chunked (For Complex Documents)"],
+        help="Use 'Chunked' method if you encounter copyright errors with the standard method.",
+        key="analysis_method_tab1"
+    )
 
-    uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf")
+    # Load Model Chapter Progression
+    model_progression = load_model_chapter_progression()
 
-    if uploaded_file_st is not None:
-        st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade}...")
-        
-        # Get PDF bytes for processing
-        pdf_bytes = uploaded_file_st.getvalue()
+    if model_progression:
+        st.sidebar.subheader("Model Chapter Progression:")
+        st.sidebar.text_area("Model Details", model_progression, height=300, disabled=True)
 
-        # Create columns for the buttons
-        col1, col2 = st.columns(2)
-        col3, col4 = st.columns(2)
-        
-        # Create session state to store generated content
-        if 'chapter_content' not in st.session_state:
-            st.session_state.chapter_content = None
-        if 'exercises' not in st.session_state:
-            st.session_state.exercises = None
-        if 'skill_activities' not in st.session_state:
-            st.session_state.skill_activities = None
-        if 'art_learning' not in st.session_state:
-            st.session_state.art_learning = None
+        uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
 
-        # Generate Chapter Content Button
-        generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
-        
-        # Generate Exercises Button
-        generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
-        
-        # Generate Skill Activities Button
-        generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
-        
-        # Generate Art Learning Button
-        generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
-        
-        # Download All Button (outside columns)
-        download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
-        
-        # Handle button clicks and content generation
-        if generate_chapter:
-            with st.spinner(f"🧠 Generating Chapter Content for {selected_grade}..."):
-                content, message = generate_specific_content("chapter", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
-                if content:
-                    st.session_state.chapter_content = content
-                    st.success(f"✅ Chapter Content generated successfully! {message}")
-                    st.subheader("Chapter Content:")
-                    st.markdown(st.session_state.chapter_content)
-                    # Download button for this content only
-                    doc = create_word_document(st.session_state.chapter_content)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Chapter Content as Word (.docx)",
-                        data=doc_io,
-                        file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    )
-                else:
-                    st.error(f"Failed to generate Chapter Content: {message}")
-        
-        if generate_exercises:
-            with st.spinner(f"🧠 Generating Exercises for {selected_grade}..."):
-                content, message = generate_specific_content("exercises", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
-                if content:
-                    st.session_state.exercises = content
-                    st.success(f"✅ Exercises generated successfully! {message}")
-                    st.subheader("Exercises:")
-                    st.markdown(st.session_state.exercises)
-                    # Download button for this content only
-                    doc = create_word_document(st.session_state.exercises)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Exercises as Word (.docx)",
-                        data=doc_io,
-                        file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    )
-                else:
-                    st.error(f"Failed to generate Exercises: {message}")
-        
-        if generate_skills:
-            with st.spinner(f"🧠 Generating Skill Activities for {selected_grade}..."):
-                content, message = generate_specific_content("skills", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
-                if content:
-                    st.session_state.skill_activities = content
-                    st.success(f"✅ Skill Activities generated successfully! {message}")
-                    st.subheader("Skill Activities:")
-                    st.markdown(st.session_state.skill_activities)
-                    # Download button for this content only
-                    doc = create_word_document(st.session_state.skill_activities)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Skill Activities as Word (.docx)",
-                        data=doc_io,
-                        file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    )
-                else:
-                    st.error(f"Failed to generate Skill Activities: {message}")
-        
-        if generate_art:
-            with st.spinner(f"🧠 Generating Art-Integrated Learning for {selected_grade}..."):
-                content, message = generate_specific_content("art", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
-                if content:
-                    st.session_state.art_learning = content
-                    st.success(f"✅ Art-Integrated Learning generated successfully! {message}")
-                    st.subheader("Art-Integrated Learning:")
-                    st.markdown(st.session_state.art_learning)
-                    # Download button for this content only
-                    doc = create_word_document(st.session_state.art_learning)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Art-Integrated Learning as Word (.docx)",
-                        data=doc_io,
-                        file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    )
-                else:
-                    st.error(f"Failed to generate Art-Integrated Learning: {message}")
-        
-        if download_all:
-            # Combine all generated content (if any)
-            all_content_parts = []
+        if uploaded_file_st is not None:
+            st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade}...")
             
-            if st.session_state.chapter_content:
-                all_content_parts.append("# CHAPTER CONTENT\n\n" + st.session_state.chapter_content)
-            else:
-                st.warning("Chapter Content has not been generated yet.")
+            # Get PDF bytes for processing
+            pdf_bytes = uploaded_file_st.getvalue()
+
+            # Create columns for the buttons
+            col1, col2 = st.columns(2)
+            col3, col4 = st.columns(2)
             
-            if st.session_state.exercises:
-                all_content_parts.append("# EXERCISES\n\n" + st.session_state.exercises)
-            else:
-                st.warning("Exercises have not been generated yet.")
+            # Create session state to store generated content
+            if 'chapter_content' not in st.session_state:
+                st.session_state.chapter_content = None
+            if 'exercises' not in st.session_state:
+                st.session_state.exercises = None
+            if 'skill_activities' not in st.session_state:
+                st.session_state.skill_activities = None
+            if 'art_learning' not in st.session_state:
+                st.session_state.art_learning = None
+
+            # Generate Chapter Content Button
+            generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
             
-            if st.session_state.skill_activities:
-                all_content_parts.append("# SKILL ACTIVITIES\n\n" + st.session_state.skill_activities)
-            else:
-                st.warning("Skill Activities have not been generated yet.")
+            # Generate Exercises Button
+            generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
             
-            if st.session_state.art_learning:
-                all_content_parts.append("# ART-INTEGRATED LEARNING\n\n" + st.session_state.art_learning)
-            else:
-                st.warning("Art-Integrated Learning has not been generated yet.")
+            # Generate Skill Activities Button
+            generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
             
-            if all_content_parts:
-                combined_content = "\n\n" + "\n\n".join(all_content_parts)
+            # Generate Art Learning Button
+            generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
+            
+            # Download All Button (outside columns)
+            download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
+            
+            # Handle button clicks and content generation
+            if generate_chapter:
+                with st.spinner(f"🧠 Generating Chapter Content for {selected_grade}..."):
+                    content, message = generate_specific_content("chapter", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
+                    if content:
+                        st.session_state.chapter_content = content
+                        st.success(f"✅ Chapter Content generated successfully! {message}")
+                        st.subheader("Chapter Content:")
+                        st.markdown(st.session_state.chapter_content)
+                        # Download button for this content only
+                        doc = create_word_document(st.session_state.chapter_content)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Chapter Content as Word (.docx)",
+                            data=doc_io,
+                            file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        )
+                    else:
+                        st.error(f"Failed to generate Chapter Content: {message}")
+            
+            if generate_exercises:
+                with st.spinner(f"🧠 Generating Exercises for {selected_grade}..."):
+                    content, message = generate_specific_content("exercises", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
+                    if content:
+                        st.session_state.exercises = content
+                        st.success(f"✅ Exercises generated successfully! {message}")
+                        st.subheader("Exercises:")
+                        st.markdown(st.session_state.exercises)
+                        # Download button for this content only
+                        doc = create_word_document(st.session_state.exercises)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Exercises as Word (.docx)",
+                            data=doc_io,
+                            file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        )
+                    else:
+                        st.error(f"Failed to generate Exercises: {message}")
+            
+            if generate_skills:
+                with st.spinner(f"🧠 Generating Skill Activities for {selected_grade}..."):
+                    content, message = generate_specific_content("skills", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
+                    if content:
+                        st.session_state.skill_activities = content
+                        st.success(f"✅ Skill Activities generated successfully! {message}")
+                        st.subheader("Skill Activities:")
+                        st.markdown(st.session_state.skill_activities)
+                        # Download button for this content only
+                        doc = create_word_document(st.session_state.skill_activities)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Skill Activities as Word (.docx)",
+                            data=doc_io,
+                            file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        )
+                    else:
+                        st.error(f"Failed to generate Skill Activities: {message}")
+            
+            if generate_art:
+                with st.spinner(f"🧠 Generating Art-Integrated Learning for {selected_grade}..."):
+                    content, message = generate_specific_content("art", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"))
+                    if content:
+                        st.session_state.art_learning = content
+                        st.success(f"✅ Art-Integrated Learning generated successfully! {message}")
+                        st.subheader("Art-Integrated Learning:")
+                        st.markdown(st.session_state.art_learning)
+                        # Download button for this content only
+                        doc = create_word_document(st.session_state.art_learning)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Art-Integrated Learning as Word (.docx)",
+                            data=doc_io,
+                            file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        )
+                    else:
+                        st.error(f"Failed to generate Art-Integrated Learning: {message}")
+            
+            if download_all:
+                # Combine all generated content (if any)
+                all_content_parts = []
                 
-                # Create Word document with all content
-                doc = create_word_document(combined_content)
-                doc_io = io.BytesIO()
-                doc.save(doc_io)
-                doc_io.seek(0)
+                if st.session_state.chapter_content:
+                    all_content_parts.append("# CHAPTER CONTENT\n\n" + st.session_state.chapter_content)
+                else:
+                    st.warning("Chapter Content has not been generated yet.")
                 
-                st.download_button(
-                    label="📥 Download Complete Chapter with All Elements as Word (.docx)",
-                    data=doc_io,
-                    file_name=f"complete_chapter_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                if st.session_state.exercises:
+                    all_content_parts.append("# EXERCISES\n\n" + st.session_state.exercises)
+                else:
+                    st.warning("Exercises have not been generated yet.")
+                
+                if st.session_state.skill_activities:
+                    all_content_parts.append("# SKILL ACTIVITIES\n\n" + st.session_state.skill_activities)
+                else:
+                    st.warning("Skill Activities have not been generated yet.")
+                
+                if st.session_state.art_learning:
+                    all_content_parts.append("# ART-INTEGRATED LEARNING\n\n" + st.session_state.art_learning)
+                else:
+                    st.warning("Art-Integrated Learning has not been generated yet.")
+                
+                if all_content_parts:
+                    combined_content = "\n\n" + "\n\n".join(all_content_parts)
+                    
+                    # Create Word document with all content
+                    doc = create_word_document(combined_content)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    
+                    st.download_button(
+                        label="📥 Download Complete Chapter with All Elements as Word (.docx)",
+                        data=doc_io,
+                        file_name=f"complete_chapter_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                else:
+                    st.error("No content has been generated yet. Please generate at least one type of content first.")
+    else:
+        st.error("Failed to load the Model Chapter Progression. The tool cannot proceed without it.")
+
+with tab2:
+    st.header("💬 Content Chat with EeeBee")
+    st.markdown("""
+    Chat with EeeBee for content development assistance! Upload PDFs for context or ask questions directly.
+    EeeBee can help with content creation, modification, curriculum alignment, and educational guidance.
+    """)
+    
+    # Initialize chat session state
+    if 'chat_messages' not in st.session_state:
+        st.session_state.chat_messages = []
+    if 'chat_uploaded_files' not in st.session_state:
+        st.session_state.chat_uploaded_files = []
+    
+    # Sidebar for chat settings
+    with st.sidebar:
+        st.subheader("Chat Settings")
+        
+        # Grade level for chat context
+        chat_grade = st.selectbox(
+            "Grade Level Context:", 
+            [f"Grade {i}" for i in range(1, 13)], 
+            index=8, 
+            key="chat_grade"
+        )
+        
+        # Subject context
+        chat_subject = st.selectbox(
+            "Subject Context:",
+            ["General Education", "Mathematics", "Science", "Social Studies", "English", "Hindi", "Other"],
+            key="chat_subject"
+        )
+        
+        # PDF Upload for chat context
+        st.subheader("Upload Documents for Context")
+        chat_uploaded_files = st.file_uploader(
+            "Upload PDFs for EeeBee to reference:",
+            type="pdf",
+            accept_multiple_files=True,
+            key="chat_pdf_uploader"
+        )
+        
+        if chat_uploaded_files:
+            st.session_state.chat_uploaded_files = chat_uploaded_files
+            st.success(f"📄 {len(chat_uploaded_files)} PDF(s) uploaded successfully!")
+            for file in chat_uploaded_files:
+                st.write(f"• {file.name}")
+        
+        # Clear chat button
+        if st.button("🗑️ Clear Chat History", key="clear_chat"):
+            st.session_state.chat_messages = []
+            st.session_state.chat_uploaded_files = []
+            st.rerun()
+    
+    # Display chat messages
+    chat_container = st.container()
+    
+    with chat_container:
+        # Display existing chat messages
+        for message in st.session_state.chat_messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+    
+    # Chat input
+    if prompt := st.chat_input("Ask EeeBee anything about content development..."):
+        # Add user message to chat history
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        
+        # Display user message
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Generate EeeBee response
+        with st.chat_message("assistant"):
+            with st.spinner("🤔 EeeBee is thinking..."):
+                response = generate_chat_response(
+                    prompt, 
+                    st.session_state.chat_messages, 
+                    st.session_state.chat_uploaded_files,
+                    chat_grade,
+                    chat_subject
                 )
-            else:
-                st.error("No content has been generated yet. Please generate at least one type of content first.")
-else:
-    st.error("Failed to load the Model Chapter Progression. The tool cannot proceed without it.")
+                st.markdown(response)
+        
+        # Add assistant response to chat history
+        st.session_state.chat_messages.append({"role": "assistant", "content": response})
 
 st.sidebar.markdown("---")
-st.sidebar.info("This app now uses the EeeBee API.")
+st.sidebar.info("This app uses the EeeBee API powered by Google Gemini.")
