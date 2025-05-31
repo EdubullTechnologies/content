@@ -594,7 +594,7 @@ Provide the complete, integrated chapter in Markdown format.
         
         if 'temp_pdf_path' in locals() and temp_pdf_path.exists():
             temp_pdf_path.unlink()
-            
+        
         return f"Error: Could not complete chunked analysis. {e}", "Error"
 
 # --- Helper Functions for Content Generation ---
@@ -1621,6 +1621,103 @@ Current user question: {user_prompt}"""
     except Exception as e:
         return f"I encountered an error: {str(e)}. Please try asking your question again or check if your uploaded files are valid PDFs."
 
+def generate_chat_response_stream(user_prompt, chat_history, uploaded_files, grade_level, subject):
+    """Generate a streaming response from EeeBee for the chat interface"""
+    try:
+        # Build context from chat history
+        conversation_context = ""
+        if len(chat_history) > 1:
+            recent_messages = chat_history[-6:]  # Keep last 6 messages for context
+            for msg in recent_messages[:-1]:  # Exclude the current message
+                conversation_context += f"{msg['role'].title()}: {msg['content']}\n"
+        
+        # Build system prompt for EeeBee
+        system_prompt = f"""You are EeeBee, an expert educational content development assistant specializing in CBSE curriculum.
+You help content teams create, modify, and improve educational materials that align with NCERT, NCF, and NEP 2020 guidelines.
+
+Context:
+- Target Grade: {grade_level}
+- Subject Area: {subject}
+- This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY
+
+Your expertise includes:
+- Content creation and improvement for CBSE curriculum
+- Curriculum alignment and standards compliance
+- Age-appropriate content development
+- Educational activity design
+- Assessment and exercise creation
+- Pedagogical best practices
+- Integration of 21st-century skills
+
+Guidelines:
+- Be helpful, friendly, and professional
+- Provide detailed, actionable advice
+- Reference educational standards and best practices
+- Suggest specific improvements or modifications
+- Ask clarifying questions when needed
+- Maintain consistency with CBSE/NCERT guidelines
+
+Previous conversation:
+{conversation_context}
+
+Current user question: {user_prompt}"""
+
+        # Prepare content for generation
+        content_parts = [system_prompt]
+        
+        # Add uploaded PDFs if any
+        uploaded_file_objects = []
+        if uploaded_files:
+            for uploaded_file in uploaded_files:
+                try:
+                    # Save uploaded file temporarily
+                    temp_path = pathlib.Path(f"temp_chat_{uploaded_file.name}")
+                    with open(temp_path, "wb") as f:
+                        f.write(uploaded_file.getvalue())
+                    
+                    # Upload to Gemini
+                    gemini_file = genai.upload_file(
+                        path=temp_path, 
+                        display_name=uploaded_file.name, 
+                        mime_type="application/pdf"
+                    )
+                    uploaded_file_objects.append(gemini_file)
+                    content_parts.append(gemini_file)
+                    
+                    # Clean up temp file
+                    temp_path.unlink()
+                    
+                except Exception as e:
+                    st.warning(f"Could not process {uploaded_file.name}: {e}")
+        
+        # Generate streaming response
+        generation_config = genai.types.GenerationConfig(
+            max_output_tokens=8192,
+            temperature=0.7,  # Slightly higher temperature for more conversational responses
+        )
+        
+        # Use streaming mode
+        response_stream = model.generate_content(
+            content_parts,
+            generation_config=generation_config,
+            stream=True
+        )
+        
+        # Yield chunks as they come
+        for chunk in response_stream:
+            if chunk.text:
+                yield chunk.text
+        
+        # Clean up uploaded files from Gemini
+        for gemini_file in uploaded_file_objects:
+            try:
+                genai.delete_file(gemini_file.name)
+            except Exception as e:
+                pass  # Ignore cleanup errors
+            
+    except Exception as e:
+        yield f"I encountered an error: {str(e)}. Please try asking your question again or check if your uploaded files are valid PDFs."
+
 # --- Streamlit App ---
 st.set_page_config(layout="wide")
 st.title("📚 EeeBee Content Development Suite ✨")
@@ -1844,16 +1941,10 @@ with tab2:
     EeeBee can help with content creation, modification, curriculum alignment, and educational guidance.
     """)
     
-    # Initialize chat session state
-    if 'chat_messages' not in st.session_state:
-        st.session_state.chat_messages = []
-    if 'chat_uploaded_files' not in st.session_state:
-        st.session_state.chat_uploaded_files = []
+    # Move chat settings to main area (above chat)
+    col1, col2, col3 = st.columns([1, 1, 1])
     
-    # Sidebar for chat settings
-    with st.sidebar:
-        st.subheader("Chat Settings")
-        
+    with col1:
         # Grade level for chat context
         chat_grade = st.selectbox(
             "Grade Level Context:", 
@@ -1861,36 +1952,48 @@ with tab2:
             index=8, 
             key="chat_grade"
         )
-        
+    
+    with col2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
             ["General Education", "Mathematics", "Science", "Social Studies", "English", "Hindi", "Other"],
             key="chat_subject"
         )
-        
-        # PDF Upload for chat context
-        st.subheader("Upload Documents for Context")
-        chat_uploaded_files = st.file_uploader(
-            "Upload PDFs for EeeBee to reference:",
-            type="pdf",
-            accept_multiple_files=True,
-            key="chat_pdf_uploader"
-        )
-        
-        if chat_uploaded_files:
-            st.session_state.chat_uploaded_files = chat_uploaded_files
-            st.success(f"📄 {len(chat_uploaded_files)} PDF(s) uploaded successfully!")
-            for file in chat_uploaded_files:
-                st.write(f"• {file.name}")
-        
+    
+    with col3:
         # Clear chat button
         if st.button("🗑️ Clear Chat History", key="clear_chat"):
             st.session_state.chat_messages = []
             st.session_state.chat_uploaded_files = []
             st.rerun()
     
-    # Display chat messages
+    # PDF Upload for chat context
+    st.subheader("📄 Upload Documents for Context")
+    chat_uploaded_files = st.file_uploader(
+        "Upload PDFs for EeeBee to reference:",
+        type="pdf",
+        accept_multiple_files=True,
+        key="chat_pdf_uploader"
+    )
+    
+    if chat_uploaded_files:
+        st.session_state.chat_uploaded_files = chat_uploaded_files
+        st.success(f"📄 {len(chat_uploaded_files)} PDF(s) uploaded successfully!")
+        uploaded_files_info = ""
+        for file in chat_uploaded_files:
+            uploaded_files_info += f"• {file.name}\n"
+        st.text(uploaded_files_info)
+    
+    st.divider()
+    
+    # Initialize chat session state
+    if 'chat_messages' not in st.session_state:
+        st.session_state.chat_messages = []
+    if 'chat_uploaded_files' not in st.session_state:
+        st.session_state.chat_uploaded_files = []
+    
+    # Display chat messages in a container
     chat_container = st.container()
     
     with chat_container:
@@ -1899,29 +2002,45 @@ with tab2:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
     
-    # Chat input
+    # Chat input at the bottom
     if prompt := st.chat_input("Ask EeeBee anything about content development..."):
         # Add user message to chat history
         st.session_state.chat_messages.append({"role": "user", "content": prompt})
         
         # Display user message
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
         
-        # Generate EeeBee response
-        with st.chat_message("assistant"):
-            with st.spinner("🤔 EeeBee is thinking..."):
-                response = generate_chat_response(
-                    prompt, 
-                    st.session_state.chat_messages, 
-                    st.session_state.chat_uploaded_files,
-                    chat_grade,
-                    chat_subject
-                )
-                st.markdown(response)
-        
-        # Add assistant response to chat history
-        st.session_state.chat_messages.append({"role": "assistant", "content": response})
+        # Generate EeeBee response with streaming
+        with chat_container:
+            with st.chat_message("assistant"):
+                # Create placeholder for streaming response
+                response_placeholder = st.empty()
+                response_text = ""
+                
+                try:
+                    # Generate streaming response
+                    for chunk in generate_chat_response_stream(
+                        prompt, 
+                        st.session_state.chat_messages, 
+                        st.session_state.chat_uploaded_files,
+                        chat_grade,
+                        chat_subject
+                    ):
+                        response_text += chunk
+                        response_placeholder.markdown(response_text + "▊")  # Add cursor effect
+                    
+                    # Remove cursor and show final response
+                    response_placeholder.markdown(response_text)
+                    
+                    # Add assistant response to chat history
+                    st.session_state.chat_messages.append({"role": "assistant", "content": response_text})
+                    
+                except Exception as e:
+                    error_message = f"I encountered an error: {str(e)}. Please try asking your question again."
+                    response_placeholder.markdown(error_message)
+                    st.session_state.chat_messages.append({"role": "assistant", "content": error_message})
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the EeeBee API powered by Google Gemini.")
