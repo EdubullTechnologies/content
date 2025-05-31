@@ -108,7 +108,7 @@ def analyze_with_llm(pdf_file_bytes, pdf_filename, model_progression_text, grade
         # It's good practice to use the File API for documents, especially if they might be large.
         # Files are stored for 48 hours.
         uploaded_file = genai.upload_file(path=temp_pdf_path, display_name=pdf_filename, mime_type="application/pdf")
-        st.success(f"'{pdf_filename}' uploaded successfully to Gemini (URI: {uploaded_file.uri})")
+        st.success(f"'{pdf_filename}' uploaded successfully to EeeBee (URI: {uploaded_file.uri})")
 
     except Exception as e:
         st.error(f"Error uploading PDF to EeeBee: {e}")
@@ -219,11 +219,11 @@ Provide the complete, rewritten chapter text in Markdown format, incorporating a
         # --- Debugging: Print finish reason and safety feedback ---
         if response.candidates:
             finish_reason = response.candidates[0].finish_reason
-            st.write(f"Gemini Finish Reason: {finish_reason}")
+            st.write(f"EeeBee Finish Reason: {finish_reason}")
             
             # Check for copyright detection (finish_reason 4)
             if finish_reason == 4:
-                st.error("Gemini detected potential copyright concerns. Since this is your own content being used for educational purposes, we need to adjust our approach.")
+                st.error("EeeBee detected potential copyright concerns. Since this is your own content being used for educational purposes, we need to adjust our approach.")
                 st.warning("Try one of these solutions: 1) Modify your PDF content to be less like published material, 2) Break the document into smaller chunks, or 3) Change specific terminology that might be triggering the copyright filter.")
                 
                 # Clean up resources
@@ -1590,8 +1590,8 @@ Current user question: {user_prompt}"""
         
         # Generate response
         generation_config = genai.types.GenerationConfig(
-            max_output_tokens=8192,
-            temperature=0.7,  # Slightly higher temperature for more conversational responses
+            max_output_tokens=131072,
+            temperature=0.3,  # Slightly higher temperature for more conversational responses
         )
         
         response = model.generate_content(
@@ -2043,4 +2043,4 @@ with tab2:
                     st.session_state.chat_messages.append({"role": "assistant", "content": error_message})
 
 st.sidebar.markdown("---")
-st.sidebar.info("This app uses the EeeBee API powered by Google Gemini.")
+st.sidebar.info("This app uses the EeeBee API powered by EeeBee.")
