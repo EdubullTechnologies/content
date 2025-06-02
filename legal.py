@@ -8,10 +8,7 @@ import pathlib
 import tempfile
 import os
 from datetime import datetime
-from reportlab.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
+
 
 # --- Configuration ---
 st.set_page_config(
@@ -61,7 +58,7 @@ except Exception as e:
 # --- Helper Functions ---
 
 def convert_word_to_pdf(word_bytes, filename):
-    """Convert Word document to PDF for better Gemini API compatibility."""
+    """Convert Word document to PDF using PyMuPDF for better Gemini API compatibility."""
     try:
         st.info("Converting Word document to PDF for analysis...")
         
@@ -92,54 +89,78 @@ def convert_word_to_pdf(word_bytes, filename):
             # Clean up Word temp file
             os.unlink(word_temp.name)
         
-        # Create PDF from extracted text
+        # Create PDF from extracted text using PyMuPDF
         pdf_filename = filename.replace('.docx', '.pdf').replace('.doc', '.pdf')
         pdf_temp_path = pathlib.Path(f"temp_converted_{pdf_filename}")
         
-        # Create PDF document
-        doc_pdf = SimpleDocTemplate(
-            str(pdf_temp_path),
-            pagesize=letter,
-            rightMargin=72,
-            leftMargin=72,
-            topMargin=72,
-            bottomMargin=18
-        )
+        # Create a new PDF document using PyMuPDF
+        pdf_doc = fitz.open()  # Create new PDF
         
-        # Define styles
-        styles = getSampleStyleSheet()
-        title_style = ParagraphStyle(
-            'CustomTitle',
-            parent=styles['Heading1'],
-            fontSize=16,
-            spaceAfter=30,
-            alignment=1  # Center alignment
-        )
+        # Page settings
+        page_width = 595  # A4 width in points
+        page_height = 842  # A4 height in points
+        margin = 50
         
-        normal_style = ParagraphStyle(
-            'CustomNormal',
-            parent=styles['Normal'],
-            fontSize=12,
-            spaceAfter=12,
-            leading=14
-        )
+        # Add title and content
+        content_lines = []
+        content_lines.append(f"Legal Document: {filename}")
+        content_lines.append("")  # Empty line
+        content_lines.extend(full_text)
         
-        # Build PDF content
-        story = []
+        # Create pages with text
+        current_page = pdf_doc.new_page(width=page_width, height=page_height)
+        y_position = page_height - margin
+        line_height = 15
         
-        # Add title
-        story.append(Paragraph(f"Legal Document: {filename}", title_style))
-        story.append(Spacer(1, 20))
-        
-        # Add document content
-        for line in full_text:
+        for line in content_lines:
+            # Check if we need a new page
+            if y_position < margin + line_height:
+                current_page = pdf_doc.new_page(width=page_width, height=page_height)
+                y_position = page_height - margin
+            
+            # Insert text
             if line.strip():
-                # Clean text for PDF
-                clean_line = line.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')
-                story.append(Paragraph(clean_line, normal_style))
+                # Wrap long lines
+                if len(line) > 80:
+                    words = line.split()
+                    current_line = ""
+                    for word in words:
+                        if len(current_line + word) < 80:
+                            current_line += word + " "
+                        else:
+                            if current_line:
+                                current_page.insert_text(
+                                    (margin, y_position), 
+                                    current_line.strip(), 
+                                    fontsize=11,
+                                    fontname="helv"
+                                )
+                                y_position -= line_height
+                            current_line = word + " "
+                    
+                    # Insert remaining text
+                    if current_line:
+                        current_page.insert_text(
+                            (margin, y_position), 
+                            current_line.strip(), 
+                            fontsize=11,
+                            fontname="helv"
+                        )
+                        y_position -= line_height
+                else:
+                    current_page.insert_text(
+                        (margin, y_position), 
+                        line, 
+                        fontsize=11,
+                        fontname="helv"
+                    )
+                    y_position -= line_height
+            else:
+                y_position -= line_height  # Empty line
         
-        # Build PDF
-        doc_pdf.build(story)
+        # Save PDF
+        pdf_doc.save(str(pdf_temp_path))
+        pdf_doc.close()
         
         # Read the created PDF
         with open(pdf_temp_path, 'rb') as pdf_file:
