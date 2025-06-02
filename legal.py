@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+import google.generativeai as genai  # Back to same as app.py
 import fitz  # PyMuPDF for PDF processing
 from docx import Document
 from PIL import Image
@@ -46,10 +46,10 @@ except KeyError:
     """)
     st.stop()
 
-# Initialize Google Gemini Client
+# Initialize Google Gemini Client - same as app.py
 try:
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel(model_name="gemini-2.5-pro-preview-05-06")
+    model = genai.GenerativeModel(model_name="gemini-2.5-pro-preview-05-06")  # Same as app.py
 except Exception as e:
     st.error(f"Error configuring Google Gemini client: {e}")
     st.stop()
@@ -92,10 +92,10 @@ def extract_text_from_word(word_bytes):
         return None
 
 def analyze_legal_document(file_bytes, filename, document_type, analysis_type, jurisdiction="Delhi, India"):
-    """Analyze legal document using Gemini API."""
+    """Analyze legal document using Gemini API - same pattern as app.py."""
     
     try:
-        # Save the uploaded file bytes to a temporary file
+        # Save the uploaded file bytes to a temporary file - same as app.py
         file_extension = pathlib.Path(filename).suffix.lower()
         temp_file_path = pathlib.Path(f"temp_legal_{filename}")
         
@@ -104,7 +104,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
 
         st.info(f"Uploading '{filename}' to LegalVet AI...")
         
-        # Determine MIME type
+        # Determine MIME type - same as app.py
         if file_extension == '.pdf':
             mime_type = "application/pdf"
         elif file_extension in ['.docx', '.doc']:
@@ -112,7 +112,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
         else:
             mime_type = "application/octet-stream"
         
-        # Upload the file using the File API
+        # Upload the file using the File API - same as app.py
         uploaded_file = genai.upload_file(
             path=temp_file_path, 
             display_name=filename, 
@@ -125,7 +125,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
         
         st.info(f"Analyzing {document_type} for {analysis_type}...")
         
-        # Generate analysis
+        # Generate analysis - same as app.py
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=131072,
             temperature=0.2,  # Lower temperature for more factual legal analysis
@@ -136,12 +136,12 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
             generation_config=generation_config
         )
 
-        # Check for issues
+        # Check for issues - same as app.py
         if response.candidates and response.candidates[0].finish_reason == 4:
             st.error("Content policy issue detected. Please ensure the document contains appropriate legal content.")
             return None, "Content Policy Error"
 
-        # Extract response text
+        # Extract response text - same as app.py
         if hasattr(response, 'text') and response.text:
             analysis_result = response.text
         else:
@@ -154,7 +154,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
             else:
                 raise Exception("No valid text content found in response")
 
-        # Clean up resources
+        # Clean up resources - same as app.py
         try:
             genai.delete_file(uploaded_file.name)
             st.info(f"Temporary file '{uploaded_file.display_name}' deleted from Gemini.")
@@ -168,7 +168,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
 
     except Exception as e:
         st.error(f"Error during legal document analysis: {e}")
-        # Clean up on error
+        # Clean up on error - same as app.py
         if 'uploaded_file' in locals():
             try:
                 genai.delete_file(uploaded_file.name)
@@ -469,7 +469,7 @@ Please provide comprehensive analysis including:
 """
 
 def generate_legal_chat_response(user_prompt, chat_history, uploaded_files, jurisdiction="Delhi, India"):
-    """Generate legal consultation response."""
+    """Generate legal consultation response - same pattern as app.py."""
     try:
         # Build context from chat history
         conversation_context = ""
@@ -521,10 +521,10 @@ Current legal query: {user_prompt}
 Please provide comprehensive legal assistance with proper legal reasoning, relevant precedents, and practical recommendations.
 """
 
-        # Prepare content for generation
+        # Prepare content for generation - same as app.py
         content_parts = [system_prompt]
         
-        # Add uploaded files if any
+        # Add uploaded files if any - same as app.py
         uploaded_file_objects = []
         if uploaded_files:
             for uploaded_file in uploaded_files:
@@ -535,7 +535,7 @@ Please provide comprehensive legal assistance with proper legal reasoning, relev
                     with open(temp_path, "wb") as f:
                         f.write(uploaded_file.getvalue())
                     
-                    # Determine MIME type
+                    # Determine MIME type - same as app.py
                     if file_extension == '.pdf':
                         mime_type = "application/pdf"
                     elif file_extension in ['.docx', '.doc']:
@@ -543,7 +543,7 @@ Please provide comprehensive legal assistance with proper legal reasoning, relev
                     else:
                         mime_type = "application/octet-stream"
                     
-                    # Upload to Gemini
+                    # Upload to Gemini - same as app.py
                     gemini_file = genai.upload_file(
                         path=temp_path, 
                         display_name=uploaded_file.name, 
@@ -558,7 +558,7 @@ Please provide comprehensive legal assistance with proper legal reasoning, relev
                 except Exception as e:
                     st.warning(f"Could not process {uploaded_file.name}: {e}")
 
-        # Generate response
+        # Generate response - same as app.py
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=131072,
             temperature=0.3,
@@ -569,14 +569,14 @@ Please provide comprehensive legal assistance with proper legal reasoning, relev
             generation_config=generation_config
         )
 
-        # Clean up uploaded files from Gemini
+        # Clean up uploaded files from Gemini - same as app.py
         for gemini_file in uploaded_file_objects:
             try:
                 genai.delete_file(gemini_file.name)
             except Exception as e:
                 pass
 
-        # Extract response text
+        # Extract response text - same as app.py
         if hasattr(response, 'text') and response.text:
             return response.text
         elif response.candidates and response.candidates[0].content:
