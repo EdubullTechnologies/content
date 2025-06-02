@@ -49,7 +49,7 @@ except KeyError:
 # Initialize Google Gemini Client
 try:
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
+    model = genai.GenerativeModel(model_name="gemini-2.5-pro-preview-05-06")
 except Exception as e:
     st.error(f"Error configuring Google Gemini client: {e}")
     st.stop()
