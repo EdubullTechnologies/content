@@ -8,6 +8,10 @@ import pathlib
 import tempfile
 import os
 from datetime import datetime
+from reportlab.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
 
 # --- Configuration ---
 st.set_page_config(
@@ -56,6 +60,101 @@ except Exception as e:
 
 # --- Helper Functions ---
 
+def convert_word_to_pdf(word_bytes, filename):
+    """Convert Word document to PDF for better Gemini API compatibility."""
+    try:
+        st.info("Converting Word document to PDF for analysis...")
+        
+        # Save Word bytes to temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as word_temp:
+            word_temp.write(word_bytes)
+            word_temp.flush()
+            
+            # Read Word document
+            doc = Document(word_temp.name)
+            
+            # Extract text content
+            full_text = []
+            for paragraph in doc.paragraphs:
+                if paragraph.text.strip():
+                    full_text.append(paragraph.text)
+            
+            # Also extract text from tables
+            for table in doc.tables:
+                for row in table.rows:
+                    row_text = []
+                    for cell in row.cells:
+                        if cell.text.strip():
+                            row_text.append(cell.text.strip())
+                    if row_text:
+                        full_text.append(" | ".join(row_text))
+            
+            # Clean up Word temp file
+            os.unlink(word_temp.name)
+        
+        # Create PDF from extracted text
+        pdf_filename = filename.replace('.docx', '.pdf').replace('.doc', '.pdf')
+        pdf_temp_path = pathlib.Path(f"temp_converted_{pdf_filename}")
+        
+        # Create PDF document
+        doc_pdf = SimpleDocTemplate(
+            str(pdf_temp_path),
+            pagesize=letter,
+            rightMargin=72,
+            leftMargin=72,
+            topMargin=72,
+            bottomMargin=18
+        )
+        
+        # Define styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=16,
+            spaceAfter=30,
+            alignment=1  # Center alignment
+        )
+        
+        normal_style = ParagraphStyle(
+            'CustomNormal',
+            parent=styles['Normal'],
+            fontSize=12,
+            spaceAfter=12,
+            leading=14
+        )
+        
+        # Build PDF content
+        story = []
+        
+        # Add title
+        story.append(Paragraph(f"Legal Document: {filename}", title_style))
+        story.append(Spacer(1, 20))
+        
+        # Add document content
+        for line in full_text:
+            if line.strip():
+                # Clean text for PDF
+                clean_line = line.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')
+                story.append(Paragraph(clean_line, normal_style))
+        
+        # Build PDF
+        doc_pdf.build(story)
+        
+        # Read the created PDF
+        with open(pdf_temp_path, 'rb') as pdf_file:
+            pdf_bytes = pdf_file.read()
+        
+        # Clean up PDF temp file
+        pdf_temp_path.unlink()
+        
+        st.success("Word document successfully converted to PDF!")
+        return pdf_bytes, pdf_filename
+        
+    except Exception as e:
+        st.error(f"Error converting Word to PDF: {e}")
+        return None, None
+
 def extract_text_from_pdf(pdf_bytes):
     """Extract text from PDF bytes."""
     try:
@@ -92,11 +191,26 @@ def extract_text_from_word(word_bytes):
         return None
 
 def analyze_legal_document(file_bytes, filename, document_type, analysis_type, jurisdiction="Delhi, India"):
-    """Analyze legal document using Gemini API - same pattern as app.py."""
+    """Analyze legal document using Gemini API - same pattern as app.py with Word to PDF conversion."""
     
     try:
-        # Save the uploaded file bytes to a temporary file - same as app.py
+        # Check if it's a Word document and convert to PDF
         file_extension = pathlib.Path(filename).suffix.lower()
+        original_filename = filename
+        
+        if file_extension in ['.docx', '.doc']:
+            # Convert Word to PDF automatically
+            converted_pdf_bytes, pdf_filename = convert_word_to_pdf(file_bytes, filename)
+            if converted_pdf_bytes is None:
+                return None, "Failed to convert Word document to PDF"
+            
+            # Use the converted PDF
+            file_bytes = converted_pdf_bytes
+            filename = pdf_filename
+            file_extension = '.pdf'
+            st.info(f"Using converted PDF: {pdf_filename}")
+        
+        # Save the file bytes to a temporary file - same as app.py
         temp_file_path = pathlib.Path(f"temp_legal_{filename}")
         
         with open(temp_file_path, "wb") as f:
@@ -104,11 +218,9 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
 
         st.info(f"Uploading '{filename}' to LegalVet AI...")
         
-        # Determine MIME type - same as app.py
+        # Set MIME type (will be PDF for converted Word docs)
         if file_extension == '.pdf':
             mime_type = "application/pdf"
-        elif file_extension in ['.docx', '.doc']:
-            mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         else:
             mime_type = "application/octet-stream"
         
@@ -121,7 +233,7 @@ def analyze_legal_document(file_bytes, filename, document_type, analysis_type, j
         st.success(f"'{filename}' uploaded successfully to LegalVet AI")
 
         # Create legal analysis prompt based on analysis type
-        prompt = create_legal_analysis_prompt(document_type, analysis_type, jurisdiction, filename)
+        prompt = create_legal_analysis_prompt(document_type, analysis_type, jurisdiction, original_filename)
         
         st.info(f"Analyzing {document_type} for {analysis_type}...")
         
@@ -531,22 +643,36 @@ Please provide comprehensive legal assistance with proper legal reasoning, relev
                 try:
                     # Save uploaded file temporarily
                     file_extension = pathlib.Path(uploaded_file.name).suffix.lower()
-                    temp_path = pathlib.Path(f"temp_chat_{uploaded_file.name}")
+                    file_bytes = uploaded_file.getvalue()
+                    original_filename = uploaded_file.name
+                    current_filename = uploaded_file.name
+                    
+                    # Convert Word documents to PDF for better compatibility
+                    if file_extension in ['.docx', '.doc']:
+                        converted_pdf_bytes, pdf_filename = convert_word_to_pdf(file_bytes, uploaded_file.name)
+                        if converted_pdf_bytes is not None:
+                            file_bytes = converted_pdf_bytes
+                            current_filename = pdf_filename
+                            file_extension = '.pdf'
+                            st.info(f"Chat: Converted {original_filename} to PDF")
+                        else:
+                            st.warning(f"Could not convert {uploaded_file.name} to PDF, skipping...")
+                            continue
+                    
+                    temp_path = pathlib.Path(f"temp_chat_{current_filename}")
                     with open(temp_path, "wb") as f:
-                        f.write(uploaded_file.getvalue())
+                        f.write(file_bytes)
                     
                     # Determine MIME type - same as app.py
                     if file_extension == '.pdf':
                         mime_type = "application/pdf"
-                    elif file_extension in ['.docx', '.doc']:
-                        mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     else:
                         mime_type = "application/octet-stream"
                     
                     # Upload to Gemini - same as app.py
                     gemini_file = genai.upload_file(
                         path=temp_path, 
-                        display_name=uploaded_file.name, 
+                        display_name=current_filename, 
                         mime_type=mime_type
                     )
                     uploaded_file_objects.append(gemini_file)
