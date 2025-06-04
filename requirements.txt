@@ -5,3 +5,5 @@ Pillow
 google-generativeai
 pathlib2
 reportlab
+openai
+requests
