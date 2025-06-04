@@ -1019,7 +1019,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Provide detailed explanations of ALL key concepts from the PDF
    - Include multiple examples for each concept
    - Use analogies and real-world connections to explain complex ideas
-   - Break down concepts into sub-concepts with clear explanations
+   - Break down concepts into sub-concepts with clear explanations, the sub concepts should be implicitly mentioned within the concept not as a seperate concept
    - Include scientific principles, formulas, or definitions where applicable
    - Give questions for each current concept - 3 MCQs, 2 Short questions, 1 Long question
    - Give activity according to the concept
