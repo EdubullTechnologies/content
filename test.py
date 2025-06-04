@@ -568,18 +568,36 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Clear introduction to each mathematical concept
     - Simple, clear mathematical language
     - Use analogies and mathematical examples
+    - Identify all subconcepts that will be covered under this main concept
     
-    **B. Mathematical Explanation** (400-500 words per concept)
-    - Detailed theoretical understanding of the mathematical concept
+    **B. Subconcepts (As per NCERT Books)**
+    - **IMPORTANT**: Identify and include ALL subconcepts present in NCERT books for this topic
+    - Each main concept typically has 2-5 subconcepts in NCERT mathematics books
+    - Subconcepts should be clearly labeled and integrated within the main concept
+    - Examples of subconcepts:
+      * For "Fractions": Types of fractions, Equivalent fractions, Comparing fractions, etc.
+      * For "Triangles": Types of triangles, Properties of triangles, Congruence, etc.
+      * For "Integers": Positive and negative integers, Operations on integers, Properties, etc.
+    - Each subconcept should include:
+      * Definition and explanation (100-150 words)
+      * Examples and illustrations
+      * Key points to remember
+      * Common errors to avoid
+    
+    **C. Mathematical Explanation** (400-500 words per concept including all subconcepts)
+    - Detailed theoretical understanding of the mathematical concept and its subconcepts
     - Include step-by-step mathematical reasoning and derivations
     - Show different mathematical approaches where applicable
+    - Ensure each subconcept is thoroughly explained with connections to the main concept
     
-    **C. Solved Examples** (500-600 words per concept)
+    **D. Solved Examples** (500-600 words per concept)
     - Provide 4-5 different worked examples for each concept
+    - Include examples that cover different subconcepts
     - Include step-by-step solutions with clear explanations
     - Use varied difficulty levels and question formats
+    - Ensure examples demonstrate application of all subconcepts
     
-    **D. Concept-Based Exercise Questions** (400-500 words per concept)
+    **E. Concept-Based Exercise Questions** (400-500 words per concept)
     Create the following specific mathematical question types for each concept:
     
     1. **Fill in the Blanks** - 3-4 questions
@@ -603,31 +621,31 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
        - Mixed question types testing various aspects of the concept
        - Include higher-order thinking and application problems
     
-    **E. Visuals** (Throughout each concept)
+    **F. Visuals** (Throughout each concept)
     - Include detailed image prompts for mathematical diagrams, graphs, and illustrations
     
-    **F. Mathematical Activities/Experiments** (200-250 words per concept)
+    **G. Mathematical Activities/Experiments** (200-250 words per concept)
     - Step-by-step mathematical experiments or investigations
     - Inquiry-based mathematical activities
     
-    **G. Check Your Understanding** (150-200 words per concept)
+    **H. Check Your Understanding** (150-200 words per concept)
     - Quick check questions (2-3 simple questions) to test immediate understanding
     - Brief conceptual questions or simple calculations
     
-    **H. Key Mathematical Terms** (100-150 words per concept)
+    **I. Key Mathematical Terms** (100-150 words per concept)
     - Highlighted mathematical terminology in text
     - Clear mathematical definitions
     
-    **I. Mathematical Applications** (200-250 words per concept)
+    **J. Mathematical Applications** (200-250 words per concept)
     - Show relevance to daily life, mathematical careers, technology
     
-    **J. Fun Mathematical Facts** (100-150 words per concept)
+    **K. Fun Mathematical Facts** (100-150 words per concept)
     - Include interesting mathematical facts related to the concept
     
-    **K. Think About It! (Mathematical Exploration)** (100-150 words per concept)
+    **L. Think About It! (Mathematical Exploration)** (100-150 words per concept)
     - Present thought-provoking mathematical questions or scenarios
     
-    **L. Mental Mathematics** (150-200 words per concept)
+    **M. Mental Mathematics** (150-200 words per concept)
     - Provide mental mathematics strategies and techniques
 
 ## III. Special Features (Apply to the ENTIRE chapter, not just one section)
