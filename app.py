@@ -209,7 +209,7 @@ Provide the complete, rewritten chapter text in Markdown format, incorporating a
         # Use the uploaded file in the prompt
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=65536, # Explicitly set max output tokens
-            temperature=0.3,  # Add some creativity to avoid direct copying
+            temperature=0.0,  # Add some creativity to avoid direct copying
         )
         response = model.generate_content(
             [uploaded_file, prompt_content],
@@ -421,7 +421,7 @@ Do not include analysis or explanations - just the rewritten content.
             try:
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=32768,
-                    temperature=0.3,
+                    temperature=0.0,
                 )
                 
                 # Send the full PDF but instruct to focus on specific pages
@@ -1244,12 +1244,12 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             if subject_type == "Mathematics" and content_type == "chapter":
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=131072,  # Doubled for multi-section math chapters
-                    temperature=0.3,
+                    temperature=0.0,
                 )
             else:
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=131072,
-                    temperature=0.3,
+                    temperature=0.0,
                 )
             
             response = model.generate_content(
@@ -1363,7 +1363,7 @@ Format your analysis in Markdown. This is just an intermediate step - don't crea
             try:
                 generation_config = genai.types.GenerationConfig(
                     max_output_tokens=32768,
-                    temperature=0.3,
+                    temperature=0.0,
                 )
                 
                 # Send the full PDF but instruct to focus on specific pages
@@ -1451,12 +1451,12 @@ Ensure it is cohesive, well-structured, and follows all the requirements for {co
             if subject_type == "Mathematics" and content_type == "chapter":
                 integration_config = genai.types.GenerationConfig(
                     max_output_tokens=131072,  # Doubled for multi-section math chapters
-                    temperature=0.3,  # Lower temperature for more coherent integration
+                    temperature=0.0,  # Lower temperature for more coherent integration
                 )
             else:
                 integration_config = genai.types.GenerationConfig(
                     max_output_tokens=131072,
-                    temperature=0.3,  # Lower temperature for more coherent integration
+                    temperature=0.0,  # Lower temperature for more coherent integration
                 )
             
             final_response = model.generate_content(
@@ -1591,7 +1591,7 @@ Current user question: {user_prompt}"""
         # Generate response
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=131072,
-            temperature=0.3,  # Slightly higher temperature for more conversational responses
+            temperature=0.0,  # Slightly higher temperature for more conversational responses
         )
         
         response = model.generate_content(
