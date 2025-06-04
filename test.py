@@ -579,8 +579,9 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
       * For "Triangles": Types of triangles, Properties of triangles, Congruence, etc.
       * For "Integers": Positive and negative integers, Operations on integers, Properties, etc.
     - Each subconcept should include:
-      * Definition and explanation (100-150 words)
-      * Examples and illustrations
+      * Introduction (60-80 words)
+      * Definition and explanation
+      * 2 Examples with solution
       * Key points to remember
       * Common errors to avoid
     
