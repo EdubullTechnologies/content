@@ -60,7 +60,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "openai/gpt-4.1"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "openai/o3"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
