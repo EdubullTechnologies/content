@@ -2164,25 +2164,25 @@ with tab1:
         
         with col1:
             st.markdown("**Core Sections**")
-            hook_words = st.number_input("Hook (words)", min_value=20, max_value=200, value=80, step=10, key="hook_words")
-            learning_outcome_words = st.number_input("Learning Outcome (words)", min_value=30, max_value=200, value=70, step=10, key="learning_outcome_words")
-            real_world_words = st.number_input("Real World Connection (words)", min_value=30, max_value=150, value=50, step=10, key="real_world_words")
-            previous_class_words = st.number_input("Previous Class Concept (words)", min_value=30, max_value=200, value=100, step=10, key="previous_class_words")
-            history_words = st.number_input("History (words)", min_value=50, max_value=300, value=100, step=10, key="history_words")
+            hook_words = st.number_input("Hook (words)", min_value=20, value=80, step=10, key="hook_words")
+            learning_outcome_words = st.number_input("Learning Outcome (words)", min_value=30, value=70, step=10, key="learning_outcome_words")
+            real_world_words = st.number_input("Real World Connection (words)", min_value=30, value=50, step=10, key="real_world_words")
+            previous_class_words = st.number_input("Previous Class Concept (words)", min_value=30, value=100, step=10, key="previous_class_words")
+            history_words = st.number_input("History (words)", min_value=50, value=100, step=10, key="history_words")
         
         with col2:
             st.markdown("**Main Content**")
-            current_concepts_words = st.number_input("Current Concepts (words)", min_value=500, max_value=8000, value=1200, step=100, key="current_concepts_words")
-            summary_words = st.number_input("Summary (words)", min_value=300, max_value=1500, value=700, step=50, key="summary_words")
-            link_learn_words = st.number_input("Link and Learn Questions (words)", min_value=100, max_value=500, value=250, step=25, key="link_learn_words")
-            image_based_words = st.number_input("Image Based Questions (words)", min_value=100, max_value=500, value=250, step=25, key="image_based_words")
+            current_concepts_words = st.number_input("Current Concepts (words)", min_value=500, value=1200, step=100, key="current_concepts_words")
+            summary_words = st.number_input("Summary (words)", min_value=300, value=700, step=50, key="summary_words")
+            link_learn_words = st.number_input("Link and Learn Questions (words)", min_value=100, value=250, step=25, key="link_learn_words")
+            image_based_words = st.number_input("Image Based Questions (words)", min_value=100, value=250, step=25, key="image_based_words")
         
         with col3:
             st.markdown("**Activities & Exercises**")
-            exercises_words = st.number_input("Exercise Questions (words)", min_value=300, max_value=2000, value=800, step=50, key="exercises_words")
-            skill_activity_words = st.number_input("Skill Activities (words)", min_value=200, max_value=1000, value=400, step=50, key="skill_activity_words")
-            stem_activity_words = st.number_input("STEM Activities (words)", min_value=200, max_value=1000, value=400, step=50, key="stem_activity_words")
-            art_learning_words = st.number_input("Art Learning (words)", min_value=200, max_value=1000, value=400, step=50, key="art_learning_words")
+            exercises_words = st.number_input("Exercise Questions (words)", min_value=300, value=800, step=50, key="exercises_words")
+            skill_activity_words = st.number_input("Skill Activities (words)", min_value=200, value=400, step=50, key="skill_activity_words")
+            stem_activity_words = st.number_input("STEM Activities (words)", min_value=200, value=400, step=50, key="stem_activity_words")
+            art_learning_words = st.number_input("Art Learning (words)", min_value=200, value=400, step=50, key="art_learning_words")
 
         # Store word limits in session state
         st.session_state.word_limits = {
