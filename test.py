@@ -460,7 +460,7 @@ def create_word_document(improved_text_markdown):
     return doc
 
 # Helper Functions for Content Generation
-def create_specific_prompt(content_type, grade_level, model_progression_text, subject_type="General", word_limits=None):
+def create_specific_prompt(content_type, grade_level, model_progression_text, subject_type="Science", word_limits=None):
     """Creates a prompt focused on a specific content type"""
     
     if subject_type == "Mathematics":
@@ -474,13 +474,13 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
             return create_math_art_prompt(grade_level, model_progression_text, word_limits)
     else:
         if content_type == "chapter":
-            return create_general_chapter_prompt(grade_level, model_progression_text, word_limits)
+            return create_science_chapter_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "exercises":
-            return create_general_exercises_prompt(grade_level, model_progression_text, word_limits)
+            return create_science_exercises_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "skills":
-            return create_general_skills_prompt(grade_level, model_progression_text, word_limits)
+            return create_science_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
-            return create_general_art_prompt(grade_level, model_progression_text, word_limits)
+            return create_science_art_prompt(grade_level, model_progression_text, word_limits)
 
 # Mathematics-specific prompt functions
 def create_math_chapter_prompt(grade_level, model_progression_text, word_limits=None):
@@ -717,8 +717,12 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 Provide ONLY the comprehensive mathematics chapter content in Markdown format. Remember to include EVERY section found in the PDF document.
 """
 
-def create_math_exercises_prompt(grade_level, model_progression_text):
-    """Creates a mathematics-specific exercises prompt"""
+def create_math_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a mathematics-specific exercises prompt with dynamic word limits"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 800
+        }
     return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -730,6 +734,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 ---
 
 Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapter content in the PDF.
+**Total Word Count for All Exercises**: {word_limits['exercises']} words
 
 **Core Mathematical Exercise Types:**
 1. **MCQ (Multiple Choice Questions)** - at least 12 questions with detailed solutions
@@ -760,8 +765,13 @@ Ensure that:
 Provide ONLY the comprehensive mathematical exercises in Markdown format.
 """
 
-def create_math_skills_prompt(grade_level, model_progression_text):
-    """Creates a mathematics-specific skills and STEM activities prompt"""
+def create_math_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a mathematics-specific skills and STEM activities prompt with dynamic word limits"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activity': 400,
+            'stem_activity': 400
+        }
     return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -774,7 +784,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 
 Your task is to generate MATHEMATICAL SKILL-BASED ACTIVITIES and STEM projects.
 
-## Mathematical Skill-Based Activities
+## Mathematical Skill-Based Activities ({word_limits['skill_activity']} words)
 
 Create at least 3 comprehensive mathematical activities:
 
@@ -795,7 +805,7 @@ Create at least 3 comprehensive mathematical activities:
 - Mathematical Pattern Recognition Activities
 - Mathematical Measurement and Data Collection
 
-## Mathematical STEM Projects
+## Mathematical STEM Projects ({word_limits['stem_activity']} words)
 
 Create at least 2 comprehensive projects that integrate mathematics with Science, Technology, and Engineering:
 
@@ -820,8 +830,12 @@ Format the content in Markdown with proper mathematical notation.
 Provide ONLY the Mathematical Skill Activities and STEM Projects in Markdown format.
 """
 
-def create_math_art_prompt(grade_level, model_progression_text):
-    """Creates a mathematics-specific art integration prompt"""
+def create_math_art_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a mathematics-specific art integration prompt with dynamic word limits"""
+    if word_limits is None:
+        word_limits = {
+            'art_learning': 400
+        }
     return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -833,6 +847,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 ---
 
 Your task is to generate MATHEMATICS-INTEGRATED CREATIVE LEARNING projects.
+**Total Word Count for All Art-Integrated Learning**: {word_limits['art_learning']} words
 
 ## Mathematical Art Projects
 
@@ -884,9 +899,9 @@ Format the content in Markdown with proper mathematical notation.
 Provide ONLY the Mathematics-Integrated Creative Learning content in Markdown format.
 """
 
-# General subject prompt functions (same as before)
-def create_general_chapter_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates a general subject chapter content prompt with dynamic word limits"""
+# Science subject prompt functions
+def create_science_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a science subject chapter content prompt with dynamic word limits"""
     # Default word limits if none provided
     if word_limits is None:
         word_limits = {
@@ -898,239 +913,344 @@ def create_general_chapter_prompt(grade_level, model_progression_text, word_limi
             'current_concepts': 1200,
             'summary': 700,
             'link_learn': 250,
-            'image_based': 250
+            'image_based': 250,
+            'exercises': 800,
+            'skill_activity': 400,
+            'stem_activity': 400,
+            'art_learning': 400
         }
     
-    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+    return f"""You are an expert in science education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
 IMPORTANT: This is the user's own copyright material, and they have explicitly authorized its analysis and transformation for educational purposes.
 
-You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
-The book is intended to align with NCERT, NCF, and NEP 2020 guidelines.
+You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
+The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Science education.
 
 **Model Chapter Progression and Elements:**
 ---
 {model_progression_text}
 ---
 
-**Target Audience:** {grade_level} (CBSE Syllabus)
+**Target Audience:** {grade_level} (CBSE Science Syllabus)
 
-Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equivalent to a complete textbook chapter.
+Your task is to generate COMPREHENSIVE CORE SCIENCE CHAPTER CONTENT that should be equivalent to a complete science textbook chapter.
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
 
 1. **Current Concepts** ({word_limits['current_concepts']} words minimum)
-   - Provide detailed explanations of ALL key concepts from the PDF
-   - Include multiple examples for each concept
-   - Use analogies and real-world connections to explain complex ideas
-   - Break down concepts into sub-concepts with clear explanations
+   - Provide detailed explanations of ALL key scientific concepts from the PDF
+   - Include multiple scientific examples for each concept
+   - Use analogies and real-world scientific connections to explain complex ideas
+   - Break down concepts into scientific sub-concepts with clear explanations
    - Include scientific principles, formulas, or definitions where applicable
    - Give questions for each current concept - 3 MCQs, 2 Short questions, 1 Long question
-   - Give activity according to the concept
-   - Give fun fact for each concept
-   - Give key points for each concept
-   - Give common misconceptions for each concept
+   - Give scientific activity according to the concept
+   - Give fun scientific fact for each concept
+   - Give key scientific points for each concept
+   - Give common scientific misconceptions for each concept
    - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding
    - Make sure there is no repetition of concepts
 
 2. **Hook (with Image Prompt)** ({word_limits['hook']} words)
-   - Create an engaging opening that captures student interest
-   - Use storytelling, surprising facts, or thought-provoking questions
-   - Connect to students' daily experiences or current events
-   - Include a detailed image prompt for a compelling visual
+   - Create an engaging scientific opening that captures student interest
+   - Use scientific storytelling, surprising scientific facts, or thought-provoking scientific questions
+   - Connect to students' daily scientific experiences or current scientific events
+   - Include a detailed image prompt for a compelling scientific visual
 
 3. **Learning Outcome** ({word_limits['learning_outcome']} words)
-   - List specific, measurable learning objectives
-   - Use action verbs (analyze, evaluate, create, etc.)
-   - Align with Bloom's Taxonomy levels
-   - Connect to CBSE curriculum standards
+   - List specific, measurable scientific learning objectives
+   - Use action verbs (analyze, evaluate, create, experiment, investigate, etc.)
+   - Align with Bloom's Taxonomy levels for science education
+   - Connect to CBSE science curriculum standards
 
 4. **Real World Connection** ({word_limits['real_world']} words)
-   - Provide multiple real-world applications of the concepts
-   - Include current examples from technology, environment, health, etc.
-   - Explain how the concepts impact daily life
-   - Connect to career opportunities and future studies
+   - Provide multiple real-world applications of the scientific concepts
+   - Include current examples from technology, environment, health, space science, etc.
+   - Explain how the scientific concepts impact daily life
+   - Connect to scientific careers and future studies
 
 5. **Previous Class Concept** ({word_limits['previous_class']} words)
-   - Give the concept name and the previous class it was studied in according to NCERT textbooks
+   - Give the scientific concept name and the previous class it was studied in according to NCERT science textbooks
+   - Link to prior scientific knowledge and foundations
 
 6. **History** ({word_limits['history']} words)
-   - Provide comprehensive historical background
-   - Include key scientists, inventors, or historical figures
-   - Explain the timeline of discoveries or developments
-   - Connect historical context to modern understanding
+   - Provide comprehensive historical background of scientific discoveries
+   - Include key scientists, inventors, or scientific figures and their contributions
+   - Explain the timeline of scientific developments and discoveries
+   - Connect historical scientific context to modern understanding
 
 7. **Summary** ({word_limits['summary']} words)
-   - Create detailed concept-wise summaries (not just one overall summary)
-   - Include key points, formulas, and important facts
-   - Organize by individual concepts covered in the chapter
-   - Provide clear, concise explanations that reinforce learning
+   - Create detailed concept-wise scientific summaries (not just one overall summary)
+   - Include key scientific points, formulas, and important scientific facts
+   - Organize by individual scientific concepts covered in the chapter
+   - Provide clear, concise explanations that reinforce scientific learning
 
 8. **Link and Learn Based Question** ({word_limits['link_learn']} words)
-   - Create 3-5 questions that connect different concepts
-   - Include questions that link to other subjects or real-world scenarios
-   - Provide detailed explanations for the connections
+   - Create 3-5 questions that connect different scientific concepts
+   - Include questions that link to other science subjects or real-world scientific scenarios
+   - Provide detailed explanations for the scientific connections
 
 9. **Image Based Question** ({word_limits['image_based']} words)
-   - Create 3-5 questions based on images/diagrams from the chapter
-   - Include detailed image descriptions if creating new image prompts
-   - Ensure questions test understanding, not just observation
+   - Create 3-5 questions based on scientific images/diagrams from the chapter
+   - Include detailed scientific image descriptions if creating new image prompts
+   - Ensure questions test scientific understanding, not just observation
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 6000-7000 words for the complete chapter content
-* **Detailed Explanations**: Each concept should be explained thoroughly with multiple paragraphs
-* **Examples and Illustrations**: Include numerous examples, case studies, and practical applications
-* **Age-Appropriate Language**: Use vocabulary suitable for {grade_level} but don't oversimplify
-* **Engaging Tone**: Write in an engaging, conversational style that maintains student interest
-* **Clear Structure**: Use proper headings, subheadings, and formatting
-* **Visual Integration**: Include detailed image prompts throughout the content
+* **Minimum Total Length**: 6000-7000 words for the complete science chapter content
+* **Scientific Accuracy**: Ensure all scientific content is accurate and up-to-date
+* **Detailed Scientific Explanations**: Each scientific concept should be explained thoroughly with multiple paragraphs
+* **Scientific Examples and Illustrations**: Include numerous scientific examples, case studies, and practical applications
+* **Age-Appropriate Scientific Language**: Use scientific vocabulary suitable for {grade_level} but don't oversimplify
+* **Engaging Scientific Tone**: Write in an engaging, conversational style that maintains student interest in science
+* **Clear Scientific Structure**: Use proper headings, subheadings, and formatting for science content
+* **Visual Integration**: Include detailed image prompts for scientific diagrams, experiments, and illustrations
 
 **FORMATTING REQUIREMENTS:**
 * Use Markdown formatting with clear headings (# ## ###)
-* Include bullet points and numbered lists where appropriate
-* Use **bold** for key terms and *italics* for emphasis
-* Create well-structured paragraphs (3-5 sentences each)
-* Include image prompts marked as: [PROMPT FOR NEW IMAGE: detailed description]
+* Include bullet points and numbered lists where appropriate for scientific content
+* Use **bold** for key scientific terms and *italics* for emphasis
+* Create well-structured paragraphs (3-5 sentences each) explaining scientific concepts
+* Include image prompts marked as: [PROMPT FOR NEW IMAGE: detailed scientific description]
 
-**QUALITY STANDARDS:**
-* Each section should be substantial and comprehensive
-* Avoid superficial coverage - go deep into each topic
-* Include multiple perspectives and approaches to concepts
-* Ensure content flows logically from one section to the next
-* Maintain consistency in terminology and explanations
+**SCIENTIFIC QUALITY STANDARDS:**
+* Each section should be scientifically substantial and comprehensive
+* Avoid superficial coverage - go deep into each scientific topic
+* Include multiple scientific perspectives and approaches to concepts
+* Ensure content flows logically from one scientific concept to the next
+* Maintain consistency in scientific terminology and explanations
+* Connect scientific concepts to real-world applications and current scientific research
+* Include age-appropriate scientific investigations and inquiry-based learning
 
-Analyze the PDF document thoroughly and create improved content that expands significantly on what's provided while maintaining all original concept names and terminology.
+Analyze the PDF document thoroughly and create improved scientific content that expands significantly on what's provided while maintaining all original concept names and terminology.
 
-Provide ONLY the comprehensive chapter content in Markdown format. Do not include exercises, activities, or art projects.
+Provide ONLY the comprehensive science chapter content in Markdown format. Do not include exercises, activities, or art projects.
 """
 
-def create_general_exercises_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates a general subject exercises prompt"""
+def create_science_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a science subject exercises prompt with dynamic word limits"""
     if word_limits is None:
         word_limits = {
             'exercises': 800
         }
-    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+    return f"""You are an expert in science education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
-You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 
 **Model Chapter Progression and Elements:**
 ---
 {model_progression_text}
 ---
 
-Your task is to generate COMPREHENSIVE EXERCISES based on the chapter content in the PDF.
+Your task is to generate COMPREHENSIVE SCIENCE EXERCISES based on the chapter content in the PDF.
+**Total Word Count for All Exercises**: {word_limits['exercises']} words
 
-Create the following exercise types:
-1. MCQ (Multiple Choice Questions) - at least 10 questions
-2. Assertion and Reason - at least 5 questions
-3. Fill in the Blanks - at least 10 questions
-4. True False - at least 10 statements
-5. Define the following terms - at least 10 terms
-6. Match the column - at least 2 sets with 5 matches each
-7. Give Reason for the following Statement (Easy Level) - at least 5 questions
-8. Answer in Brief (Moderate Level) - at least 5 questions
-9. Answer in Detail (Hard Level) - at least 5 questions
+**Core Science Exercise Types:**
+
+Create the following science exercise types:
+1. **MCQ (Multiple Choice Questions)** - at least 10 questions with scientific reasoning
+2. **Assertion and Reason (Scientific)** - at least 5 questions testing scientific logic
+3. **Fill in the Blanks (Scientific)** - at least 10 questions focusing on scientific terms
+4. **True False (Scientific)** - at least 10 statements with scientific justification
+5. **Define the following scientific terms** - at least 10 terms from the chapter
+6. **Match the column (Scientific)** - at least 2 sets with 5 scientific matches each
+7. **Give Reason for the following Scientific Statement (Easy Level)** - at least 5 questions
+8. **Answer in Brief (Moderate Level)** - at least 5 questions on scientific concepts
+9. **Answer in Detail (Hard Level)** - at least 5 questions requiring scientific explanation
+
+**Special Science Features:**
+- **Scientific Investigation Questions**: Include questions that require scientific thinking
+- **Experimental Design**: Questions about planning and conducting scientific experiments
+- **Data Analysis**: Questions involving interpretation of scientific data and graphs
+- **Real-world Applications**: Connect scientific concepts to everyday phenomena
+- **Cross-curricular Connections**: Link science to mathematics, technology, and environment
 
 Ensure that:
-* Questions cover ALL important concepts from the PDF
+* Questions cover ALL important scientific concepts from the PDF
 * Questions follow Bloom's Taxonomy at various levels (Remember, Understand, Apply, Analyze, Evaluate, Create)
-* Language is clear and appropriate for {grade_level}
-* Questions increase in difficulty from basic recall to higher-order thinking
-* All exercises include correct answers or model solutions
-* The content is formatted in Markdown with proper headings and organization
+* Scientific language is clear and appropriate for {grade_level}
+* Questions increase in difficulty from basic scientific recall to higher-order scientific thinking
+* All exercises include correct answers or model scientific solutions
+* Content is formatted in Markdown with proper scientific notation
+* Questions encourage scientific inquiry and critical thinking
+* Include questions that test understanding of scientific processes and methods
 
-Do NOT directly copy questions from the PDF. Create new, original questions based on the content.
+Do NOT directly copy questions from the PDF. Create new, original scientific questions based on the content.
 
-Provide ONLY the exercises in Markdown format.
+Provide ONLY the comprehensive science exercises in Markdown format.
 """
 
-def create_general_skills_prompt(grade_level, model_progression_text):
-    """Creates a general subject skills and STEM activities prompt"""
-    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+def create_science_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a science subject skills and STEM activities prompt with dynamic word limits"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activity': 400,
+            'stem_activity': 400
+        }
+    return f"""You are an expert in science education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
-You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 
 **Model Chapter Progression and Elements:**
 ---
 {model_progression_text}
 ---
 
-Your task is to generate SKILL-BASED ACTIVITIES and STEM projects based on the chapter content in the PDF.
+Your task is to generate SCIENCE SKILL-BASED ACTIVITIES and STEM projects based on the chapter content in the PDF.
 
-Create the following:
-1. Skill-based Activities - At least 3 hands-on activities that:
-   * Reinforce the key concepts from the chapter
-   * Develop practical skills relevant to the subject
-   * Can be completed with easily available materials
-   * Include clear step-by-step instructions
+## Science Skill-Based Activities ({word_limits['skill_activity']} words)
 
-2. Activity Time – STEM Projects - At least 2 projects that:
-   * Integrate Science, Technology, Engineering and Mathematics
-   * Connect to real-world applications of the chapter concepts
-   * Encourage problem-solving and critical thinking
-   * Include materials needed, procedure, and expected outcomes
+Create at least 3 hands-on science activities that:
+* Reinforce the key scientific concepts from the chapter
+* Develop practical scientific skills relevant to the subject
+* Can be completed with easily available scientific materials
+* Include clear step-by-step scientific procedures
+* Encourage scientific observation and data collection
+* Connect to scientific method and inquiry-based learning
+
+**Activity Structure for Each:**
+1. **Clear Scientific Objective**
+2. **Scientific Materials Required**
+3. **Step-by-Step Scientific Procedure**
+4. **Scientific Observations to Record**
+5. **Data Collection and Analysis**
+6. **Safety Precautions for Science Activities**
+7. **Scientific Reflection Questions**
+8. **Expected Scientific Outcomes and Learning**
+
+## Science STEM Projects ({word_limits['stem_activity']} words)
+
+Create at least 2 comprehensive STEM projects that:
+* Integrate Science, Technology, Engineering and Mathematics
+* Connect to real-world scientific applications of the chapter concepts
+* Encourage scientific problem-solving and critical thinking
+* Include scientific materials needed, procedure, and expected outcomes
+* Promote scientific investigation and evidence-based conclusions
+* Link to current scientific research and technological developments
+
+**STEM Project Structure for Each:**
+1. **Scientific Integration Focus**
+2. **Real-World Scientific Application**
+3. **Technology Integration in Science**
+4. **Engineering Design Challenge**
+5. **Mathematical Analysis of Scientific Data**
+6. **Scientific Methodology and Process**
+7. **Scientific Communication and Presentation**
+8. **Assessment Criteria for Scientific Understanding**
+
+**Special Science Features:**
+- **Scientific Investigation**: Include projects that require hypothesis formation and testing
+- **Environmental Connections**: Link activities to environmental science and sustainability
+- **Technology Integration**: Use digital tools for data collection and analysis
+- **Career Connections**: Connect to science, technology, engineering careers
+- **Safety First**: Emphasize scientific safety protocols in all activities
 
 For each activity/project, include:
-* A clear title and objective
-* Materials required
-* Detailed procedure with steps
-* Safety precautions where applicable
-* Questions for reflection
-* Expected outcomes or learning points
+* A clear scientific title and learning objective
+* Complete list of scientific materials required
+* Detailed scientific procedure with numbered steps
+* Safety precautions for scientific activities
+* Scientific observation charts and data collection sheets
+* Reflection questions that promote scientific thinking
+* Expected scientific outcomes and learning points
+* Connections to scientific careers and real-world applications
 
-Format the content in Markdown with proper headings, lists, and organization.
+Format the content in Markdown with proper scientific headings, lists, and organization.
 
-Provide ONLY the Skill Activities and STEM Projects in Markdown format.
+Provide ONLY the Science Skill Activities and STEM Projects in Markdown format.
 """
 
-def create_general_art_prompt(grade_level, model_progression_text):
-    """Creates a general subject art integration prompt"""
-    return f"""You are an expert in educational content development, specifically for CBSE curriculum.
+def create_science_art_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a science subject art integration prompt with dynamic word limits"""
+    if word_limits is None:
+        word_limits = {
+            'art_learning': 400
+        }
+    return f"""You are an expert in science education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
-You are analyzing a book chapter intended for **{grade_level} (CBSE)**.
+You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 
 **Model Chapter Progression and Elements:**
 ---
 {model_progression_text}
 ---
 
-Your task is to generate ART-INTEGRATED LEARNING projects based on the chapter content in the PDF.
+Your task is to generate SCIENCE-INTEGRATED CREATIVE LEARNING projects based on the chapter content in the PDF.
+**Total Word Count for All Art-Integrated Learning**: {word_limits['art_learning']} words
 
-Create the following:
-1. Creativity – Art Projects - At least 3 creative projects that:
-   * Connect the chapter concepts to various art forms (visual arts, music, drama, etc.)
-   * Allow for creative expression while reinforcing learning
-   * Can be completed with commonly available art supplies
-   * Are age-appropriate for {grade_level} students
+## Science Art Projects
 
-2. Case Study – Level 1 - At least 1 simpler case study that:
-   * Presents a real-world scenario related to the chapter concepts
-   * Includes guiding questions for analysis
-   * Is accessible to all students
+Create at least 3 creative projects that connect scientific concepts to various art forms:
 
-3. Case Study – Level 2 - At least 1 more complex case study that:
-   * Challenges students with a multi-faceted scenario
-   * Requires deeper application of chapter concepts
-   * Encourages higher-order thinking skills
+**Project Structure for Each:**
+1. **Scientific Learning Objective**
+2. **Art Form Integration with Science**
+3. **Scientific Concepts Highlighted**
+4. **Materials and Scientific Tools**
+5. **Step-by-Step Scientific-Artistic Process**
+6. **Scientific Observation and Documentation**
+7. **Scientific Reflection and Analysis**
+8. **Showcase and Scientific Communication**
+
+**Types of Science Art Integration:**
+- **Scientific Visualization**: Create artistic representations of scientific processes
+- **Science Through Music**: Use rhythm and sound to represent scientific patterns
+- **Scientific Drama**: Act out scientific processes and phenomena
+- **Digital Science Art**: Use technology to create scientific visualizations
+- **Scientific Models and Sculptures**: 3D representations of scientific concepts
+
+## Scientific Case Studies
+
+**Case Study – Level 1 (Accessible Scientific Analysis):**
+Create at least 1 simpler case study that:
+- Presents a real-world scientific scenario appropriate for {grade_level}
+- Includes guided scientific analysis questions
+- Is accessible to all students with basic scientific knowledge
+- Connects to current scientific events or discoveries
+
+**Case Study – Level 2 (Advanced Scientific Challenge):**
+Create at least 1 more complex case study that:
+- Challenges students with multi-step scientific problems
+- Requires deeper application of scientific concepts
+- Encourages higher-order scientific thinking skills
+- Includes data analysis and scientific reasoning
+
+**Scientific Case Study Structure for Each:**
+1. **Real-World Scientific Context**
+2. **Scientific Background Information**
+3. **Guided Scientific Questions**
+4. **Scientific Data and Evidence**
+5. **Analysis Requirements**
+6. **Creative Scientific Solutions**
+7. **Scientific Communication Component**
+8. **Extension Scientific Challenges**
+
+**Special Science Integration Features:**
+- **Environmental Connections**: Link art projects to environmental science
+- **Scientific Method Integration**: Include hypothesis, observation, and conclusion
+- **Technology Tools**: Use digital tools for scientific art creation
+- **Scientific Communication**: Present findings through artistic expression
+- **Cross-Curricular Connections**: Connect science to mathematics, geography, and history
 
 For each project/case study, include:
-* A clear title and learning objective
-* Materials needed (for art projects)
-* Detailed instructions or scenario description
-* Guiding questions or reflection points
-* Assessment criteria or expected outcomes
+* A clear scientific title and learning objective
+* Complete list of materials needed (scientific and artistic supplies)
+* Detailed scientific-artistic instructions or scenario description
+* Scientific observation sheets and reflection questions
+* Assessment criteria for both scientific understanding and creative expression
+* Connections to scientific careers and real-world applications
+* Safety considerations for scientific art activities
 
-Format the content in Markdown with proper headings, lists, and organization.
+Format the content in Markdown with proper scientific and artistic headings, lists, and organization.
 
-Provide ONLY the Art-Integrated Learning content in Markdown format.
+Provide ONLY the Science-Integrated Creative Learning content in Markdown format.
 """
 
-def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="General", word_limits=None, use_chunked=False, use_openrouter_method=False):
+def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False):
     """Generates specific content based on content type"""
     if not use_chunked:
         # Standard approach
@@ -1979,8 +2099,8 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["General (Uses Model Chapter Progression)", "Mathematics"],
-        help="Choose 'Mathematics' for math-specific content structure or 'General' for other subjects.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics"],
+        help="Choose 'Mathematics' for math-specific content structure or 'Science' for science subjects.",
         key="subject_selector_tab1"
     )
 
@@ -2535,7 +2655,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["General Education", "Mathematics", "Science", "Social Studies", "English", "Hindi", "Other"],
+            ["Science Education", "Mathematics", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
