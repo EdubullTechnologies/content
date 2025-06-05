@@ -60,7 +60,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-flash-preview-05-20"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "anthropic/claude-sonnet-4"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
@@ -460,31 +460,45 @@ def create_word_document(improved_text_markdown):
     return doc
 
 # Helper Functions for Content Generation
-def create_specific_prompt(content_type, grade_level, model_progression_text, subject_type="General"):
+def create_specific_prompt(content_type, grade_level, model_progression_text, subject_type="General", word_limits=None):
     """Creates a prompt focused on a specific content type"""
     
     if subject_type == "Mathematics":
         if content_type == "chapter":
-            return create_math_chapter_prompt(grade_level, model_progression_text)
+            return create_math_chapter_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "exercises":
-            return create_math_exercises_prompt(grade_level, model_progression_text)
+            return create_math_exercises_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "skills":
-            return create_math_skills_prompt(grade_level, model_progression_text)
+            return create_math_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
-            return create_math_art_prompt(grade_level, model_progression_text)
+            return create_math_art_prompt(grade_level, model_progression_text, word_limits)
     else:
         if content_type == "chapter":
-            return create_general_chapter_prompt(grade_level, model_progression_text)
+            return create_general_chapter_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "exercises":
-            return create_general_exercises_prompt(grade_level, model_progression_text)
+            return create_general_exercises_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "skills":
-            return create_general_skills_prompt(grade_level, model_progression_text)
+            return create_general_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
-            return create_general_art_prompt(grade_level, model_progression_text)
+            return create_general_art_prompt(grade_level, model_progression_text, word_limits)
 
 # Mathematics-specific prompt functions
-def create_math_chapter_prompt(grade_level, model_progression_text):
+def create_math_chapter_prompt(grade_level, model_progression_text, word_limits=None):
     """Creates a mathematics-specific chapter content prompt"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'hook': 70,
+            'learning_outcome': 70,
+            'real_world': 50,
+            'previous_class': 100,
+            'history': 100,
+            'current_concepts': 4000,
+            'summary': 700,
+            'link_learn': 250,
+            'image_based': 250
+        }
+    
     return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -512,25 +526,25 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 
 1. **Chapter Title** - Engaging and mathematically focused
 
-2. **Hook (with Image Prompt)** (80-100 words)
+2. **Hook (with Image Prompt)** ({word_limits['hook']} words)
    - Create an engaging mathematical opening that captures student interest
    - Use real-life mathematical scenarios, surprising mathematical facts, or thought-provoking mathematical questions
    - Connect to students' daily mathematical experiences
    - Include a detailed image prompt for a compelling mathematical visual
 
-3. **Real-World Connection** (100 words)
+3. **Real-World Connection** ({word_limits['real_world']} words)
    - Provide multiple real-world applications of the mathematical concepts
    - Show how math is used in everyday life situations
    - Include examples from technology, engineering, finance, science, etc.
    - Connect to mathematical careers and future studies
 
-4. **Learning Outcomes** (125 words)
+4. **Learning Outcomes** ({word_limits['learning_outcome']} words)
    - List specific, measurable mathematical learning objectives
    - Use action verbs (define, explain, calculate, apply, analyze, solve, prove, etc.)
    - Align with Bloom's Taxonomy levels for mathematics
    - Connect to CBSE mathematics curriculum standards
 
-5. **Previous Class Link** (100 words)
+5. **Previous Class Link** ({word_limits['previous_class']} words)
    - Link to prior mathematical knowledge from previous classes
    - Explain how previous concepts connect to current learning
    - Provide a brief review of essential prerequisites
@@ -579,9 +593,8 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
       * For "Triangles": Types of triangles, Properties of triangles, Congruence, etc.
       * For "Integers": Positive and negative integers, Operations on integers, Properties, etc.
     - Each subconcept should include:
-      * Introduction (60-80 words)
-      * Definition and explanation
-      * 2 Examples with solution
+      * Definition and explanation (100-150 words)
+      * Examples and illustrations
       * Key points to remember
       * Common errors to avoid
     
@@ -872,8 +885,22 @@ Provide ONLY the Mathematics-Integrated Creative Learning content in Markdown fo
 """
 
 # General subject prompt functions (same as before)
-def create_general_chapter_prompt(grade_level, model_progression_text):
-    """Creates a general subject chapter content prompt"""
+def create_general_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a general subject chapter content prompt with dynamic word limits"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'hook': 70,
+            'learning_outcome': 70,
+            'real_world': 50,
+            'previous_class': 100,
+            'history': 100,
+            'current_concepts': 1200,
+            'summary': 700,
+            'link_learn': 250,
+            'image_based': 250
+        }
+    
     return f"""You are an expert in educational content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -893,7 +920,7 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
 
-1. **Current Concepts** (1000-1200 words minimum)
+1. **Current Concepts** ({word_limits['current_concepts']} words minimum)
    - Provide detailed explanations of ALL key concepts from the PDF
    - Include multiple examples for each concept
    - Use analogies and real-world connections to explain complex ideas
@@ -907,45 +934,45 @@ Your task is to generate COMPREHENSIVE CORE CHAPTER CONTENT that should be equiv
    - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding
    - Make sure there is no repetition of concepts
 
-2. **Hook (with Image Prompt)** (50-70 words)
+2. **Hook (with Image Prompt)** ({word_limits['hook']} words)
    - Create an engaging opening that captures student interest
    - Use storytelling, surprising facts, or thought-provoking questions
    - Connect to students' daily experiences or current events
    - Include a detailed image prompt for a compelling visual
 
-3. **Learning Outcome** (50-70 words)
+3. **Learning Outcome** ({word_limits['learning_outcome']} words)
    - List specific, measurable learning objectives
    - Use action verbs (analyze, evaluate, create, etc.)
    - Align with Bloom's Taxonomy levels
    - Connect to CBSE curriculum standards
 
-4. **Real World Connection** (35-50 words)
+4. **Real World Connection** ({word_limits['real_world']} words)
    - Provide multiple real-world applications of the concepts
    - Include current examples from technology, environment, health, etc.
    - Explain how the concepts impact daily life
    - Connect to career opportunities and future studies
 
-5. **Previous Class Concept** (50-100 words)
+5. **Previous Class Concept** ({word_limits['previous_class']} words)
    - Give the concept name and the previous class it was studied in according to NCERT textbooks
 
-6. **History** (70-100 words)
+6. **History** ({word_limits['history']} words)
    - Provide comprehensive historical background
    - Include key scientists, inventors, or historical figures
    - Explain the timeline of discoveries or developments
    - Connect historical context to modern understanding
 
-7. **Summary** (600-800 words)
+7. **Summary** ({word_limits['summary']} words)
    - Create detailed concept-wise summaries (not just one overall summary)
    - Include key points, formulas, and important facts
    - Organize by individual concepts covered in the chapter
    - Provide clear, concise explanations that reinforce learning
 
-8. **Link and Learn Based Question** (200-300 words)
+8. **Link and Learn Based Question** ({word_limits['link_learn']} words)
    - Create 3-5 questions that connect different concepts
    - Include questions that link to other subjects or real-world scenarios
    - Provide detailed explanations for the connections
 
-9. **Image Based Question** (200-300 words)
+9. **Image Based Question** ({word_limits['image_based']} words)
    - Create 3-5 questions based on images/diagrams from the chapter
    - Include detailed image descriptions if creating new image prompts
    - Ensure questions test understanding, not just observation
@@ -978,8 +1005,12 @@ Analyze the PDF document thoroughly and create improved content that expands sig
 Provide ONLY the comprehensive chapter content in Markdown format. Do not include exercises, activities, or art projects.
 """
 
-def create_general_exercises_prompt(grade_level, model_progression_text):
+def create_general_exercises_prompt(grade_level, model_progression_text, word_limits=None):
     """Creates a general subject exercises prompt"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 800
+        }
     return f"""You are an expert in educational content development, specifically for CBSE curriculum.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
@@ -1099,13 +1130,13 @@ Format the content in Markdown with proper headings, lists, and organization.
 Provide ONLY the Art-Integrated Learning content in Markdown format.
 """
 
-def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="General", use_chunked=False, use_openrouter_method=False):
+def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="General", word_limits=None, use_chunked=False, use_openrouter_method=False):
     """Generates specific content based on content type"""
     if not use_chunked:
         # Standard approach
         try:
             # Get the specific prompt
-            prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type)
+            prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
             st.info(f"Generating {content_type} content for {grade_level}...")
             
@@ -1171,15 +1202,15 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             if "token" in str(e).lower() or "limit" in str(e).lower():
                 st.info("Document might be too large. Trying chunked approach...")
                 return generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, 
-                                               model_progression_text, subject_type, use_chunked=True, use_openrouter_method=use_openrouter_method)
+                                               model_progression_text, subject_type, word_limits, use_chunked=True, use_openrouter_method=use_openrouter_method)
             return None, f"Error: {str(e)}"
     else:
         # Chunked approach
         return analyze_with_chunked_approach_for_specific_content(content_type, pdf_bytes, pdf_filename, 
-                                                                 grade_level, model_progression_text, subject_type, use_openrouter_method)
+                                                                 grade_level, model_progression_text, subject_type, word_limits, use_openrouter_method)
 
 def analyze_with_chunked_approach_for_specific_content(content_type, pdf_bytes, pdf_filename, 
-                                                       grade_level, model_progression_text, subject_type, use_openrouter_method):
+                                                       grade_level, model_progression_text, subject_type, word_limits, use_openrouter_method):
     """Specialized chunked approach for specific content types"""
     st.info(f"Using chunked approach to generate {content_type} content...")
     
@@ -1274,7 +1305,7 @@ Format your analysis in Markdown. This is just an intermediate step - don't crea
         combined_analyses = "\n\n".join(analysis_results)
         
         # Get the specific prompt for this content type
-        specific_prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type)
+        specific_prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
         
         # Create the final integration prompt
         integration_prompt = f"""You are an expert educational content developer for CBSE curriculum.
@@ -1831,13 +1862,13 @@ Provide the complete, rewritten chapter text in Markdown format, incorporating a
         yield chunk
 
 def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, grade_level, 
-                                       model_progression_text, subject_type, use_openrouter_method):
+                                       model_progression_text, subject_type, word_limits, use_openrouter_method):
     """
     Generates specific content with streaming support.
     Returns a generator that yields response chunks.
     """
     # Get the specific prompt
-    prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type)
+    prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
     if use_openrouter_method:
         # Create messages with direct PDF upload
@@ -1868,7 +1899,7 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
         yield chunk
 
 def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_grade, 
-                               model_progression, subject_type, pdf_method, button_key):
+                               model_progression, subject_type, word_limits, pdf_method, button_key):
     """Helper function to handle streaming content generation with UI"""
     # Initialize cancel event for streaming
     st.session_state.cancel_event = Event()
@@ -1878,39 +1909,48 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
         if cancel_button:
             st.session_state.cancel_event.set()
     
-    # Create a placeholder for streaming content
-    content_placeholder = st.empty()
-    accumulated_content = ""
-    
-    try:
-        # Stream the content
-        for chunk in generate_specific_content_streaming(
-            content_type,
-            pdf_bytes, 
-            pdf_filename, 
-            selected_grade,
-            model_progression, 
-            subject_type,
-            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
-        ):
-            if st.session_state.cancel_event.is_set():
-                st.warning("Generation cancelled by user.")
-                break
-            accumulated_content += chunk
-            # Update the placeholder with accumulated content
-            content_placeholder.markdown(accumulated_content + "▊")  # Add cursor
+    # Create a container for streaming content
+    content_container = st.container()
+    with content_container:
+        content_placeholder = st.empty()
+        accumulated_content = ""
         
-        # Remove cursor and finalize
-        content_placeholder.markdown(accumulated_content)
-        
-        if accumulated_content and not st.session_state.cancel_event.is_set():
-            return accumulated_content, "Generated successfully using streaming!"
-        else:
-            return None, "Generation cancelled or failed"
+        try:
+            # Stream the content
+            for chunk in generate_specific_content_streaming(
+                content_type,
+                pdf_bytes, 
+                pdf_filename, 
+                selected_grade,
+                model_progression, 
+                subject_type,
+                word_limits,
+                use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+            ):
+                if st.session_state.cancel_event.is_set():
+                    st.warning("⚠️ Generation cancelled by user.")
+                    break
+                accumulated_content += chunk
+                # Update the placeholder with accumulated content
+                with content_placeholder.container():
+                    st.markdown(f"### Generated {content_type.title()} Content:")
+                    st.markdown(accumulated_content + " ⏳")
             
-    except Exception as e:
-        st.error(f"Error during streaming: {e}")
-        return None, f"Error: {str(e)}"
+            # Finalize content without cursor
+            if accumulated_content and not st.session_state.cancel_event.is_set():
+                with content_placeholder.container():
+                    st.markdown(f"### ✅ {content_type.title()} Content (Complete):")
+                    st.markdown(accumulated_content)
+                return accumulated_content, "Generated successfully using streaming!"
+            else:
+                return None, "Generation cancelled or failed"
+                
+        except Exception as e:
+            st.error(f"❌ Error during streaming: {e}")
+            if accumulated_content:
+                st.info("💾 Saving partial content...")
+                return accumulated_content, f"Partial content saved due to error: {str(e)}"
+            return None, f"Error: {str(e)}"
 
 # --- Streamlit App ---
 st.set_page_config(layout="wide")
@@ -1943,6 +1983,50 @@ with tab1:
         help="Choose 'Mathematics' for math-specific content structure or 'General' for other subjects.",
         key="subject_selector_tab1"
     )
+
+    # Word Limit Controls
+    st.subheader("📝 Content Length Settings")
+    with st.expander("Configure Word Limits for Each Section", expanded=False):
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("**Core Sections**")
+            hook_words = st.number_input("Hook (words)", min_value=20, max_value=200, value=80, step=10, key="hook_words")
+            learning_outcome_words = st.number_input("Learning Outcome (words)", min_value=30, max_value=200, value=70, step=10, key="learning_outcome_words")
+            real_world_words = st.number_input("Real World Connection (words)", min_value=30, max_value=150, value=50, step=10, key="real_world_words")
+            previous_class_words = st.number_input("Previous Class Concept (words)", min_value=30, max_value=200, value=100, step=10, key="previous_class_words")
+            history_words = st.number_input("History (words)", min_value=50, max_value=300, value=100, step=10, key="history_words")
+        
+        with col2:
+            st.markdown("**Main Content**")
+            current_concepts_words = st.number_input("Current Concepts (words)", min_value=500, max_value=8000, value=1200, step=100, key="current_concepts_words")
+            summary_words = st.number_input("Summary (words)", min_value=300, max_value=1500, value=700, step=50, key="summary_words")
+            link_learn_words = st.number_input("Link and Learn Questions (words)", min_value=100, max_value=500, value=250, step=25, key="link_learn_words")
+            image_based_words = st.number_input("Image Based Questions (words)", min_value=100, max_value=500, value=250, step=25, key="image_based_words")
+        
+        with col3:
+            st.markdown("**Activities & Exercises**")
+            exercises_words = st.number_input("Exercise Questions (words)", min_value=300, max_value=2000, value=800, step=50, key="exercises_words")
+            skill_activity_words = st.number_input("Skill Activities (words)", min_value=200, max_value=1000, value=400, step=50, key="skill_activity_words")
+            stem_activity_words = st.number_input("STEM Activities (words)", min_value=200, max_value=1000, value=400, step=50, key="stem_activity_words")
+            art_learning_words = st.number_input("Art Learning (words)", min_value=200, max_value=1000, value=400, step=50, key="art_learning_words")
+
+        # Store word limits in session state
+        st.session_state.word_limits = {
+            'hook': hook_words,
+            'learning_outcome': learning_outcome_words,
+            'real_world': real_world_words,
+            'previous_class': previous_class_words,
+            'history': history_words,
+            'current_concepts': current_concepts_words,
+            'summary': summary_words,
+            'link_learn': link_learn_words,
+            'image_based': image_based_words,
+            'exercises': exercises_words,
+            'skill_activity': skill_activity_words,
+            'stem_activity': stem_activity_words,
+            'art_learning': art_learning_words
+        }
 
     # Analysis Method Selector
     analysis_method = st.radio(
@@ -1997,6 +2081,86 @@ with tab1:
             if 'art_learning' not in st.session_state:
                 st.session_state.art_learning = None
 
+            # Display previously generated content if available
+            st.subheader("📋 Previously Generated Content")
+            prev_col1, prev_col2, prev_col3, prev_col4 = st.columns(4)
+            
+            with prev_col1:
+                if st.session_state.chapter_content:
+                    with st.expander("📖 Chapter Content Available", expanded=False):
+                        st.markdown(st.session_state.chapter_content[:500] + "..." if len(st.session_state.chapter_content) > 500 else st.session_state.chapter_content)
+                        doc = create_word_document(st.session_state.chapter_content)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Chapter",
+                            data=doc_io,
+                            file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_chapter"
+                        )
+                else:
+                    st.info("📖 No chapter content generated yet")
+            
+            with prev_col2:
+                if st.session_state.exercises:
+                    with st.expander("📝 Exercises Available", expanded=False):
+                        st.markdown(st.session_state.exercises[:500] + "..." if len(st.session_state.exercises) > 500 else st.session_state.exercises)
+                        doc = create_word_document(st.session_state.exercises)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Exercises",
+                            data=doc_io,
+                            file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_exercises"
+                        )
+                else:
+                    st.info("📝 No exercises generated yet")
+            
+            with prev_col3:
+                if st.session_state.skill_activities:
+                    with st.expander("🛠️ Skills Available", expanded=False):
+                        st.markdown(st.session_state.skill_activities[:500] + "..." if len(st.session_state.skill_activities) > 500 else st.session_state.skill_activities)
+                        doc = create_word_document(st.session_state.skill_activities)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Skills",
+                            data=doc_io,
+                            file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_skills"
+                        )
+                else:
+                    st.info("🛠️ No skill activities generated yet")
+            
+            with prev_col4:
+                if st.session_state.art_learning:
+                    with st.expander("🎨 Art Learning Available", expanded=False):
+                        st.markdown(st.session_state.art_learning[:500] + "..." if len(st.session_state.art_learning) > 500 else st.session_state.art_learning)
+                        doc = create_word_document(st.session_state.art_learning)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download Art Learning",
+                            data=doc_io,
+                            file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_art"
+                        )
+                else:
+                    st.info("🎨 No art learning generated yet")
+
+            st.divider()
+            
+            st.subheader("🚀 Generate New Content")
+
             # Generate Chapter Content Button
             generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
             
@@ -2014,71 +2178,96 @@ with tab1:
             
             # Handle button clicks and content generation
             if generate_chapter:
-                # Initialize cancel event for streaming
-                if use_streaming:
-                    st.session_state.cancel_event = Event()
-                    cancel_col1, cancel_col2 = st.columns([5, 1])
-                    with cancel_col2:
-                        cancel_button = st.button("🛑 Cancel", key="cancel_chapter")
-                        if cancel_button:
-                            st.session_state.cancel_event.set()
+                # Get word limits from session state
+                word_limits = st.session_state.get('word_limits', {})
                 
                 with st.spinner(f"🧠 Generating Chapter Content for {selected_grade}..."):
                     if use_streaming:
-                        # Create a placeholder for streaming content
-                        content_placeholder = st.empty()
-                        accumulated_content = ""
+                        # Initialize cancel event for streaming
+                        st.session_state.cancel_event = Event()
                         
-                        try:
-                            # Get the specific prompt
-                            prompt = create_specific_prompt("chapter", selected_grade, model_progression, subject_type)
+                        # Create cancel button and content container
+                        cancel_col1, cancel_col2 = st.columns([5, 1])
+                        with cancel_col2:
+                            cancel_button = st.button("🛑 Cancel", key="cancel_chapter")
+                            if cancel_button:
+                                st.session_state.cancel_event.set()
+                        
+                        # Create container for streaming content
+                        content_container = st.container()
+                        with content_container:
+                            content_placeholder = st.empty()
+                            accumulated_content = ""
                             
-                            # Stream the content
-                            for chunk in generate_specific_content_streaming(
-                                "chapter",
-                                pdf_bytes, 
-                                uploaded_file_st.name, 
-                                selected_grade,
-                                model_progression, 
-                                subject_type,
-                                use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
-                            ):
-                                if st.session_state.cancel_event.is_set():
-                                    st.warning("Generation cancelled by user.")
-                                    break
-                                accumulated_content += chunk
-                                # Update the placeholder with accumulated content
-                                content_placeholder.markdown(accumulated_content + "▊")  # Add cursor
-                            
-                            # Remove cursor and finalize
-                            content_placeholder.markdown(accumulated_content)
-                            
-                            if accumulated_content and not st.session_state.cancel_event.is_set():
-                                st.session_state.chapter_content = accumulated_content
-                                st.success(f"✅ Chapter Content generated successfully using streaming!")
+                            try:
+                                # Stream the content
+                                for chunk in generate_specific_content_streaming(
+                                    "chapter",
+                                    pdf_bytes, 
+                                    uploaded_file_st.name, 
+                                    selected_grade,
+                                    model_progression, 
+                                    subject_type,
+                                    word_limits,
+                                    use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                                ):
+                                    if st.session_state.cancel_event.is_set():
+                                        st.warning("⚠️ Generation cancelled by user.")
+                                        break
+                                    accumulated_content += chunk
+                                    # Update the placeholder with accumulated content (in a code block to preserve formatting)
+                                    with content_placeholder.container():
+                                        st.markdown("### Generated Chapter Content:")
+                                        st.markdown(accumulated_content + " ⏳")
                                 
-                                # Download button for this content
-                                doc = create_word_document(st.session_state.chapter_content)
-                                doc_io = io.BytesIO()
-                                doc.save(doc_io)
-                                doc_io.seek(0)
-                                st.download_button(
-                                    label="📥 Download Chapter Content as Word (.docx)",
-                                    data=doc_io,
-                                    file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                )
-                        except Exception as e:
-                            st.error(f"Error during streaming: {e}")
+                                # Finalize content without cursor
+                                if accumulated_content and not st.session_state.cancel_event.is_set():
+                                    st.session_state.chapter_content = accumulated_content
+                                    with content_placeholder.container():
+                                        st.markdown("### ✅ Chapter Content (Complete):")
+                                        st.markdown(st.session_state.chapter_content)
+                                    
+                                    st.success(f"✅ Chapter Content generated successfully!")
+                                    
+                                    # Download button
+                                    doc = create_word_document(st.session_state.chapter_content)
+                                    doc_io = io.BytesIO()
+                                    doc.save(doc_io)
+                                    doc_io.seek(0)
+                                    st.download_button(
+                                        label="📥 Download Chapter Content as Word (.docx)",
+                                        data=doc_io,
+                                        file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                        key="download_chapter_streaming"
+                                    )
+                                    
+                            except Exception as e:
+                                st.error(f"❌ Error during streaming: {e}")
+                                if accumulated_content:
+                                    st.info("💾 Saving partial content...")
+                                    st.session_state.chapter_content = accumulated_content
                     else:
                         # Use non-streaming approach
-                        content, message = generate_specific_content("chapter", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"), use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"))
+                        content, message = generate_specific_content(
+                            "chapter", 
+                            pdf_bytes, 
+                            uploaded_file_st.name, 
+                            selected_grade, 
+                            model_progression, 
+                            subject_type, 
+                            word_limits,
+                            use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
+                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                        )
                         if content:
                             st.session_state.chapter_content = content
                             st.success(f"✅ Chapter Content generated successfully! {message}")
-                            st.subheader("Chapter Content:")
-                            st.markdown(st.session_state.chapter_content)
-                            # Download button for this content only
+                            st.subheader("📖 Chapter Content:")
+                            with st.expander("View Chapter Content", expanded=True):
+                                st.markdown(st.session_state.chapter_content)
+                            
+                            # Download button
                             doc = create_word_document(st.session_state.chapter_content)
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
@@ -2087,17 +2276,21 @@ with tab1:
                                 label="📥 Download Chapter Content as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_chapter_standard"
                             )
                         else:
-                            st.error(f"Failed to generate Chapter Content: {message}")
+                            st.error(f"❌ Failed to generate Chapter Content: {message}")
             
             if generate_exercises:
+                # Get word limits from session state
+                word_limits = st.session_state.get('word_limits', {})
+                
                 with st.spinner(f"🧠 Generating Exercises for {selected_grade}..."):
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "exercises", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, pdf_method, "exercises"
+                            model_progression, subject_type, word_limits, pdf_method, "exercises"
                         )
                         if content:
                             st.session_state.exercises = content
@@ -2112,18 +2305,31 @@ with tab1:
                                 label="📥 Download Exercises as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_exercises_streaming"
                             )
                         else:
-                            st.error(f"Failed to generate Exercises: {message}")
+                            st.error(f"❌ Failed to generate Exercises: {message}")
                     else:
-                        content, message = generate_specific_content("exercises", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"), use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"))
+                        content, message = generate_specific_content(
+                            "exercises", 
+                            pdf_bytes, 
+                            uploaded_file_st.name, 
+                            selected_grade, 
+                            model_progression, 
+                            subject_type, 
+                            word_limits,
+                            use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
+                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                        )
                         if content:
                             st.session_state.exercises = content
                             st.success(f"✅ Exercises generated successfully! {message}")
-                            st.subheader("Exercises:")
-                            st.markdown(st.session_state.exercises)
-                            # Download button for this content only
+                            st.subheader("📝 Exercises:")
+                            with st.expander("View Exercises", expanded=True):
+                                st.markdown(st.session_state.exercises)
+                            
+                            # Download button
                             doc = create_word_document(st.session_state.exercises)
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
@@ -2132,17 +2338,21 @@ with tab1:
                                 label="📥 Download Exercises as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_exercises_standard"
                             )
                         else:
-                            st.error(f"Failed to generate Exercises: {message}")
+                            st.error(f"❌ Failed to generate Exercises: {message}")
             
             if generate_skills:
+                # Get word limits from session state
+                word_limits = st.session_state.get('word_limits', {})
+                
                 with st.spinner(f"🧠 Generating Skill Activities for {selected_grade}..."):
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "skills", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, pdf_method, "skills"
+                            model_progression, subject_type, word_limits, pdf_method, "skills"
                         )
                         if content:
                             st.session_state.skill_activities = content
@@ -2157,18 +2367,31 @@ with tab1:
                                 label="📥 Download Skill Activities as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_skills_streaming"
                             )
                         else:
-                            st.error(f"Failed to generate Skill Activities: {message}")
+                            st.error(f"❌ Failed to generate Skill Activities: {message}")
                     else:
-                        content, message = generate_specific_content("skills", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"), use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"))
+                        content, message = generate_specific_content(
+                            "skills", 
+                            pdf_bytes, 
+                            uploaded_file_st.name, 
+                            selected_grade, 
+                            model_progression, 
+                            subject_type, 
+                            word_limits,
+                            use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
+                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                        )
                         if content:
                             st.session_state.skill_activities = content
                             st.success(f"✅ Skill Activities generated successfully! {message}")
-                            st.subheader("Skill Activities:")
-                            st.markdown(st.session_state.skill_activities)
-                            # Download button for this content only
+                            st.subheader("🛠️ Skill Activities:")
+                            with st.expander("View Skill Activities", expanded=True):
+                                st.markdown(st.session_state.skill_activities)
+                            
+                            # Download button
                             doc = create_word_document(st.session_state.skill_activities)
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
@@ -2177,17 +2400,21 @@ with tab1:
                                 label="📥 Download Skill Activities as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_skills_standard"
                             )
                         else:
-                            st.error(f"Failed to generate Skill Activities: {message}")
+                            st.error(f"❌ Failed to generate Skill Activities: {message}")
             
             if generate_art:
+                # Get word limits from session state
+                word_limits = st.session_state.get('word_limits', {})
+                
                 with st.spinner(f"🧠 Generating Art-Integrated Learning for {selected_grade}..."):
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "art", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, pdf_method, "art"
+                            model_progression, subject_type, word_limits, pdf_method, "art"
                         )
                         if content:
                             st.session_state.art_learning = content
@@ -2202,18 +2429,31 @@ with tab1:
                                 label="📥 Download Art-Integrated Learning as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_art_streaming"
                             )
                         else:
-                            st.error(f"Failed to generate Art-Integrated Learning: {message}")
+                            st.error(f"❌ Failed to generate Art-Integrated Learning: {message}")
                     else:
-                        content, message = generate_specific_content("art", pdf_bytes, uploaded_file_st.name, selected_grade, model_progression, subject_type, use_chunked=(analysis_method == "Chunked (For Complex Documents)"), use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"))
+                        content, message = generate_specific_content(
+                            "art", 
+                            pdf_bytes, 
+                            uploaded_file_st.name, 
+                            selected_grade, 
+                            model_progression, 
+                            subject_type, 
+                            word_limits,
+                            use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
+                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                        )
                         if content:
                             st.session_state.art_learning = content
                             st.success(f"✅ Art-Integrated Learning generated successfully! {message}")
-                            st.subheader("Art-Integrated Learning:")
-                            st.markdown(st.session_state.art_learning)
-                            # Download button for this content only
+                            st.subheader("🎨 Art-Integrated Learning:")
+                            with st.expander("View Art-Integrated Learning", expanded=True):
+                                st.markdown(st.session_state.art_learning)
+                            
+                            # Download button
                             doc = create_word_document(st.session_state.art_learning)
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
@@ -2222,10 +2462,11 @@ with tab1:
                                 label="📥 Download Art-Integrated Learning as Word (.docx)",
                                 data=doc_io,
                                 file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_art_standard"
                             )
                         else:
-                            st.error(f"Failed to generate Art-Integrated Learning: {message}")
+                            st.error(f"❌ Failed to generate Art-Integrated Learning: {message}")
             
             if download_all:
                 # Combine all generated content (if any)
