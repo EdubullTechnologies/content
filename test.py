@@ -2087,6 +2087,7 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
     with content_container:
         content_placeholder = st.empty()
         accumulated_content = ""
+        content_saved = False
         
         try:
             # Stream the content
@@ -2103,25 +2104,44 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
                 if st.session_state.cancel_event.is_set():
                     st.warning("⚠️ Generation cancelled by user.")
                     break
+                
                 accumulated_content += chunk
+                
+                # Auto-save content periodically during streaming to prevent loss
+                if len(accumulated_content) > 0 and len(accumulated_content) % 1000 < 50:  # Save every ~1000 characters
+                    content_saved = True
+                
                 # Update the placeholder with accumulated content
                 with content_placeholder.container():
                     st.markdown(f"### Generated {content_type.title()} Content:")
                     st.markdown(accumulated_content + " ⏳")
             
-            # Finalize content without cursor
-            if accumulated_content and not st.session_state.cancel_event.is_set():
+            # Always try to save content if we have any, regardless of completion status
+            if accumulated_content:
+                content_saved = True
                 with content_placeholder.container():
-                    st.markdown(f"### ✅ {content_type.title()} Content (Complete):")
+                    if st.session_state.cancel_event.is_set():
+                        st.markdown(f"### ⚠️ {content_type.title()} Content (Cancelled - Partial):")
+                    else:
+                        st.markdown(f"### ✅ {content_type.title()} Content (Complete):")
                     st.markdown(accumulated_content)
-                return accumulated_content, "Generated successfully using streaming!"
+                
+                # Determine success message
+                if st.session_state.cancel_event.is_set():
+                    return accumulated_content, "Partial content saved (generation cancelled by user)"
+                else:
+                    return accumulated_content, "Generated successfully using streaming!"
             else:
-                return None, "Generation cancelled or failed"
+                return None, "No content generated"
                 
         except Exception as e:
             st.error(f"❌ Error during streaming: {e}")
+            # Always try to save any content we managed to generate
             if accumulated_content:
-                st.info("💾 Saving partial content...")
+                st.info("💾 Saving partial content despite error...")
+                with content_placeholder.container():
+                    st.markdown(f"### ⚠️ {content_type.title()} Content (Partial - Error Occurred):")
+                    st.markdown(accumulated_content)
                 return accumulated_content, f"Partial content saved due to error: {str(e)}"
             return None, f"Error: {str(e)}"
 
@@ -2228,9 +2248,106 @@ with tab1:
     # Load Model Chapter Progression
     model_progression = load_model_chapter_progression()
 
+    # Initialize session state for content persistence (MOVED OUTSIDE FILE UPLOAD CONDITION)
+    if 'chapter_content' not in st.session_state:
+        st.session_state.chapter_content = None
+    if 'exercises' not in st.session_state:
+        st.session_state.exercises = None
+    if 'skill_activities' not in st.session_state:
+        st.session_state.skill_activities = None
+    if 'art_learning' not in st.session_state:
+        st.session_state.art_learning = None
+
     if model_progression:
         st.sidebar.subheader("Model Chapter Progression:")
         st.sidebar.text_area("Model Details", model_progression, height=300, disabled=True)
+
+        # Display previously generated content (MOVED OUTSIDE FILE UPLOAD CONDITION)
+        col_header1, col_header2 = st.columns([4, 1])
+        with col_header1:
+            st.subheader("📋 Previously Generated Content")
+        with col_header2:
+            if st.button("🗑️ Clear All Content", key="clear_all_content", help="Clear all generated content from session"):
+                st.session_state.chapter_content = None
+                st.session_state.exercises = None
+                st.session_state.skill_activities = None
+                st.session_state.art_learning = None
+                st.success("✅ All content cleared!")
+                st.rerun()
+        
+        prev_col1, prev_col2, prev_col3, prev_col4 = st.columns(4)
+        
+        with prev_col1:
+            if st.session_state.chapter_content:
+                with st.expander("📖 Chapter Content Available", expanded=False):
+                    st.markdown(st.session_state.chapter_content[:500] + "..." if len(st.session_state.chapter_content) > 500 else st.session_state.chapter_content)
+                    doc = create_word_document(st.session_state.chapter_content)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    st.download_button(
+                        label="📥 Download Chapter",
+                        data=doc_io,
+                        file_name="chapter_content.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key="prev_download_chapter"
+                    )
+            else:
+                st.info("📖 No chapter content generated yet")
+        
+        with prev_col2:
+            if st.session_state.exercises:
+                with st.expander("📝 Exercises Available", expanded=False):
+                    st.markdown(st.session_state.exercises[:500] + "..." if len(st.session_state.exercises) > 500 else st.session_state.exercises)
+                    doc = create_word_document(st.session_state.exercises)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    st.download_button(
+                        label="📥 Download Exercises",
+                        data=doc_io,
+                        file_name="exercises.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key="prev_download_exercises"
+                    )
+            else:
+                st.info("📝 No exercises generated yet")
+        
+        with prev_col3:
+            if st.session_state.skill_activities:
+                with st.expander("🛠️ Skills Available", expanded=False):
+                    st.markdown(st.session_state.skill_activities[:500] + "..." if len(st.session_state.skill_activities) > 500 else st.session_state.skill_activities)
+                    doc = create_word_document(st.session_state.skill_activities)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    st.download_button(
+                        label="📥 Download Skills",
+                        data=doc_io,
+                        file_name="skill_activities.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key="prev_download_skills"
+                    )
+            else:
+                st.info("🛠️ No skill activities generated yet")
+        
+        with prev_col4:
+            if st.session_state.art_learning:
+                with st.expander("🎨 Art Learning Available", expanded=False):
+                    st.markdown(st.session_state.art_learning[:500] + "..." if len(st.session_state.art_learning) > 500 else st.session_state.art_learning)
+                    doc = create_word_document(st.session_state.art_learning)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    st.download_button(
+                        label="📥 Download Art Learning",
+                        data=doc_io,
+                        file_name="art_learning.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key="prev_download_art"
+                    )
+            else:
+                st.info("🎨 No art learning generated yet")
 
         uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
 
@@ -2243,92 +2360,6 @@ with tab1:
             # Create columns for the buttons
             col1, col2 = st.columns(2)
             col3, col4 = st.columns(2)
-            
-            # Create session state to store generated content
-            if 'chapter_content' not in st.session_state:
-                st.session_state.chapter_content = None
-            if 'exercises' not in st.session_state:
-                st.session_state.exercises = None
-            if 'skill_activities' not in st.session_state:
-                st.session_state.skill_activities = None
-            if 'art_learning' not in st.session_state:
-                st.session_state.art_learning = None
-
-            # Display previously generated content if available
-            st.subheader("📋 Previously Generated Content")
-            prev_col1, prev_col2, prev_col3, prev_col4 = st.columns(4)
-            
-            with prev_col1:
-                if st.session_state.chapter_content:
-                    with st.expander("📖 Chapter Content Available", expanded=False):
-                        st.markdown(st.session_state.chapter_content[:500] + "..." if len(st.session_state.chapter_content) > 500 else st.session_state.chapter_content)
-                        doc = create_word_document(st.session_state.chapter_content)
-                        doc_io = io.BytesIO()
-                        doc.save(doc_io)
-                        doc_io.seek(0)
-                        st.download_button(
-                            label="📥 Download Chapter",
-                            data=doc_io,
-                            file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                            key="prev_download_chapter"
-                        )
-                else:
-                    st.info("📖 No chapter content generated yet")
-            
-            with prev_col2:
-                if st.session_state.exercises:
-                    with st.expander("📝 Exercises Available", expanded=False):
-                        st.markdown(st.session_state.exercises[:500] + "..." if len(st.session_state.exercises) > 500 else st.session_state.exercises)
-                        doc = create_word_document(st.session_state.exercises)
-                        doc_io = io.BytesIO()
-                        doc.save(doc_io)
-                        doc_io.seek(0)
-                        st.download_button(
-                            label="📥 Download Exercises",
-                            data=doc_io,
-                            file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                            key="prev_download_exercises"
-                        )
-                else:
-                    st.info("📝 No exercises generated yet")
-            
-            with prev_col3:
-                if st.session_state.skill_activities:
-                    with st.expander("🛠️ Skills Available", expanded=False):
-                        st.markdown(st.session_state.skill_activities[:500] + "..." if len(st.session_state.skill_activities) > 500 else st.session_state.skill_activities)
-                        doc = create_word_document(st.session_state.skill_activities)
-                        doc_io = io.BytesIO()
-                        doc.save(doc_io)
-                        doc_io.seek(0)
-                        st.download_button(
-                            label="📥 Download Skills",
-                            data=doc_io,
-                            file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                            key="prev_download_skills"
-                        )
-                else:
-                    st.info("🛠️ No skill activities generated yet")
-            
-            with prev_col4:
-                if st.session_state.art_learning:
-                    with st.expander("🎨 Art Learning Available", expanded=False):
-                        st.markdown(st.session_state.art_learning[:500] + "..." if len(st.session_state.art_learning) > 500 else st.session_state.art_learning)
-                        doc = create_word_document(st.session_state.art_learning)
-                        doc_io = io.BytesIO()
-                        doc.save(doc_io)
-                        doc_io.seek(0)
-                        st.download_button(
-                            label="📥 Download Art Learning",
-                            data=doc_io,
-                            file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                            key="prev_download_art"
-                        )
-                else:
-                    st.info("🎨 No art learning generated yet")
 
             st.divider()
             
@@ -2393,16 +2424,22 @@ with tab1:
                                         st.markdown("### Generated Chapter Content:")
                                         st.markdown(accumulated_content + " ⏳")
                                 
-                                # Finalize content without cursor
-                                if accumulated_content and not st.session_state.cancel_event.is_set():
+                                # Always save content if we have any, regardless of completion status
+                                if accumulated_content:
                                     st.session_state.chapter_content = accumulated_content
                                     with content_placeholder.container():
-                                        st.markdown("### ✅ Chapter Content (Complete):")
+                                        if st.session_state.cancel_event.is_set():
+                                            st.markdown("### ⚠️ Chapter Content (Cancelled - Partial):")
+                                        else:
+                                            st.markdown("### ✅ Chapter Content (Complete):")
                                         st.markdown(st.session_state.chapter_content)
                                     
-                                    st.success(f"✅ Chapter Content generated successfully!")
+                                    if st.session_state.cancel_event.is_set():
+                                        st.warning("⚠️ Chapter Content partially generated (cancelled by user) but saved!")
+                                    else:
+                                        st.success(f"✅ Chapter Content generated successfully!")
                                     
-                                    # Download button
+                                    # Download button (available even for partial content)
                                     doc = create_word_document(st.session_state.chapter_content)
                                     doc_io = io.BytesIO()
                                     doc.save(doc_io)
@@ -2414,12 +2451,31 @@ with tab1:
                                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                         key="download_chapter_streaming"
                                     )
+                                else:
+                                    st.error("❌ No content was generated.")
                                     
                             except Exception as e:
                                 st.error(f"❌ Error during streaming: {e}")
+                                # Always save any partial content
                                 if accumulated_content:
-                                    st.info("💾 Saving partial content...")
+                                    st.info("💾 Saving partial content despite error...")
                                     st.session_state.chapter_content = accumulated_content
+                                    with content_placeholder.container():
+                                        st.markdown("### ⚠️ Chapter Content (Partial - Error Occurred):")
+                                        st.markdown(st.session_state.chapter_content)
+                                    
+                                    # Download button for partial content
+                                    doc = create_word_document(st.session_state.chapter_content)
+                                    doc_io = io.BytesIO()
+                                    doc.save(doc_io)
+                                    doc_io.seek(0)
+                                    st.download_button(
+                                        label="📥 Download Partial Chapter Content as Word (.docx)",
+                                        data=doc_io,
+                                        file_name=f"partial_chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                        key="download_chapter_partial"
+                                    )
                     else:
                         # Use non-streaming approach
                         content, message = generate_specific_content(
