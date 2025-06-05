@@ -9,6 +9,8 @@ import json
 import requests
 from threading import Event, Thread
 import time
+import re
+from typing import List, Dict, Any
 
 # --- Configuration ---
 # Get API key from Streamlit secrets
@@ -60,7 +62,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-pro-preview"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "google/gemini-2.5-flash-preview-05-20"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
@@ -2145,6 +2147,422 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
                 return accumulated_content, f"Partial content saved due to error: {str(e)}"
             return None, f"Error: {str(e)}"
 
+# --- Hybrid Content Expansion System ---
+def parse_content_sections(content: str) -> List[Dict[str, Any]]:
+    """Automatically detect expandable sections in generated content"""
+    sections = []
+    
+    if not content:
+        return sections
+    
+    # Split content into lines for processing
+    lines = content.split('\n')
+    current_section = ""
+    section_type = "paragraph"
+    
+    for i, line in enumerate(lines):
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Detect different section types
+        if re.match(r'^#{1,6}\s+(.+)$', line):  # Headings
+            if current_section:
+                sections.append({
+                    'type': section_type,
+                    'text': current_section.strip(),
+                    'expandable': True,
+                    'line_start': max(0, i-10),
+                    'line_end': min(len(lines), i+10)
+                })
+            current_section = line
+            section_type = 'heading'
+            
+        elif re.match(r'^\*\*([^*]+)\*\*', line):  # Bold concepts
+            if current_section:
+                sections.append({
+                    'type': section_type,
+                    'text': current_section.strip(),
+                    'expandable': True,
+                    'line_start': max(0, i-5),
+                    'line_end': min(len(lines), i+15)
+                })
+            current_section = line
+            section_type = 'concept'
+            
+        elif re.match(r'^[-*+]\s+(.+)$', line):  # List items
+            if section_type != 'list':
+                if current_section:
+                    sections.append({
+                        'type': section_type,
+                        'text': current_section.strip(),
+                        'expandable': True,
+                        'line_start': max(0, i-5),
+                        'line_end': min(len(lines), i+10)
+                    })
+                current_section = line
+                section_type = 'list'
+            else:
+                current_section += "\n" + line
+                
+        elif len(line) > 50:  # Regular paragraphs
+            if section_type in ['heading', 'concept'] and current_section:
+                current_section += "\n" + line
+            else:
+                if current_section and section_type != 'paragraph':
+                    sections.append({
+                        'type': section_type,
+                        'text': current_section.strip(),
+                        'expandable': True,
+                        'line_start': max(0, i-5),
+                        'line_end': min(len(lines), i+10)
+                    })
+                if section_type != 'paragraph':
+                    current_section = line
+                    section_type = 'paragraph'
+                else:
+                    current_section += "\n" + line
+    
+    # Add the last section
+    if current_section:
+        sections.append({
+            'type': section_type,
+            'text': current_section.strip(),
+            'expandable': True,
+            'line_start': 0,
+            'line_end': len(lines)
+        })
+    
+    return sections
+
+def expand_text_with_ai(selected_text: str, expansion_type: str, context: str, content_type: str, grade_level: str, subject_type: str) -> str:
+    """Generate expanded content for selected text using AI"""
+    
+    expansion_prompts = {
+        'detail': "Provide more detailed explanation and depth",
+        'examples': "Add relevant examples, case studies, and practical applications",
+        'activities': "Add hands-on activities, experiments, and interactive exercises",
+        'simplify': "Make the explanation simpler and clearer for students",
+        'questions': "Add thought-provoking questions and assessments",
+        'connections': "Add connections to other concepts and real-world applications"
+    }
+    
+    prompt = f"""You are an expert educational content developer for CBSE {grade_level} curriculum.
+
+TASK: Expand the selected educational content with {expansion_prompts.get(expansion_type, 'more detail')}.
+
+CONTEXT:
+- Content Type: {content_type}
+- Grade Level: {grade_level} (CBSE)
+- Subject: {subject_type}
+- Selected Text: "{selected_text}"
+- Surrounding Context: "{context[:500]}..."
+
+EXPANSION TYPE: {expansion_type.upper()}
+
+REQUIREMENTS:
+1. Keep the same educational tone and CBSE alignment
+2. Make content appropriate for {grade_level} students
+3. Maintain consistency with existing content
+4. Target expansion: 2-3x the original length
+5. Use clear, engaging language
+6. Include proper formatting (markdown)
+
+EXPANDED CONTENT:"""
+    
+    try:
+        # Create messages for AI
+        messages = [{"role": "user", "content": prompt}]
+        
+        # Generate expansion
+        completion = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": YOUR_SITE_URL,
+                "X-Title": YOUR_SITE_NAME,
+            },
+            model=MODEL_NAME,
+            messages=messages,
+            max_tokens=8192,
+            temperature=0.4,
+        )
+        
+        return completion.choices[0].message.content
+        
+    except Exception as e:
+        return f"Error generating expansion: {str(e)}"
+
+def display_section_expander(sections: List[Dict[str, Any]], content_type: str, grade_level: str, subject_type: str):
+    """Display expandable sections with expansion buttons"""
+    
+    st.subheader("🔍 Section-by-Section Expansion")
+    st.markdown("*Click the expand button next to any section you want to develop further.*")
+    
+    for i, section in enumerate(sections):
+        # Create container for each section
+        with st.container():
+            col1, col2 = st.columns([5, 1])
+            
+            with col1:
+                # Display section based on type
+                if section['type'] == 'heading':
+                    st.markdown(section['text'])
+                elif section['type'] == 'concept':
+                    st.markdown(section['text'])
+                else:
+                    # Truncate long paragraphs for display
+                    display_text = section['text'][:200] + "..." if len(section['text']) > 200 else section['text']
+                    st.markdown(display_text)
+            
+            with col2:
+                # Expansion button
+                if st.button("🔍 Expand", key=f"expand_section_{i}", help=f"Expand this {section['type']}"):
+                    # Show expansion options
+                    st.session_state[f"show_expansion_options_{i}"] = True
+                    st.rerun()
+            
+            # Show expansion options if button was clicked
+            if st.session_state.get(f"show_expansion_options_{i}", False):
+                with st.container():
+                    st.markdown("**Choose expansion type:**")
+                    exp_col1, exp_col2, exp_col3, exp_col4 = st.columns(4)
+                    
+                    expansion_type = None
+                    if exp_col1.button("📝 More Detail", key=f"detail_{i}"):
+                        expansion_type = "detail"
+                    if exp_col2.button("💡 Add Examples", key=f"examples_{i}"):
+                        expansion_type = "examples"
+                    if exp_col3.button("🎯 Add Activities", key=f"activities_{i}"):
+                        expansion_type = "activities"
+                    if exp_col4.button("📖 Simplify", key=f"simplify_{i}"):
+                        expansion_type = "simplify"
+                    
+                    if expansion_type:
+                        with st.spinner(f"🧠 Expanding section with {expansion_type}..."):
+                            expanded_content = expand_text_with_ai(
+                                selected_text=section['text'],
+                                expansion_type=expansion_type,
+                                context=section['text'],  # For now, use section itself as context
+                                content_type=content_type,
+                                grade_level=grade_level,
+                                subject_type=subject_type
+                            )
+                            
+                            st.session_state[f"expanded_content_{i}"] = expanded_content
+                            st.session_state[f"show_expansion_options_{i}"] = False
+                            st.rerun()
+            
+            # Show expanded content if available
+            if st.session_state.get(f"expanded_content_{i}"):
+                with st.expander("✨ Expanded Content", expanded=True):
+                    st.markdown(st.session_state[f"expanded_content_{i}"])
+                    
+                    # Option to replace original content
+                    if st.button("🔄 Replace Original", key=f"replace_{i}"):
+                        # Here you could update the original content
+                        st.success("Content replacement functionality can be added here!")
+            
+            st.divider()
+
+def display_manual_text_expander(original_content: str, content_type: str, grade_level: str, subject_type: str):
+    """Allow users to manually specify text for expansion"""
+    
+    st.subheader("🎯 Manual Text Expansion")
+    st.markdown("*Copy and paste any specific text from your content that you want to expand.*")
+    
+    # User input for text selection
+    selected_text = st.text_area(
+        "Paste the specific text you want to expand:",
+        height=100,
+        placeholder="Example: 'Current Concepts' or 'Mathematical explanation' or any specific paragraph...",
+        key="manual_text_input"
+    )
+    
+    if selected_text.strip():
+        # Expansion type selection
+        st.markdown("**Choose how to expand this text:**")
+        exp_col1, exp_col2, exp_col3 = st.columns(3)
+        exp_col4, exp_col5, exp_col6 = st.columns(3)
+        
+        expansion_type = None
+        if exp_col1.button("📝 More Detail", key="manual_detail"):
+            expansion_type = "detail"
+        if exp_col2.button("💡 Add Examples", key="manual_examples"):
+            expansion_type = "examples"
+        if exp_col3.button("🎯 Add Activities", key="manual_activities"):
+            expansion_type = "activities"
+        if exp_col4.button("📖 Simplify", key="manual_simplify"):
+            expansion_type = "simplify"
+        if exp_col5.button("❓ Add Questions", key="manual_questions"):
+            expansion_type = "questions"
+        if exp_col6.button("🔗 Add Connections", key="manual_connections"):
+            expansion_type = "connections"
+        
+        if expansion_type:
+            with st.spinner(f"🧠 Expanding your text with {expansion_type}..."):
+                # Find context around the selected text
+                context = ""
+                if selected_text in original_content:
+                    start_idx = original_content.find(selected_text)
+                    context_start = max(0, start_idx - 200)
+                    context_end = min(len(original_content), start_idx + len(selected_text) + 200)
+                    context = original_content[context_start:context_end]
+                
+                expanded_content = expand_text_with_ai(
+                    selected_text=selected_text,
+                    expansion_type=expansion_type,
+                    context=context,
+                    content_type=content_type,
+                    grade_level=grade_level,
+                    subject_type=subject_type
+                )
+                
+                st.markdown("### ✨ Expanded Content:")
+                st.markdown(expanded_content)
+                
+                # Option to save expanded content
+                if st.button("💾 Save Expansion", key="save_manual_expansion"):
+                    # Store in session state for later use
+                    if 'saved_expansions' not in st.session_state:
+                        st.session_state.saved_expansions = []
+                    
+                    st.session_state.saved_expansions.append({
+                        'original': selected_text,
+                        'expanded': expanded_content,
+                        'type': expansion_type,
+                        'timestamp': time.time()
+                    })
+                    st.success("✅ Expansion saved! You can view all saved expansions below.")
+
+def display_global_content_expander(original_content: str, content_type: str, grade_level: str, subject_type: str):
+    """Global content expansion options"""
+    
+    st.subheader("🚀 Global Content Enhancement")
+    st.markdown("*Enhance the entire content with specific improvements.*")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    global_action = None
+    if col1.button("📏 Make Content Longer", key="global_longer"):
+        global_action = "longer"
+    if col2.button("🎯 Add More Activities", key="global_activities"):
+        global_action = "activities"
+    if col3.button("💡 Add More Examples", key="global_examples"):
+        global_action = "examples"
+    
+    if global_action:
+        with st.spinner(f"🧠 Enhancing entire content..."):
+            if global_action == "longer":
+                prompt = f"""Make this {content_type} content significantly longer and more detailed for {grade_level} CBSE students.
+                
+Original Content:
+{original_content}
+
+Add more depth, explanations, and comprehensive coverage while maintaining the same structure and educational quality."""
+                
+            elif global_action == "activities":
+                prompt = f"""Add more hands-on activities, exercises, and interactive elements throughout this {content_type} content for {grade_level} CBSE students.
+
+Original Content:
+{original_content}
+
+Integrate practical activities that reinforce learning and engage students actively."""
+                
+            elif global_action == "examples":
+                prompt = f"""Add more real-world examples, case studies, and practical applications throughout this {content_type} content for {grade_level} CBSE students.
+
+Original Content:
+{original_content}
+
+Include diverse examples that help students understand concepts better."""
+            
+            try:
+                messages = [{"role": "user", "content": prompt}]
+                
+                completion = client.chat.completions.create(
+                    extra_headers={
+                        "HTTP-Referer": YOUR_SITE_URL,
+                        "X-Title": YOUR_SITE_NAME,
+                    },
+                    model=MODEL_NAME,
+                    messages=messages,
+                    max_tokens=16384,
+                    temperature=0.4,
+                )
+                
+                enhanced_content = completion.choices[0].message.content
+                
+                st.markdown("### ✨ Enhanced Content:")
+                st.markdown(enhanced_content)
+                
+                # Option to replace original content
+                col1, col2 = st.columns(2)
+                if col1.button("🔄 Replace Original Content", key=f"replace_global_{global_action}"):
+                    # Update the session state with enhanced content
+                    if content_type == "chapter":
+                        st.session_state.chapter_content = enhanced_content
+                    elif content_type == "exercises":
+                        st.session_state.exercises = enhanced_content
+                    elif content_type == "skills":
+                        st.session_state.skill_activities = enhanced_content
+                    elif content_type == "art":
+                        st.session_state.art_learning = enhanced_content
+                    
+                    st.success("✅ Original content replaced with enhanced version!")
+                    st.rerun()
+                
+                if col2.button("💾 Save as New Version", key=f"save_global_{global_action}"):
+                    # Save as a new version
+                    st.session_state[f"{content_type}_enhanced_{global_action}"] = enhanced_content
+                    st.success("✅ Enhanced content saved as new version!")
+                
+            except Exception as e:
+                st.error(f"Error enhancing content: {str(e)}")
+
+def hybrid_content_expander(content: str, content_type: str, grade_level: str, subject_type: str):
+    """Complete hybrid content expansion system"""
+    
+    if not content:
+        st.warning("No content available for expansion.")
+        return
+    
+    st.markdown("---")
+    st.header("✨ Content Expansion Studio")
+    st.markdown("*Enhance your generated content with AI-powered expansions*")
+    
+    # Parse content into sections
+    sections = parse_content_sections(content)
+    
+    # Tab interface for different expansion methods
+    tab1, tab2, tab3, tab4 = st.tabs(["🔍 Auto-Sections", "🎯 Manual Select", "🚀 Global Enhance", "💾 Saved Expansions"])
+    
+    with tab1:
+        if sections:
+            display_section_expander(sections, content_type, grade_level, subject_type)
+        else:
+            st.info("No expandable sections detected. Try the Manual Select tab to expand specific text.")
+    
+    with tab2:
+        display_manual_text_expander(content, content_type, grade_level, subject_type)
+    
+    with tab3:
+        display_global_content_expander(content, content_type, grade_level, subject_type)
+    
+    with tab4:
+        st.subheader("💾 Your Saved Expansions")
+        if 'saved_expansions' in st.session_state and st.session_state.saved_expansions:
+            for i, expansion in enumerate(st.session_state.saved_expansions):
+                with st.expander(f"Expansion {i+1}: {expansion['type'].title()}", expanded=False):
+                    st.markdown("**Original Text:**")
+                    st.markdown(expansion['original'][:200] + "..." if len(expansion['original']) > 200 else expansion['original'])
+                    st.markdown("**Expanded Version:**")
+                    st.markdown(expansion['expanded'])
+                    
+                    if st.button(f"🗑️ Delete", key=f"delete_expansion_{i}"):
+                        st.session_state.saved_expansions.pop(i)
+                        st.rerun()
+        else:
+            st.info("No saved expansions yet. Use the other tabs to create expansions.")
+
 # --- Streamlit App ---
 st.set_page_config(layout="wide")
 st.title("📚 EeeBee Content Development Suite ✨ (OpenRouter Edition)")
@@ -2163,6 +2581,11 @@ with tab1:
     Upload your book chapter in PDF format. This tool will analyze it using EeeBee (Claude)
     based on the 'Model Chapter Progression and Elements' and suggest improvements.
     Select which part of the content you want to generate.
+    
+    ✨ **New Feature**: Use the **"Expand Content"** buttons to enhance any generated content with:
+    - **Auto-Section Detection**: Click specific sections to expand
+    - **Manual Text Selection**: Paste any text you want to develop further  
+    - **Global Enhancement**: Make entire content longer or add more examples/activities
     """)
 
     # Grade Level Selector
@@ -2281,17 +2704,24 @@ with tab1:
             if st.session_state.chapter_content:
                 with st.expander("📖 Chapter Content Available", expanded=False):
                     st.markdown(st.session_state.chapter_content[:500] + "..." if len(st.session_state.chapter_content) > 500 else st.session_state.chapter_content)
-                    doc = create_word_document(st.session_state.chapter_content)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Chapter",
-                        data=doc_io,
-                        file_name="chapter_content.docx",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        key="prev_download_chapter"
-                    )
+                    
+                    col_dl, col_expand = st.columns(2)
+                    with col_dl:
+                        doc = create_word_document(st.session_state.chapter_content)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download",
+                            data=doc_io,
+                            file_name="chapter_content.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_chapter"
+                        )
+                    with col_expand:
+                        if st.button("✨ Expand Content", key="expand_chapter_btn"):
+                            st.session_state.show_chapter_expander = True
+                            st.rerun()
             else:
                 st.info("📖 No chapter content generated yet")
         
@@ -2299,17 +2729,24 @@ with tab1:
             if st.session_state.exercises:
                 with st.expander("📝 Exercises Available", expanded=False):
                     st.markdown(st.session_state.exercises[:500] + "..." if len(st.session_state.exercises) > 500 else st.session_state.exercises)
-                    doc = create_word_document(st.session_state.exercises)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Exercises",
-                        data=doc_io,
-                        file_name="exercises.docx",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        key="prev_download_exercises"
-                    )
+                    
+                    col_dl, col_expand = st.columns(2)
+                    with col_dl:
+                        doc = create_word_document(st.session_state.exercises)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download",
+                            data=doc_io,
+                            file_name="exercises.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_exercises"
+                        )
+                    with col_expand:
+                        if st.button("✨ Expand Content", key="expand_exercises_btn"):
+                            st.session_state.show_exercises_expander = True
+                            st.rerun()
             else:
                 st.info("📝 No exercises generated yet")
         
@@ -2317,17 +2754,24 @@ with tab1:
             if st.session_state.skill_activities:
                 with st.expander("🛠️ Skills Available", expanded=False):
                     st.markdown(st.session_state.skill_activities[:500] + "..." if len(st.session_state.skill_activities) > 500 else st.session_state.skill_activities)
-                    doc = create_word_document(st.session_state.skill_activities)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Skills",
-                        data=doc_io,
-                        file_name="skill_activities.docx",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        key="prev_download_skills"
-                    )
+                    
+                    col_dl, col_expand = st.columns(2)
+                    with col_dl:
+                        doc = create_word_document(st.session_state.skill_activities)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download",
+                            data=doc_io,
+                            file_name="skill_activities.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_skills"
+                        )
+                    with col_expand:
+                        if st.button("✨ Expand Content", key="expand_skills_btn"):
+                            st.session_state.show_skills_expander = True
+                            st.rerun()
             else:
                 st.info("🛠️ No skill activities generated yet")
         
@@ -2335,19 +2779,71 @@ with tab1:
             if st.session_state.art_learning:
                 with st.expander("🎨 Art Learning Available", expanded=False):
                     st.markdown(st.session_state.art_learning[:500] + "..." if len(st.session_state.art_learning) > 500 else st.session_state.art_learning)
-                    doc = create_word_document(st.session_state.art_learning)
-                    doc_io = io.BytesIO()
-                    doc.save(doc_io)
-                    doc_io.seek(0)
-                    st.download_button(
-                        label="📥 Download Art Learning",
-                        data=doc_io,
-                        file_name="art_learning.docx",
-                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        key="prev_download_art"
-                    )
+                    
+                    col_dl, col_expand = st.columns(2)
+                    with col_dl:
+                        doc = create_word_document(st.session_state.art_learning)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        st.download_button(
+                            label="📥 Download",
+                            data=doc_io,
+                            file_name="art_learning.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key="prev_download_art"
+                        )
+                    with col_expand:
+                        if st.button("✨ Expand Content", key="expand_art_btn"):
+                            st.session_state.show_art_expander = True
+                            st.rerun()
             else:
                 st.info("🎨 No art learning generated yet")
+
+        # Content Expansion Displays (when expand buttons are clicked)
+        if st.session_state.get('show_chapter_expander', False):
+            hybrid_content_expander(
+                st.session_state.chapter_content, 
+                "chapter", 
+                selected_grade, 
+                subject_type.replace(" (Uses Model Chapter Progression)", "")
+            )
+            if st.button("❌ Close Expander", key="close_chapter_expander"):
+                st.session_state.show_chapter_expander = False
+                st.rerun()
+        
+        if st.session_state.get('show_exercises_expander', False):
+            hybrid_content_expander(
+                st.session_state.exercises, 
+                "exercises", 
+                selected_grade, 
+                subject_type.replace(" (Uses Model Chapter Progression)", "")
+            )
+            if st.button("❌ Close Expander", key="close_exercises_expander"):
+                st.session_state.show_exercises_expander = False
+                st.rerun()
+        
+        if st.session_state.get('show_skills_expander', False):
+            hybrid_content_expander(
+                st.session_state.skill_activities, 
+                "skills", 
+                selected_grade, 
+                subject_type.replace(" (Uses Model Chapter Progression)", "")
+            )
+            if st.button("❌ Close Expander", key="close_skills_expander"):
+                st.session_state.show_skills_expander = False
+                st.rerun()
+        
+        if st.session_state.get('show_art_expander', False):
+            hybrid_content_expander(
+                st.session_state.art_learning, 
+                "art", 
+                selected_grade, 
+                subject_type.replace(" (Uses Model Chapter Progression)", "")
+            )
+            if st.button("❌ Close Expander", key="close_art_expander"):
+                st.session_state.show_art_expander = False
+                st.rerun()
 
         uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
 
@@ -2496,18 +2992,36 @@ with tab1:
                             with st.expander("View Chapter Content", expanded=True):
                                 st.markdown(st.session_state.chapter_content)
                             
-                            # Download button
-                            doc = create_word_document(st.session_state.chapter_content)
-                            doc_io = io.BytesIO()
-                            doc.save(doc_io)
-                            doc_io.seek(0)
-                            st.download_button(
-                                label="📥 Download Chapter Content as Word (.docx)",
-                                data=doc_io,
-                                file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                key="download_chapter_standard"
+                            # Download and Expand buttons
+                            dl_col, expand_col = st.columns(2)
+                            with dl_col:
+                                doc = create_word_document(st.session_state.chapter_content)
+                                doc_io = io.BytesIO()
+                                doc.save(doc_io)
+                                doc_io.seek(0)
+                                st.download_button(
+                                    label="📥 Download Chapter Content as Word (.docx)",
+                                    data=doc_io,
+                                    file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key="download_chapter_standard"
+                                )
+                            with expand_col:
+                                if st.button("✨ Expand This Content", key="expand_new_chapter"):
+                                    st.session_state.show_new_chapter_expander = True
+                                    st.rerun()
+                        
+                        # Show expander for newly generated content
+                        if st.session_state.get('show_new_chapter_expander', False):
+                            hybrid_content_expander(
+                                st.session_state.chapter_content, 
+                                "chapter", 
+                                selected_grade, 
+                                subject_type.replace(" (Uses Model Chapter Progression)", "")
                             )
+                            if st.button("❌ Close Expander", key="close_new_chapter_expander"):
+                                st.session_state.show_new_chapter_expander = False
+                                st.rerun()
                         else:
                             st.error(f"❌ Failed to generate Chapter Content: {message}")
             
@@ -2558,18 +3072,36 @@ with tab1:
                             with st.expander("View Exercises", expanded=True):
                                 st.markdown(st.session_state.exercises)
                             
-                            # Download button
-                            doc = create_word_document(st.session_state.exercises)
-                            doc_io = io.BytesIO()
-                            doc.save(doc_io)
-                            doc_io.seek(0)
-                            st.download_button(
-                                label="📥 Download Exercises as Word (.docx)",
-                                data=doc_io,
-                                file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                key="download_exercises_standard"
+                            # Download and Expand buttons
+                            dl_col, expand_col = st.columns(2)
+                            with dl_col:
+                                doc = create_word_document(st.session_state.exercises)
+                                doc_io = io.BytesIO()
+                                doc.save(doc_io)
+                                doc_io.seek(0)
+                                st.download_button(
+                                    label="📥 Download Exercises as Word (.docx)",
+                                    data=doc_io,
+                                    file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key="download_exercises_standard"
+                                )
+                            with expand_col:
+                                if st.button("✨ Expand This Content", key="expand_new_exercises"):
+                                    st.session_state.show_new_exercises_expander = True
+                                    st.rerun()
+                        
+                        # Show expander for newly generated exercises
+                        if st.session_state.get('show_new_exercises_expander', False):
+                            hybrid_content_expander(
+                                st.session_state.exercises, 
+                                "exercises", 
+                                selected_grade, 
+                                subject_type.replace(" (Uses Model Chapter Progression)", "")
                             )
+                            if st.button("❌ Close Expander", key="close_new_exercises_expander"):
+                                st.session_state.show_new_exercises_expander = False
+                                st.rerun()
                         else:
                             st.error(f"❌ Failed to generate Exercises: {message}")
             
@@ -2620,18 +3152,36 @@ with tab1:
                             with st.expander("View Skill Activities", expanded=True):
                                 st.markdown(st.session_state.skill_activities)
                             
-                            # Download button
-                            doc = create_word_document(st.session_state.skill_activities)
-                            doc_io = io.BytesIO()
-                            doc.save(doc_io)
-                            doc_io.seek(0)
-                            st.download_button(
-                                label="📥 Download Skill Activities as Word (.docx)",
-                                data=doc_io,
-                                file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                key="download_skills_standard"
+                            # Download and Expand buttons
+                            dl_col, expand_col = st.columns(2)
+                            with dl_col:
+                                doc = create_word_document(st.session_state.skill_activities)
+                                doc_io = io.BytesIO()
+                                doc.save(doc_io)
+                                doc_io.seek(0)
+                                st.download_button(
+                                    label="📥 Download Skill Activities as Word (.docx)",
+                                    data=doc_io,
+                                    file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key="download_skills_standard"
+                                )
+                            with expand_col:
+                                if st.button("✨ Expand This Content", key="expand_new_skills"):
+                                    st.session_state.show_new_skills_expander = True
+                                    st.rerun()
+                        
+                        # Show expander for newly generated skills
+                        if st.session_state.get('show_new_skills_expander', False):
+                            hybrid_content_expander(
+                                st.session_state.skill_activities, 
+                                "skills", 
+                                selected_grade, 
+                                subject_type.replace(" (Uses Model Chapter Progression)", "")
                             )
+                            if st.button("❌ Close Expander", key="close_new_skills_expander"):
+                                st.session_state.show_new_skills_expander = False
+                                st.rerun()
                         else:
                             st.error(f"❌ Failed to generate Skill Activities: {message}")
             
@@ -2682,18 +3232,36 @@ with tab1:
                             with st.expander("View Art-Integrated Learning", expanded=True):
                                 st.markdown(st.session_state.art_learning)
                             
-                            # Download button
-                            doc = create_word_document(st.session_state.art_learning)
-                            doc_io = io.BytesIO()
-                            doc.save(doc_io)
-                            doc_io.seek(0)
-                            st.download_button(
-                                label="📥 Download Art-Integrated Learning as Word (.docx)",
-                                data=doc_io,
-                                file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
-                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                                key="download_art_standard"
+                            # Download and Expand buttons
+                            dl_col, expand_col = st.columns(2)
+                            with dl_col:
+                                doc = create_word_document(st.session_state.art_learning)
+                                doc_io = io.BytesIO()
+                                doc.save(doc_io)
+                                doc_io.seek(0)
+                                st.download_button(
+                                    label="📥 Download Art-Integrated Learning as Word (.docx)",
+                                    data=doc_io,
+                                    file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                    key="download_art_standard"
+                                )
+                            with expand_col:
+                                if st.button("✨ Expand This Content", key="expand_new_art"):
+                                    st.session_state.show_new_art_expander = True
+                                    st.rerun()
+                        
+                        # Show expander for newly generated art learning
+                        if st.session_state.get('show_new_art_expander', False):
+                            hybrid_content_expander(
+                                st.session_state.art_learning, 
+                                "art", 
+                                selected_grade, 
+                                subject_type.replace(" (Uses Model Chapter Progression)", "")
                             )
+                            if st.button("❌ Close Expander", key="close_new_art_expander"):
+                                st.session_state.show_new_art_expander = False
+                                st.rerun()
                         else:
                             st.error(f"❌ Failed to generate Art-Integrated Learning: {message}")
             
