@@ -526,65 +526,66 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 
 1. **Chapter Title** - Engaging and mathematically focused
 
-2. **Hook (with Image Prompt)** ({word_limits['hook']} words)
+2. **Hook (with Image Prompt)** (Target: {word_limits.get('hook', 80)} words)
    - Create an engaging mathematical opening that captures student interest
    - Use real-life mathematical scenarios, surprising mathematical facts, or thought-provoking mathematical questions
    - Connect to students' daily mathematical experiences
    - Include a detailed image prompt for a compelling mathematical visual
 
-3. **Real-World Connection** ({word_limits['real_world']} words)
+3. **Real-World Connection** (Target: {word_limits.get('real_world', 100)} words)
    - Provide multiple real-world applications of the mathematical concepts
    - Show how math is used in everyday life situations
    - Include examples from technology, engineering, finance, science, etc.
    - Connect to mathematical careers and future studies
 
-4. **Learning Outcomes** ({word_limits['learning_outcome']} words)
+4. **Learning Outcomes** (Target: {word_limits.get('learning_outcome', 125)} words)
    - List specific, measurable mathematical learning objectives
    - Use action verbs (define, explain, calculate, apply, analyze, solve, prove, etc.)
    - Align with Bloom's Taxonomy levels for mathematics
    - Connect to CBSE mathematics curriculum standards
 
-5. **Previous Class Link** ({word_limits['previous_class']} words)
+5. **Previous Class Link** (Target: {word_limits.get('previous_class', 100)} words)
    - Link to prior mathematical knowledge from previous classes
    - Explain how previous concepts connect to current learning
    - Provide a brief review of essential prerequisites
 
-6. **Chapter Map/Overview** (100 words)
+6. **Chapter Map/Overview** (Target: {word_limits.get('summary', 100)} words)
    - Visual layout of mathematical concepts (mind map or flowchart description)
    - Show mathematical progressions and connections
 
-7. **Meet the Character (EeeBee)** (50-100 words)
+7. **Meet the Character (EeeBee)** (Target: 50-100 words)
    - Introduce EeeBee as a mathematical guide/helper throughout the chapter
 
 ## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
 
 **NOTE: If the PDF has Section 1, Section 2, Section 3, etc., create complete content for EACH section following this structure:**
 
-8. **Introduction of Section** (150 words per section)
+8. **Introduction of Section** (Target: 100 words)
    - Give a related section introduction that sets the mathematical context
    - Explain the importance of the mathematical concepts to be learned
    - Connect to the broader mathematical curriculum
 
-9. **History of Concepts in This Section** (150 words per section)
-   - Provide comprehensive historical background of the mathematical concepts
+9. **History of the chapter** (Target: 150 words)
+   - Provide comprehensive historical background of the chapter
    - Include key mathematicians, their contributions, and discoveries
    - Explain the timeline of mathematical developments
+   - Explain the history of the chapter
 
-10. **Warm-up Questions** (100 words per section)
+10. **Warm-up Questions** (Target: {word_limits.get('previous_class', 100)} words)
     - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
     - Include a mix of question types (mental math, real-world problems, pattern recognition)
 
-11. **Current Concepts** (3500-4500 words minimum PER SECTION)
+11. **Current Concepts** (Target: {word_limits.get('current_concepts', 4000)} words per section)
     
     For each major concept in EACH section, include ALL of the following:
     
-    **A. Concept Introduction** (100 words per concept)
+    **A. Concept Introduction** (Target: 120 words per concept)
     - Clear introduction to each mathematical concept
     - Simple, clear mathematical language
     - Use analogies and mathematical examples
     - Identify all subconcepts that will be covered under this main concept
     
-    **B. Subconcepts (As per NCERT Books)**
+    **B. Subconcepts (As per NCERT Books)** (Target: 200 words per concept)
     - **IMPORTANT**: Identify and include ALL subconcepts present in NCERT books for this topic
     - Each main concept typically has 2-5 subconcepts in NCERT mathematics books
     - Subconcepts should be clearly labeled and integrated within the main concept
@@ -593,25 +594,25 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
       * For "Triangles": Types of triangles, Properties of triangles, Congruence, etc.
       * For "Integers": Positive and negative integers, Operations on integers, Properties, etc.
     - Each subconcept should include:
-      * Definition and explanation (100-150 words)
+      * Definition and explanation 
       * Examples and illustrations
       * Key points to remember
       * Common errors to avoid
     
-    **C. Mathematical Explanation** (400-500 words per concept including all subconcepts)
+    **C. Mathematical Explanation** (Target: 450 words per concept)
     - Detailed theoretical understanding of the mathematical concept and its subconcepts
     - Include step-by-step mathematical reasoning and derivations
     - Show different mathematical approaches where applicable
     - Ensure each subconcept is thoroughly explained with connections to the main concept
     
-    **D. Solved Examples** (500-600 words per concept)
+    **D. Solved Examples** (Target: 550 words per concept)
     - Provide 4-5 different worked examples for each concept
     - Include examples that cover different subconcepts
     - Include step-by-step solutions with clear explanations
     - Use varied difficulty levels and question formats
     - Ensure examples demonstrate application of all subconcepts
     
-    **E. Concept-Based Exercise Questions** (400-500 words per concept)
+    **E. Concept-Based Exercise Questions** (Target: 450 words per concept)
     Create the following specific mathematical question types for each concept:
     
     1. **Fill in the Blanks** - 3-4 questions
@@ -638,46 +639,46 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     **F. Visuals** (Throughout each concept)
     - Include detailed image prompts for mathematical diagrams, graphs, and illustrations
     
-    **G. Mathematical Activities/Experiments** (200-250 words per concept)
+    **G. Mathematical Activities/Experiments** (Target: 220 words per concept)
     - Step-by-step mathematical experiments or investigations
     - Inquiry-based mathematical activities
     
-    **H. Check Your Understanding** (150-200 words per concept)
+    **H. Check Your Understanding** (Target: 170 words per concept)
     - Quick check questions (2-3 simple questions) to test immediate understanding
     - Brief conceptual questions or simple calculations
     
-    **I. Key Mathematical Terms** (100-150 words per concept)
+    **I. Key Mathematical Terms** (Target: 120 words per concept)
     - Highlighted mathematical terminology in text
     - Clear mathematical definitions
     
-    **J. Mathematical Applications** (200-250 words per concept)
+    **J. Mathematical Applications** (Target: 220 words per concept)
     - Show relevance to daily life, mathematical careers, technology
     
-    **K. Fun Mathematical Facts** (100-150 words per concept)
+    **K. Fun Mathematical Facts** (Target: 120 words per concept)
     - Include interesting mathematical facts related to the concept
     
-    **L. Think About It! (Mathematical Exploration)** (100-150 words per concept)
+    **L. Think About It! (Mathematical Exploration)** (Target: 120 words per concept)
     - Present thought-provoking mathematical questions or scenarios
     
-    **M. Mental Mathematics** (150-200 words per concept)
+    **M. Mental Mathematics** (Target: 170 words per concept)
     - Provide mental mathematics strategies and techniques
 
 ## III. Special Features (Apply to the ENTIRE chapter, not just one section)
 
-12. **Common Mathematical Misconceptions** (200-300 words)
+12. **Common Mathematical Misconceptions** (Target: 250 words)
     - 2-3 misconceptions per mathematical concept
     - Correct early mathematical misunderstandings
 
-13. **21st Century Skills Focus** (300-400 words)
+13. **21st Century Skills Focus** (Target: {word_limits.get('skill_activity', 350)} words)
     - Mathematical Design Challenge
     - Mathematical Debate
     - Collaborate & Create
 
-14. **Differentiation** (200-300 words)
+14. **Differentiation** (Target: {word_limits.get('exercises', 250)} words)
     - Challenge sections for advanced mathematical learners
     - Support sections for mathematical revision
 
-15. **Technology Integration** (150-200 words)
+15. **Technology Integration** (Target: {word_limits.get('stem_activity', 180)} words)
     - Mathematical software and tools
     - Digital mathematical simulations
 
@@ -686,10 +687,10 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
 
 ## IV. Chapter Wrap-Up (For the ENTIRE chapter)
 
-17. **Self-Assessment Checklist** (200-250 words)
+17. **Self-Assessment Checklist** (Target: {word_limits.get('exercises', 220)} words)
     - Create a comprehensive self-assessment checklist
 
-18. **Chapter-wise Miscellaneous Exercise** (500-600 words)
+18. **Chapter-wise Miscellaneous Exercise** (Target: {word_limits.get('exercises', 550)} words)
     - MCQs (5 questions)
     - Short/Long Answer (3 short, 2 long)
     - Open-ended Mathematical Problems (2 questions)
@@ -700,12 +701,11 @@ Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the
     - Mathematical Puzzle (1 puzzle)
     - Thinking Based Activities
 
-19. **Apply Your Mathematical Knowledge** (200-300 words)
+19. **Apply Your Mathematical Knowledge** (Target: {word_limits.get('skill_activity', 280)} words)
     - Real-world mathematical application tasks
     - Project-based mathematical problems
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 18000-25000 words (to accommodate multiple sections)
 * **CRITICAL**: Include ALL major sections from the PDF (e.g., if there are Sections 1, 2, and 3, generate complete content for ALL three)
 * **Mathematical Accuracy**: Ensure all mathematical content is accurate
 * **Clear Mathematical Language**: Use precise mathematical terminology
@@ -734,7 +734,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 ---
 
 Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapter content in the PDF.
-**Total Word Count for All Exercises**: {word_limits['exercises']} words
+**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
 
 **Core Mathematical Exercise Types:**
 1. **MCQ (Multiple Choice Questions)** - at least 12 questions with detailed solutions
@@ -784,7 +784,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 
 Your task is to generate MATHEMATICAL SKILL-BASED ACTIVITIES and STEM projects.
 
-## Mathematical Skill-Based Activities ({word_limits['skill_activity']} words)
+## Mathematical Skill-Based Activities (Target: {word_limits.get('skill_activity', 400)} words)
 
 Create at least 3 comprehensive mathematical activities:
 
@@ -805,7 +805,7 @@ Create at least 3 comprehensive mathematical activities:
 - Mathematical Pattern Recognition Activities
 - Mathematical Measurement and Data Collection
 
-## Mathematical STEM Projects ({word_limits['stem_activity']} words)
+## Mathematical STEM Projects (Target: {word_limits.get('stem_activity', 400)} words)
 
 Create at least 2 comprehensive projects that integrate mathematics with Science, Technology, and Engineering:
 
@@ -847,7 +847,7 @@ You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)
 ---
 
 Your task is to generate MATHEMATICS-INTEGRATED CREATIVE LEARNING projects.
-**Total Word Count for All Art-Integrated Learning**: {word_limits['art_learning']} words
+**Target Total Word Count for All Art-Integrated Learning**: {word_limits.get('art_learning', 400)} words
 
 ## Mathematical Art Projects
 
@@ -939,66 +939,119 @@ Your task is to generate COMPREHENSIVE CORE SCIENCE CHAPTER CONTENT that should 
 
 **REQUIRED SECTIONS (Generate ALL with substantial content):**
 
-1. **Current Concepts** ({word_limits['current_concepts']} words minimum)
-   - Provide detailed explanations of ALL key scientific concepts from the PDF
-   - Include multiple scientific examples for each concept
-   - Use analogies and real-world scientific connections to explain complex ideas
-   - Break down concepts into scientific sub-concepts with clear explanations
-   - Include scientific principles, formulas, or definitions where applicable
+1. **Current Concepts** (Target: {word_limits.get('current_concepts', 1200)} words)
+   
+   For each major scientific concept in the chapter, include ALL of the following:
+   
+   **A. Concept Introduction** (Target: 120 words per concept)
+   - Clear introduction to each scientific concept
+   - Simple, clear scientific language
+   - Use analogies and real-world scientific examples
+   - Identify all subconcepts that will be covered under this main concept
+   
+   **B. Subconcepts (As per NCERT Science Books)** (Target: 500 - 600 words per concept)
+   - **IMPORTANT**: Identify and include ALL subconcepts present in NCERT science books for this topic
+   - Each main concept typically has 2-5 subconcepts in NCERT science books
+   - Subconcepts should be clearly labeled and integrated within the main concept
+   - Examples of subconcepts:
+     * For "Matter": States of matter, Properties of matter, Changes of state, etc.
+     * For "Light": Reflection, Refraction, Dispersion, etc.
+     * For "Cell": Plant cells, Animal cells, Cell organelles, Cell division, etc.
+   - Each subconcept should include:
+     * Definition and explanation 
+     * Scientific examples and illustrations
+     * Key scientific points to remember
+     * Common scientific errors to avoid
+   
+   **C. Scientific Explanation** (Target: 450 words per concept)
+   - Detailed theoretical understanding of the scientific concept and its subconcepts
+   - Include step-by-step scientific reasoning and explanations
+   - Show different scientific approaches where applicable
+   - Ensure each subconcept is thoroughly explained with connections to the main concept
+   
+   **D. Scientific Examples and Applications** (Target: 350 words per concept)
+   - Provide 4-5 different real-world examples for each concept
+   - Include examples that cover different subconcepts
+   - Include step-by-step explanations with clear scientific reasoning
+   - Use varied complexity levels and application formats
+   - Ensure examples demonstrate application of all subconcepts
+   
+   **E. Concept-Based Questions** (Target: 300 words per concept)
    - Give questions for each current concept - 3 MCQs, 2 Short questions, 1 Long question
+   - Questions should test different subconcepts
+   - Include scientific reasoning and application-based questions
+   
+   **F. Scientific Activity** (Target: 200 words per concept)
    - Give scientific activity according to the concept
+   - Step-by-step scientific experiments or investigations
+   - Inquiry-based scientific activities
+   
+   **G. Scientific Facts and Applications** (Target: 150 words per concept)
    - Give fun scientific fact for each concept
+   - Show relevance to daily life, scientific careers, technology
+   - Connect to current scientific research and discoveries
+   
+   **H. Key Scientific Points** (Target: 120 words per concept)
    - Give key scientific points for each concept
+   - Highlighted scientific terminology and definitions
+   - Essential scientific principles and formulas
+   
+   **I. Common Scientific Misconceptions** (Target: 150 words per concept)
    - Give common scientific misconceptions for each concept
+   - Correct early scientific misunderstandings
+   - Explain why these misconceptions occur
+   
+   **J. Visual Integration** (Throughout each concept)
+   - Include detailed image prompts for scientific diagrams, experiments, and illustrations
+   
    - Mark concepts which are exactly coming from the PDF and give some extra concepts for higher level understanding
    - Make sure there is no repetition of concepts
 
-2. **Hook (with Image Prompt)** ({word_limits['hook']} words)
+2. **Hook (with Image Prompt)** (Target: {word_limits.get('hook', 80)} words)
    - Create an engaging scientific opening that captures student interest
    - Use scientific storytelling, surprising scientific facts, or thought-provoking scientific questions
    - Connect to students' daily scientific experiences or current scientific events
    - Include a detailed image prompt for a compelling scientific visual
 
-3. **Learning Outcome** ({word_limits['learning_outcome']} words)
+3. **Learning Outcome** (Target: {word_limits.get('learning_outcome', 70)} words)
    - List specific, measurable scientific learning objectives
    - Use action verbs (analyze, evaluate, create, experiment, investigate, etc.)
    - Align with Bloom's Taxonomy levels for science education
    - Connect to CBSE science curriculum standards
 
-4. **Real World Connection** ({word_limits['real_world']} words)
+4. **Real World Connection** (Target: {word_limits.get('real_world', 50)} words)
    - Provide multiple real-world applications of the scientific concepts
    - Include current examples from technology, environment, health, space science, etc.
    - Explain how the scientific concepts impact daily life
    - Connect to scientific careers and future studies
 
-5. **Previous Class Concept** ({word_limits['previous_class']} words)
+5. **Previous Class Concept** (Target: {word_limits.get('previous_class', 100)} words)
    - Give the scientific concept name and the previous class it was studied in according to NCERT science textbooks
    - Link to prior scientific knowledge and foundations
 
-6. **History** ({word_limits['history']} words)
+6. **History** (Target: {word_limits.get('history', 100)} words)
    - Provide comprehensive historical background of scientific discoveries
    - Include key scientists, inventors, or scientific figures and their contributions
    - Explain the timeline of scientific developments and discoveries
    - Connect historical scientific context to modern understanding
 
-7. **Summary** ({word_limits['summary']} words)
+7. **Summary** (Target: {word_limits.get('summary', 700)} words)
    - Create detailed concept-wise scientific summaries (not just one overall summary)
    - Include key scientific points, formulas, and important scientific facts
    - Organize by individual scientific concepts covered in the chapter
    - Provide clear, concise explanations that reinforce scientific learning
 
-8. **Link and Learn Based Question** ({word_limits['link_learn']} words)
+8. **Link and Learn Based Question** (Target: {word_limits.get('link_learn', 250)} words)
    - Create 3-5 questions that connect different scientific concepts
    - Include questions that link to other science subjects or real-world scientific scenarios
    - Provide detailed explanations for the scientific connections
 
-9. **Image Based Question** ({word_limits['image_based']} words)
+9. **Image Based Question** (Target: {word_limits.get('image_based', 250)} words)
    - Create 3-5 questions based on scientific images/diagrams from the chapter
    - Include detailed scientific image descriptions if creating new image prompts
    - Ensure questions test scientific understanding, not just observation
 
 **CONTENT REQUIREMENTS:**
-* **Minimum Total Length**: 6000-7000 words for the complete science chapter content
 * **Scientific Accuracy**: Ensure all scientific content is accurate and up-to-date
 * **Detailed Scientific Explanations**: Each scientific concept should be explained thoroughly with multiple paragraphs
 * **Scientific Examples and Illustrations**: Include numerous scientific examples, case studies, and practical applications
@@ -1045,7 +1098,7 @@ You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 ---
 
 Your task is to generate COMPREHENSIVE SCIENCE EXERCISES based on the chapter content in the PDF.
-**Total Word Count for All Exercises**: {word_limits['exercises']} words
+**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
 
 **Core Science Exercise Types:**
 
@@ -1101,7 +1154,7 @@ You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 
 Your task is to generate SCIENCE SKILL-BASED ACTIVITIES and STEM projects based on the chapter content in the PDF.
 
-## Science Skill-Based Activities ({word_limits['skill_activity']} words)
+## Science Skill-Based Activities (Target: {word_limits.get('skill_activity', 400)} words)
 
 Create at least 3 hands-on science activities that:
 * Reinforce the key scientific concepts from the chapter
@@ -1121,7 +1174,7 @@ Create at least 3 hands-on science activities that:
 7. **Scientific Reflection Questions**
 8. **Expected Scientific Outcomes and Learning**
 
-## Science STEM Projects ({word_limits['stem_activity']} words)
+## Science STEM Projects (Target: {word_limits.get('stem_activity', 400)} words)
 
 Create at least 2 comprehensive STEM projects that:
 * Integrate Science, Technology, Engineering and Mathematics
@@ -1180,7 +1233,7 @@ You are analyzing a science book chapter intended for **{grade_level} (CBSE)**.
 ---
 
 Your task is to generate SCIENCE-INTEGRATED CREATIVE LEARNING projects based on the chapter content in the PDF.
-**Total Word Count for All Art-Integrated Learning**: {word_limits['art_learning']} words
+**Target Total Word Count for All Art-Integrated Learning**: {word_limits.get('art_learning', 400)} words
 
 ## Science Art Projects
 
