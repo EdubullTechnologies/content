@@ -11,6 +11,162 @@ from threading import Event, Thread
 import time
 import re
 from typing import List, Dict, Any
+import hashlib
+from datetime import datetime
+
+# --- Streamlit Cloud Content Protection System ---
+def save_content_safely(content_type, content, grade_level=None):
+    """Save content with multiple backup strategies for Streamlit Cloud"""
+    if not content:
+        return
+    
+    try:
+        timestamp = datetime.now().isoformat()
+        content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
+        
+        # Strategy 1: Primary session state
+        st.session_state[content_type] = content
+        
+        # Strategy 2: Multiple backup session states
+        backup_data = {
+            'content': content,
+            'timestamp': timestamp,
+            'hash': content_hash,
+            'length': len(content)
+        }
+        
+        st.session_state[f"{content_type}_backup_1"] = backup_data
+        st.session_state[f"{content_type}_backup_2"] = backup_data.copy()
+        st.session_state[f"{content_type}_backup_3"] = backup_data.copy()
+        
+        # Strategy 3: Browser localStorage (works on Streamlit Cloud)
+        save_to_browser_storage(content_type, content, timestamp)
+        
+        # Strategy 4: Compressed backup for large content
+        if len(content) > 10000:
+            # Store truncated version as emergency backup
+            emergency_backup = content[:5000] + "\n\n[CONTENT TRUNCATED - PARTIAL BACKUP]"
+            st.session_state[f"{content_type}_emergency"] = emergency_backup
+        
+        # Mark as successfully saved
+        st.session_state[f"{content_type}_saved_timestamp"] = timestamp
+        
+    except Exception as e:
+        st.error(f"⚠️ Failed to save {content_type}: {e}")
+
+def save_to_browser_storage(content_type, content, timestamp):
+    """Save content to browser localStorage for persistence"""
+    try:
+        # Create minimal JavaScript to save to localStorage
+        content_json = json.dumps(content).replace("'", "\\'")
+        js_code = f"""
+        <script>
+        try {{
+            localStorage.setItem('eeebee_{content_type}', '{content_json}');
+            localStorage.setItem('eeebee_{content_type}_time', '{timestamp}');
+            console.log('Saved {content_type} to localStorage');
+        }} catch(e) {{
+            console.warn('localStorage save failed:', e);
+        }}
+        </script>
+        """
+        st.components.v1.html(js_code, height=0)
+    except Exception:
+        # Fail silently for browser storage
+        pass
+
+def recover_content_safely(content_type):
+    """Attempt to recover content from available backups"""
+    recovered_content = None
+    source = "none"
+    
+    # Check primary session state
+    if st.session_state.get(content_type):
+        recovered_content = st.session_state[content_type]
+        source = "primary"
+    
+    # Check backup session states
+    elif st.session_state.get(f"{content_type}_backup_1"):
+        backup = st.session_state[f"{content_type}_backup_1"]
+        recovered_content = backup.get('content')
+        source = "backup_1"
+    
+    elif st.session_state.get(f"{content_type}_backup_2"):
+        backup = st.session_state[f"{content_type}_backup_2"]
+        recovered_content = backup.get('content')
+        source = "backup_2"
+    
+    elif st.session_state.get(f"{content_type}_backup_3"):
+        backup = st.session_state[f"{content_type}_backup_3"]
+        recovered_content = backup.get('content')
+        source = "backup_3"
+    
+    # Check emergency backup
+    elif st.session_state.get(f"{content_type}_emergency"):
+        recovered_content = st.session_state[f"{content_type}_emergency"]
+        source = "emergency"
+    
+    return recovered_content, source
+
+def verify_and_recover_all_content():
+    """Check all content and recover if missing"""
+    content_types = ['chapter_content', 'exercises', 'skill_activities', 'art_learning']
+    recovered_any = False
+    
+    for content_type in content_types:
+        current_content = st.session_state.get(content_type)
+        
+        if not current_content:
+            recovered_content, source = recover_content_safely(content_type)
+            if recovered_content:
+                st.session_state[content_type] = recovered_content
+                st.success(f"🔄 Recovered {content_type.replace('_', ' ')} from {source}")
+                recovered_any = True
+                
+                # Re-save with all protection strategies
+                save_content_safely(content_type, recovered_content)
+    
+    return recovered_any
+
+def auto_save_during_streaming(content_type, partial_content, interval=1000):
+    """Auto-save content during streaming at regular intervals"""
+    if not partial_content:
+        return
+        
+    # Save every ~1000 characters to prevent loss
+    if len(partial_content) % interval < 50:
+        save_content_safely(content_type, partial_content)
+
+def display_content_status():
+    """Display content status in sidebar for monitoring"""
+    content_types = ['chapter_content', 'exercises', 'skill_activities', 'art_learning']
+    
+    with st.sidebar:
+        st.markdown("### 💾 Content Status")
+        for content_type in content_types:
+            content = st.session_state.get(content_type)
+            if content:
+                saved_time = st.session_state.get(f"{content_type}_saved_timestamp", "Unknown")
+                length = len(content)
+                
+                # Show status with emoji
+                if saved_time != "Unknown":
+                    status = "🟢"
+                    time_str = saved_time[11:19] if len(saved_time) > 19 else saved_time
+                else:
+                    status = "🟡"
+                    time_str = "Not saved"
+                
+                name = content_type.replace('_', ' ').title()
+                st.markdown(f"{status} **{name}**")
+                st.markdown(f"   📏 {length:,} chars | 🕒 {time_str}")
+        
+        # Recovery button
+        if st.button("🔄 Check & Recover All", key="recover_all_content"):
+            recovered = verify_and_recover_all_content()
+            if not recovered:
+                st.info("✅ All content is safe!")
+            st.rerun()
 
 # --- Configuration ---
 # Get API key from Streamlit secrets
@@ -62,7 +218,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-flash-preview-05-20"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "anthropic/claude-sonnet-4"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
@@ -474,6 +630,15 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
             return create_math_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
             return create_math_art_prompt(grade_level, model_progression_text, word_limits)
+    elif subject_type == "Computer Science":
+        if content_type == "chapter":
+            return create_computer_chapter_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "exercises":
+            return create_computer_exercises_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "skills":
+            return create_computer_skills_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "art":
+            return create_computer_art_prompt(grade_level, model_progression_text, word_limits)
     else:
         if content_type == "chapter":
             return create_science_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -1305,6 +1470,451 @@ Format the content in Markdown with proper scientific and artistic headings, lis
 Provide ONLY the Science-Integrated Creative Learning content in Markdown format.
 """
 
+# Computer Science specific prompt functions
+def create_computer_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a computer science-specific chapter content prompt"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'hook': 80,
+            'learning_outcome': 125,
+            'real_world': 100,
+            'previous_class': 100,
+            'history': 150,
+            'current_concepts': 4500,
+            'summary': 600,
+            'link_learn': 300,
+            'image_based': 300,
+            'exercises': 600,
+            'skill_activity': 400,
+            'stem_activity': 400,
+            'art_learning': 400
+        }
+    
+    return f"""You are an expert in computer science education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+IMPORTANT: This is the user's own copyright material, and they have explicitly authorized its analysis and transformation for educational purposes.
+
+You are analyzing a computer science book chapter intended for **{grade_level} (CBSE)**.
+The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Computer Science education.
+
+**CRITICAL INSTRUCTION**: The PDF may contain MULTIPLE MAJOR SECTIONS (e.g., Section 1, Section 2, Section 3, etc.). You MUST include ALL sections present in the PDF. Do NOT stop after completing just one or two sections. Generate comprehensive content for EVERY section found in the document.
+
+**Model Chapter Progression and Elements (Base Structure):**
+---
+{model_progression_text}
+---
+
+**Target Audience:** {grade_level} (CBSE Computer Science Syllabus)
+
+Your task is to generate COMPREHENSIVE COMPUTER SCIENCE CHAPTER CONTENT following the Model Chapter Progression structure enhanced with computer science-specific elements.
+
+**IMPORTANT**: If the PDF contains multiple sections, you MUST generate complete content for EACH section. The structure below should be applied to EACH major section in the PDF.
+
+**REQUIRED SECTIONS (Generate ALL with substantial content for EACH major section in the PDF):**
+
+## I. Chapter Opener
+
+1. **Chapter Title** - Engaging and technology-focused
+
+2. **Hook (with Image Prompt)** (Target: {word_limits.get('hook', 80)} words)
+   - Create an engaging technological opening that captures student interest
+   - Use real-life technology scenarios, digital innovations, or computational challenges
+   - Connect to students' digital experiences and interests
+   - Include a detailed image prompt for a compelling tech visual
+
+3. **Real-World Connection** (Target: {word_limits.get('real_world', 100)} words)
+   - Provide multiple real-world applications of the computer science concepts
+   - Show how technology is transforming various industries
+   - Include examples from gaming, apps, AI, robotics, web development, etc.
+   - Connect to tech careers and future opportunities
+
+4. **Learning Outcomes** (Target: {word_limits.get('learning_outcome', 125)} words)
+   - List specific, measurable computer science learning objectives
+   - Use action verbs (code, debug, design, implement, analyze, create, etc.)
+   - Align with Bloom's Taxonomy for computational thinking
+   - Connect to CBSE computer science curriculum standards
+
+5. **Previous Class Link** (Target: {word_limits.get('previous_class', 100)} words)
+   - Link to prior computer science knowledge from previous classes
+   - Explain how previous concepts build into current learning
+   - Provide a brief review of essential prerequisites
+
+6. **Chapter Map/Overview** (100 words)
+   - Visual layout of computer science concepts (flowchart or mind map description)
+   - Show progression from basic to advanced concepts
+
+7. **Meet the Character (EeeBee)** (50-100 words)
+   - Introduce EeeBee as a digital guide/coding buddy throughout the chapter
+
+## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
+
+8. **Introduction of Section** (150 words per section)
+   - Give a related section introduction that sets the technological context
+   - Explain the importance of the computer science concepts to be learned
+   - Connect to the broader digital literacy curriculum
+
+9. **History and Evolution** (Target: {word_limits.get('history', 150)} words per section)
+   - Provide historical background of the technology/concept
+   - Include key computer scientists, innovations, and milestones
+   - Explain how the technology has evolved over time
+
+10. **Warm-up Activities** (100 words per section)
+    - Create 5-7 engaging warm-up activities that connect to prior tech knowledge
+    - Include unplugged activities, quick challenges, or digital puzzles
+
+11. **Current Concepts** (Target: {word_limits.get('current_concepts', 4500)} words minimum PER SECTION)
+    
+    For each major concept in EACH section, include ALL of the following:
+    
+    **A. Concept Introduction** (100 words per concept)
+    - Clear introduction to each computer science concept
+    - Simple, accessible language with technical terms explained
+    - Use analogies from everyday life
+    
+    **B. Technical Explanation** (400-500 words per concept)
+    - Detailed theoretical understanding of the concept
+    - Include technical specifications, algorithms, or processes
+    - Show different approaches and methodologies
+    
+    **C. Hands-on Examples** (500-600 words per concept)
+    - Provide 4-5 different practical examples
+    - Include step-by-step implementations
+    - Show code snippets (if applicable) with clear explanations
+    - Use varied difficulty levels
+    
+    **D. Practice Exercises** (400-500 words per concept)
+    Create the following specific computer science question types for each concept:
+    
+    1. **Code Completion** - 3-4 exercises
+       - Fill in missing parts of code or algorithms
+    
+    2. **Debug the Code** - 2 exercises
+       - Find and fix errors in given code snippets
+    
+    3. **Algorithm Design** - 3 exercises
+       - Design solutions for given problems
+    
+    4. **Output Prediction** - 3 exercises
+       - Predict the output of given code
+    
+    5. **Tech Application Questions** - 5 questions
+       - Real-world scenarios using the concept
+    
+    6. **Computational Thinking Puzzles** - 3 questions
+       - Logic puzzles and problem-solving challenges
+    
+    **E. Lab Activities** (300-400 words per concept)
+    - Step-by-step computer lab exercises
+    - Include both online and offline activities
+    - Specify software/tools required
+    
+    **F. Visual Representations** (Throughout each concept)
+    - Include detailed image prompts for flowcharts, diagrams, screenshots
+    - User interface mockups where applicable
+    
+    **G. Try It Yourself** (200-250 words per concept)
+    - Mini-projects or coding challenges
+    - Encourage experimentation and creativity
+    
+    **H. Key Technical Terms** (100-150 words per concept)
+    - Highlighted technical vocabulary
+    - Clear definitions with examples
+    
+    **I. Digital Citizenship Note** (150-200 words per concept)
+    - Ethical considerations related to the concept
+    - Cyber safety and responsible technology use
+    
+    **J. Tech Facts** (100-150 words per concept)
+    - Interesting facts about the technology
+    - Current trends and future possibilities
+    
+    **K. Explore More** (100-150 words per concept)
+    - Links to online resources (describe what they would find)
+    - Suggested experiments and explorations
+    
+    **L. Quick Tips** (150-200 words per concept)
+    - Best practices and shortcuts
+    - Common mistakes to avoid
+
+## III. Special Features (Apply to the ENTIRE chapter, not just one section)
+
+12. **Common Programming Errors** (200-300 words)
+    - 2-3 common mistakes per concept
+    - How to identify and fix them
+
+13. **21st Century Skills Focus** (300-400 words)
+    - Digital Design Challenge
+    - Collaborative Coding Project
+    - Innovation Lab
+
+14. **Differentiation** (200-300 words)
+    - Advanced challenges for gifted learners
+    - Support activities for struggling students
+
+15. **Technology Integration** (150-200 words)
+    - Online platforms and tools
+    - Digital simulations and virtual labs
+
+16. **Character Integration** (Throughout)
+    - EeeBee appears as a coding companion
+
+## IV. Chapter Wrap-Up (For the ENTIRE chapter)
+
+17. **Self-Assessment Checklist** (200-250 words)
+    - Programming skills checklist
+    - Concept understanding verification
+
+18. **Chapter-wise Lab Exercise** (Target: {word_limits.get('exercises', 600)} words)
+    - Comprehensive Lab Project
+    - Multiple Choice Questions (5)
+    - Debugging Exercises (3)
+    - Algorithm Design (2)
+    - Code Writing Tasks (3)
+    - Technical Concept Mapping
+    - True/False with Explanation (5)
+    - Case Study Analysis (1)
+    - Innovation Challenge (1)
+
+19. **Apply Your Digital Skills** (Target: {word_limits.get('skill_activity', 400)} words)
+    - Real-world technology project
+    - Cross-curricular integration
+
+**CONTENT REQUIREMENTS:**
+* **CRITICAL**: Include ALL major sections from the PDF
+* **Technical Accuracy**: Ensure all code and technical content is accurate
+* **Age-Appropriate Complexity**: Match technical depth to grade level
+* **Practical Focus**: Balance theory with hands-on practice
+* **Progressive Learning**: Structure from basic to advanced
+* Include actual code examples appropriate for the grade level
+* DO NOT copy code directly from the PDF - create new examples
+
+Provide ONLY the comprehensive computer science chapter content in Markdown format. Remember to include EVERY section found in the PDF document.
+"""
+
+def create_computer_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a computer science-specific exercises prompt"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 800
+        }
+    return f"""You are an expert in computer science education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a computer science book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate COMPREHENSIVE COMPUTER SCIENCE EXERCISES based on the chapter content in the PDF.
+**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
+
+**Core Computer Science Exercise Types:**
+1. **MCQ (Multiple Choice Questions)** - at least 12 questions covering theory and concepts
+2. **Code Completion Exercises** - at least 8 exercises
+3. **Debug the Code** - at least 5 exercises with errors to fix
+4. **Write the Code** - at least 5 programming tasks
+5. **Algorithm Design** - at least 5 problems requiring algorithmic solutions
+6. **Output Prediction** - at least 8 code snippets to analyze
+7. **True/False with Technical Justification** - at least 10 statements
+8. **Fill in the Blanks (Technical)** - at least 10 questions
+9. **Match the Following (Tech Terms)** - at least 2 sets with 5 matches each
+10. **Flowchart/Diagram Exercises** - at least 3 exercises
+11. **Case Studies (Tech Scenarios)** - at least 2 real-world scenarios
+12. **Project-Based Questions** - at least 3 mini-project ideas
+
+**Special Computer Science Features:**
+- **Lab Exercises**: Step-by-step practical implementations
+- **EeeBee Integration**: Include exercises where EeeBee guides problem-solving
+- **Digital Tools**: Questions involving specific software/platforms
+- **Cyber Ethics**: Include digital citizenship and ethics questions
+- **Differentiation**: Basic to advanced level questions
+
+**Programming Languages** (adjust based on grade):
+- For lower grades: Block-based coding, Scratch concepts
+- For middle grades: Basic Python, HTML/CSS
+- For higher grades: Python, Java, SQL, Web technologies
+
+Ensure that:
+* Questions cover ALL important computer science concepts from the PDF
+* Include practical coding exercises, not just theory
+* Questions progress from basic recall to complex problem-solving
+* Language and complexity are appropriate for {grade_level}
+* All exercises include detailed solutions with explanations
+* Code examples use proper syntax and best practices
+
+Provide ONLY the comprehensive computer science exercises in Markdown format.
+"""
+
+def create_computer_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a computer science-specific skills and lab activities prompt"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activity': 400,
+            'stem_activity': 400
+        }
+    return f"""You are an expert in computer science education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a computer science book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate COMPUTER SCIENCE SKILL-BASED ACTIVITIES and LAB PROJECTS.
+
+## Computer Science Skill-Based Activities (Target: {word_limits.get('skill_activity', 400)} words)
+
+Create at least 3 comprehensive hands-on activities:
+
+**Activity Structure for Each:**
+1. **Clear Technical Objective**
+2. **Software/Hardware Requirements**
+3. **Step-by-Step Implementation**
+4. **Code Templates (if applicable)**
+5. **Testing and Debugging Steps**
+6. **Real-World Applications**
+7. **EeeBee's Coding Tips**
+8. **Reflection and Documentation**
+9. **Expected Output/Results**
+
+**Types of Computer Science Activities:**
+- Programming Challenges
+- App/Game Development Mini-Projects
+- Web Development Tasks
+- Database Design Exercises
+- Algorithm Implementation
+- Digital Art/Animation Creation
+- Robotics/IoT Projects (conceptual if hardware unavailable)
+
+## Computer Lab Projects (STEM Integration) (Target: {word_limits.get('stem_activity', 400)} words)
+
+Create at least 2 comprehensive lab projects that integrate computer science with other STEM fields:
+
+**Project Structure for Each:**
+1. **Project Title and Overview**
+2. **Technical Requirements**
+3. **Learning Objectives**
+4. **Detailed Implementation Steps**
+5. **Code Structure and Templates**
+6. **Testing Procedures**
+7. **Troubleshooting Guide**
+8. **Extensions and Modifications**
+9. **Presentation Guidelines**
+10. **Assessment Rubric**
+
+**STEM Integration Examples:**
+- Data Science Projects (CS + Math)
+- Simulation Projects (CS + Science)
+- Engineering Design with Code
+- Digital Solutions for Real Problems
+- AI/ML Demonstrations (age-appropriate)
+
+**Digital Citizenship Component:**
+Include for each activity:
+- Ethical considerations
+- Copyright and licensing awareness
+- Online safety practices
+- Responsible technology use
+
+Format the content in Markdown with proper code formatting using triple backticks for code blocks.
+
+Provide ONLY the Computer Science Skill Activities and Lab Projects in Markdown format.
+"""
+
+def create_computer_art_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a computer science-specific creative and case study prompt"""
+    if word_limits is None:
+        word_limits = {
+            'art_learning': 400
+        }
+    return f"""You are an expert in computer science education content development, specifically for CBSE curriculum.
+This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
+
+You are analyzing a computer science book chapter intended for **{grade_level} (CBSE)**.
+
+**Model Chapter Progression and Elements:**
+---
+{model_progression_text}
+---
+
+Your task is to generate COMPUTER SCIENCE CREATIVE PROJECTS and CASE STUDIES.
+**Target Total Word Count for All Art-Integrated Learning**: {word_limits.get('art_learning', 400)} words
+
+## Digital Creativity Projects
+
+Create at least 3 creative projects that blend computer science with artistic expression:
+
+**Project Structure for Each:**
+1. **Creative Tech Objective**
+2. **Tools and Technologies Required**
+3. **Technical Concepts Applied**
+4. **Step-by-Step Creative Process**
+5. **Code Components (if applicable)**
+6. **EeeBee's Creative Coding Tips**
+7. **Showcase and Portfolio Building**
+8. **Peer Review Guidelines**
+
+**Types of Digital Creative Projects:**
+- Digital Art and Graphics Programming
+- Interactive Storytelling with Code
+- Game Design and Development
+- Animation and Multimedia Projects
+- Music and Sound with Code
+- AR/VR Concepts (age-appropriate)
+- Creative Web Design
+- Data Visualization Art
+
+## Technology Case Studies
+
+**Case Study – Level 1 (Foundational Analysis):**
+Create at least 1 accessible case study that:
+- Presents a real-world technology scenario appropriate for {grade_level}
+- Includes guided analysis of technical solutions
+- Focuses on problem-solving with technology
+- Is accessible to students with basic computer skills
+
+**Case Study – Level 2 (Advanced Challenge):**
+Create at least 1 complex case study that:
+- Presents multi-faceted technical challenges
+- Requires system design thinking
+- Involves multiple technologies/concepts
+- Encourages innovative solutions
+
+**Case Study Structure for Each:**
+1. **Real-World Tech Scenario**
+2. **Problem Statement**
+3. **Technical Background**
+4. **Current Technology Analysis**
+5. **Proposed Digital Solutions**
+6. **Implementation Considerations**
+7. **Code Snippets/Pseudocode**
+8. **Ethical and Social Impact**
+9. **EeeBee's Tech Insights**
+10. **Future Enhancements**
+
+**Innovation Challenges:**
+Include for each case study:
+- "What if?" scenarios
+- Brainstorming prompts
+- Prototype development ideas
+- Presentation formats
+
+**Digital Portfolio Component:**
+- How to document projects
+- Building a digital portfolio
+- Showcasing work online safely
+
+Format the content in Markdown with proper formatting for code examples.
+
+Provide ONLY the Computer Science Creative Projects and Case Studies in Markdown format.
+"""
+
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False):
     """Generates specific content based on content type"""
     if not use_chunked:
@@ -2109,9 +2719,8 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
                 
                 accumulated_content += chunk
                 
-                # Auto-save content periodically during streaming to prevent loss
-                if len(accumulated_content) > 0 and len(accumulated_content) % 1000 < 50:  # Save every ~1000 characters
-                    content_saved = True
+                # CRITICAL: Auto-save during streaming to prevent loss
+                auto_save_during_streaming(content_type, accumulated_content)
                 
                 # Update the placeholder with accumulated content
                 with content_placeholder.container():
@@ -2120,7 +2729,9 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
             
             # Always try to save content if we have any, regardless of completion status
             if accumulated_content:
-                content_saved = True
+                # CRITICAL: Final save with all protection strategies
+                save_content_safely(content_type, accumulated_content)
+                
                 with content_placeholder.container():
                     if st.session_state.cancel_event.is_set():
                         st.markdown(f"### ⚠️ {content_type.title()} Content (Cancelled - Partial):")
@@ -2141,6 +2752,10 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
             # Always try to save any content we managed to generate
             if accumulated_content:
                 st.info("💾 Saving partial content despite error...")
+                
+                # CRITICAL: Save partial content with protection
+                save_content_safely(content_type, accumulated_content)
+                
                 with content_placeholder.container():
                     st.markdown(f"### ⚠️ {content_type.title()} Content (Partial - Error Occurred):")
                     st.markdown(accumulated_content)
@@ -2582,10 +3197,14 @@ with tab1:
     based on the 'Model Chapter Progression and Elements' and suggest improvements.
     Select which part of the content you want to generate.
     
-    ✨ **New Feature**: Use the **"Expand Content"** buttons to enhance any generated content with:
-    - **Auto-Section Detection**: Click specific sections to expand
-    - **Manual Text Selection**: Paste any text you want to develop further  
-    - **Global Enhancement**: Make entire content longer or add more examples/activities
+    ✨ **New Features**: 
+    - **Content Protection**: Your content is automatically saved with multiple backups to prevent loss
+    - **Expand Content**: Use the **"Expand Content"** buttons to enhance any generated content with:
+      - **Auto-Section Detection**: Click specific sections to expand
+      - **Manual Text Selection**: Paste any text you want to develop further  
+      - **Global Enhancement**: Make entire content longer or add more examples/activities
+    
+    💾 **Content Status**: Check the sidebar to monitor your content safety and recovery options.
     """)
 
     # Grade Level Selector
@@ -2595,8 +3214,8 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics"],
-        help="Choose 'Mathematics' for math-specific content structure or 'Science' for science subjects.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Computer Science"],
+        help="Choose 'Mathematics' for math-specific content structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
         key="subject_selector_tab1"
     )
 
@@ -2680,6 +3299,12 @@ with tab1:
         st.session_state.skill_activities = None
     if 'art_learning' not in st.session_state:
         st.session_state.art_learning = None
+    
+    # Auto-recover any lost content on startup
+    verify_and_recover_all_content()
+    
+    # Display content protection status
+    display_content_status()
 
     if model_progression:
         st.sidebar.subheader("Model Chapter Progression:")
@@ -2915,6 +3540,10 @@ with tab1:
                                         st.warning("⚠️ Generation cancelled by user.")
                                         break
                                     accumulated_content += chunk
+                                    
+                                    # CRITICAL: Auto-save during streaming to prevent loss
+                                    auto_save_during_streaming("chapter_content", accumulated_content)
+                                    
                                     # Update the placeholder with accumulated content (in a code block to preserve formatting)
                                     with content_placeholder.container():
                                         st.markdown("### Generated Chapter Content:")
@@ -2923,6 +3552,10 @@ with tab1:
                                 # Always save content if we have any, regardless of completion status
                                 if accumulated_content:
                                     st.session_state.chapter_content = accumulated_content
+                                    
+                                    # CRITICAL: Final save with all protection strategies
+                                    save_content_safely("chapter_content", accumulated_content, selected_grade)
+                                    
                                     with content_placeholder.container():
                                         if st.session_state.cancel_event.is_set():
                                             st.markdown("### ⚠️ Chapter Content (Cancelled - Partial):")
@@ -2956,6 +3589,10 @@ with tab1:
                                 if accumulated_content:
                                     st.info("💾 Saving partial content despite error...")
                                     st.session_state.chapter_content = accumulated_content
+                                    
+                                    # CRITICAL: Save partial content with protection
+                                    save_content_safely("chapter_content", accumulated_content, selected_grade)
+                                    
                                     with content_placeholder.container():
                                         st.markdown("### ⚠️ Chapter Content (Partial - Error Occurred):")
                                         st.markdown(st.session_state.chapter_content)
@@ -2987,6 +3624,10 @@ with tab1:
                         )
                         if content:
                             st.session_state.chapter_content = content
+                            
+                            # CRITICAL: Save content with protection
+                            save_content_safely("chapter_content", content, selected_grade)
+                            
                             st.success(f"✅ Chapter Content generated successfully! {message}")
                             st.subheader("📖 Chapter Content:")
                             with st.expander("View Chapter Content", expanded=True):
@@ -3067,6 +3708,10 @@ with tab1:
                         )
                         if content:
                             st.session_state.exercises = content
+                            
+                            # CRITICAL: Save content with protection
+                            save_content_safely("exercises", content, selected_grade)
+                            
                             st.success(f"✅ Exercises generated successfully! {message}")
                             st.subheader("📝 Exercises:")
                             with st.expander("View Exercises", expanded=True):
@@ -3147,6 +3792,10 @@ with tab1:
                         )
                         if content:
                             st.session_state.skill_activities = content
+                            
+                            # CRITICAL: Save content with protection
+                            save_content_safely("skill_activities", content, selected_grade)
+                            
                             st.success(f"✅ Skill Activities generated successfully! {message}")
                             st.subheader("🛠️ Skill Activities:")
                             with st.expander("View Skill Activities", expanded=True):
@@ -3227,6 +3876,10 @@ with tab1:
                         )
                         if content:
                             st.session_state.art_learning = content
+                            
+                            # CRITICAL: Save content with protection
+                            save_content_safely("art_learning", content, selected_grade)
+                            
                             st.success(f"✅ Art-Integrated Learning generated successfully! {message}")
                             st.subheader("🎨 Art-Integrated Learning:")
                             with st.expander("View Art-Integrated Learning", expanded=True):
@@ -3332,7 +3985,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
