@@ -2831,7 +2831,7 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
         yield chunk
 
 def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_grade, 
-                               model_progression, subject_type, word_limits, pdf_method, button_key):
+                               model_progression, subject_type, word_limits, button_key):
     """Helper function to handle streaming content generation with UI"""
     # Initialize cancel event for streaming
     st.session_state.cancel_event = Event()
@@ -2858,7 +2858,7 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
                 model_progression, 
                 subject_type,
                 word_limits,
-                use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                use_openrouter_method=True
             ):
                 if st.session_state.cancel_event.is_set():
                     st.warning("⚠️ Generation cancelled by user.")
@@ -3440,13 +3440,7 @@ with tab1:
         key="analysis_method_tab1"
     )
 
-    # PDF Processing Method Selector
-    pdf_method = st.radio(
-        "Choose PDF Processing Method:",
-        ["Text Extraction (Original)", "Direct PDF Upload (OpenRouter Recommended)"],
-        help="Direct PDF Upload sends the entire PDF to the API as base64. Text Extraction extracts text and images separately.",
-        key="pdf_method_tab1"
-    )
+    # Always use Direct PDF Upload method (no user selection needed)
 
     # Streaming Mode Toggle
     use_streaming = st.checkbox(
@@ -3714,7 +3708,7 @@ with tab1:
                                     model_progression, 
                                     subject_type,
                                     word_limits,
-                                    use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                                    use_openrouter_method=True
                                 ):
                                     if st.session_state.cancel_event.is_set():
                                         st.warning("⚠️ Generation cancelled by user.")
@@ -3800,7 +3794,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.chapter_content = content
@@ -3854,7 +3848,7 @@ with tab1:
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "exercises", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, word_limits, pdf_method, "exercises"
+                            model_progression, subject_type, word_limits, "exercises"
                         )
                         if content:
                             st.session_state.exercises = content
@@ -3884,7 +3878,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.exercises = content
@@ -3938,7 +3932,7 @@ with tab1:
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "skills", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, word_limits, pdf_method, "skills"
+                            model_progression, subject_type, word_limits, "skills"
                         )
                         if content:
                             st.session_state.skill_activities = content
@@ -3968,7 +3962,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.skill_activities = content
@@ -4022,7 +4016,7 @@ with tab1:
                     if use_streaming:
                         content, message = handle_streaming_generation(
                             "art", pdf_bytes, uploaded_file_st.name, selected_grade, 
-                            model_progression, subject_type, word_limits, pdf_method, "art"
+                            model_progression, subject_type, word_limits, "art"
                         )
                         if content:
                             st.session_state.art_learning = content
@@ -4052,7 +4046,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.art_learning = content
