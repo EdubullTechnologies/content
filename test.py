@@ -218,7 +218,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "anthropic/claude-sonnet-4"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "google/gemini-2.5-pro-preview"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
@@ -630,6 +630,21 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
             return create_math_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
             return create_math_art_prompt(grade_level, model_progression_text, word_limits)
+    elif subject_type == "Mathematics Primary (Classes 1-4)":
+        if content_type == "chapter":
+            return create_math_primary_chapter_prompt(grade_level, word_limits)
+        else:
+            # For Mathematics Primary, we only support chapter content generation
+            # Other content types are not applicable for this age group
+            return f"""This content type '{content_type}' is not supported for Mathematics Primary (Classes 1-4).
+            
+For primary mathematics (Classes 1-4), only complete chapter transformation is supported as it includes all necessary components:
+- Chapter Opener (Hook)
+- Let's Discover (Concept & Practice)  
+- Activity Zone (Hands-on Activities)
+- Quick Recap (Revision)
+
+Please use the "Generate Chapter Content" option instead."""
     elif subject_type == "Computer Science":
         if content_type == "chapter":
             return create_computer_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -648,6 +663,142 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
             return create_science_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
             return create_science_art_prompt(grade_level, model_progression_text, word_limits)
+
+# Mathematics Primary Classes (1-4) specific prompt function
+def create_math_primary_chapter_prompt(grade_level, word_limits=None):
+    """Creates a mathematics-specific chapter content prompt for Classes 1-4 following the lean structure"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'hook': 150,
+            'discover': 1500,
+            'activity': 300,
+            'recap': 200
+        }
+    
+    return f"""You are an Expert Indian Educator and Content Editor specializing in Mathematics textbook transformation for Classes 1-4.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Mathematics Classes 1-4. DO NOT apply Model Chapter Progression or any other structure. Follow ONLY the structure specified below.
+
+**Section 0: Prompt Scope and Limitation**
+- Specific Application: This is exclusively for transforming Mathematics textbooks for Classes 1 through 4
+- Do NOT extend this structure to any other subject or higher grade levels
+- This requires a fundamentally different pedagogical approach than secondary education
+
+**Your Role**: Transform the provided PDF chapter into a new, market-leading format using expert pedagogical judgment.
+
+**Target Audience**: {grade_level} (Primary Mathematics - Ages 6-10)
+
+**Three Golden Rules for Transformation**:
+1. **PRESERVE THE CORE CONCEPT**: Identify the core mathematical concept(s) and fundamental pedagogical sequence in the PDF
+2. **RESTRUCTURE THE LAYOUT**: Completely discard the old layout and use our mandatory four-part lean structure
+3. **DETERMINE OPTIMAL LENGTH**: Use expert judgment based on topic complexity (no fixed page limits)
+
+**Guiding Philosophy**:
+- **Crystal Clear Language**: Extremely simple, clear language for children aged 6-10
+- **Brevity and Impact**: Every page must be purposeful and packed with value
+- **Experiential Learning First**: Let children DO or EXPERIENCE the concept
+- **CPA Approach**: Concrete-Pictorial-Abstract sequence
+- **NEP/NCF Spirit**: Focus on why over how, build thinking skills
+
+**MANDATORY NEW STRUCTURE** (Transform PDF content to fit this EXACT structure):
+
+## 1. Chapter Opener - The Hook (Target: {word_limits.get('hook', 150)} words)
+**Action**: Discard any existing opener from PDF. Create completely new content.
+
+**Requirements**:
+- Create a captivating full-page illustration description and story
+- Set in rich Indian context (Indian names, places, festivals, objects, currency)
+- Age-appropriate for 6-10 year olds (positive, encouraging themes)
+- Introduce the mathematical concept through story/scenario
+- Include detailed image prompt for illustration
+- Make it experiential - child should feel connected to the math concept
+
+**Format**:
+- Story/scenario that hooks the child
+- Visual description for illustration
+- Connection to the mathematical concept they'll learn
+
+## 2. Concept & Practice - Let's Discover (Target: {word_limits.get('discover', 1500)} words)
+**Action**: Take core lesson from PDF and rewrite completely using CPA approach.
+
+**Requirements**:
+- **Variable length**: Just enough pages to cover concept thoroughly without rushing
+- **Integrate learning and practice**: Introduce micro-concept, then 2-4 practice questions immediately
+- **Replace generic examples**: Use authentic Indian contexts throughout
+- **CPA Sequence**: Concrete (manipulatives/real objects) → Pictorial (drawings/images) → Abstract (numbers/symbols)
+- **Short sentences**: Break multi-step instructions into numbered points
+- **Include "Brain Booster" questions**: Mark with 💡 for Higher Order Thinking Skills
+- **Teacher's Notes**: Add "For the Teacher" notes to 70% of content
+
+**Structure for each micro-concept**:
+- Simple introduction with concrete example
+- Pictorial representation with Indian context
+- Abstract mathematical representation
+- 2-4 immediate practice questions
+- 1 Brain Booster question (💡)
+
+**Content Safety**: Zero bias, show boys and girls equally, diverse representation of India
+
+## 3. Activity Zone - Minds-on, Hands-on (Target: {word_limits.get('activity', 300)} words)
+**Action**: Discard any existing activities from PDF. Create completely new content.
+
+**Requirements**:
+- **Two fresh activities**: 
+  1. **Maths Lab Activity** (tactile, hands-on with real objects)
+  2. **Fun with Maths** (game/puzzle format)
+- Use easily available materials
+- Indian context and examples
+- Step-by-step instructions in simple language
+- Promote collaboration and positive values
+- Age-appropriate for 6-10 year olds
+
+**Format**:
+- Activity 1: Maths Lab Activity (hands-on exploration)
+- Activity 2: Fun with Maths (engaging game/puzzle)
+- Clear materials list
+- Step-by-step instructions
+- Learning outcome for each activity
+
+## 4. Quick Recap / Revision (Target: {word_limits.get('recap', 200)} words)
+**Action**: Create this page from scratch.
+
+**Requirements**:
+- **Visual summary**: Mind map or concept map of core concepts from PDF
+- **"Let's Revise" section**: 4-5 mixed problems for assessment
+- **Simple language**: Child-friendly explanations
+- **Indian contexts**: All examples should be culturally relevant
+- **Varied question types**: Mix of formats appropriate for the grade level
+
+**Format**:
+- Visual concept summary (mind map description)
+- "Let's Revise" with 4-5 assessment questions
+- Mix of question difficulties
+- Answer key or hints
+
+**Content Enhancement Requirements**:
+- **Teacher's Notes**: Add practical teaching tips throughout
+- **Indian Context**: Replace ALL generic examples with Indian ones (names, places, currency, festivals)
+- **Language**: Kind, encouraging, simple voice throughout
+- **Safety & Appropriateness**: All content suitable for ages 6-10
+- **Inclusivity**: Gender-neutral, culturally diverse, ability-inclusive
+
+**What to Remove from PDF and Replace**:
+- Remove: Direct jumps to formulas without conceptual build-up
+- Replace: Pages of repetitive drills with varied, contextual problems  
+- Replace: Generic or culturally ambiguous examples
+- Rewrite: Long, complex paragraphs into short, simple instructions
+
+**Visual Requirements**:
+- Include detailed image prompts for illustrations throughout
+- Specify Indian cultural elements in visuals
+- Ensure age-appropriate, colorful, engaging imagery
+- Support the CPA learning progression
+
+Analyze the provided PDF thoroughly and transform it according to this structure. Focus on making mathematics fun, accessible, and meaningful for young Indian children while preserving the core mathematical concepts and learning sequence.
+
+Provide ONLY the transformed mathematics chapter content in Markdown format following the four-part structure above.
+"""
 
 # Mathematics-specific prompt functions
 def create_math_chapter_prompt(grade_level, model_progression_text, word_limits=None):
@@ -1910,8 +2061,11 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
     if not use_chunked:
         # Standard approach
         try:
-            # Get the specific prompt
-            prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
+            # Get the specific prompt (Mathematics Primary doesn't use model_progression_text)
+            if subject_type == "Mathematics Primary (Classes 1-4)":
+                prompt = create_specific_prompt(content_type, grade_level, None, subject_type, word_limits)
+            else:
+                prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
             st.info(f"Generating {content_type} content for {grade_level}...")
             
@@ -2642,8 +2796,11 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     Generates specific content with streaming support.
     Returns a generator that yields response chunks.
     """
-    # Get the specific prompt
-    prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
+    # Get the specific prompt (Mathematics Primary doesn't use model_progression_text)
+    if subject_type == "Mathematics Primary (Classes 1-4)":
+        prompt = create_specific_prompt(content_type, grade_level, None, subject_type, word_limits)
+    else:
+        prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
     if use_openrouter_method:
         # Create messages with direct PDF upload
@@ -3204,54 +3361,76 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Computer Science"],
-        help="Choose 'Mathematics' for math-specific content structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science"],
+        help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-4)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
         key="subject_selector_tab1"
     )
 
     # Word Limit Controls
     st.subheader("📝 Content Length Settings")
     with st.expander("Configure Word Limits for Each Section", expanded=False):
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("**Core Sections**")
-            hook_words = st.number_input("Hook (words)", min_value=20, value=80, step=10, key="hook_words")
-            learning_outcome_words = st.number_input("Learning Outcome (words)", min_value=30, value=70, step=10, key="learning_outcome_words")
-            real_world_words = st.number_input("Real World Connection (words)", min_value=30, value=50, step=10, key="real_world_words")
-            previous_class_words = st.number_input("Previous Class Concept (words)", min_value=30, value=100, step=10, key="previous_class_words")
-            history_words = st.number_input("History (words)", min_value=50, value=100, step=10, key="history_words")
-        
-        with col2:
-            st.markdown("**Main Content**")
-            current_concepts_words = st.number_input("Current Concepts (words)", min_value=500, value=1200, step=100, key="current_concepts_words")
-            summary_words = st.number_input("Summary (words)", min_value=300, value=700, step=50, key="summary_words")
-            link_learn_words = st.number_input("Link and Learn Questions (words)", min_value=100, value=250, step=25, key="link_learn_words")
-            image_based_words = st.number_input("Image Based Questions (words)", min_value=100, value=250, step=25, key="image_based_words")
-        
-        with col3:
-            st.markdown("**Activities & Exercises**")
-            exercises_words = st.number_input("Exercise Questions (words)", min_value=300, value=800, step=50, key="exercises_words")
-            skill_activity_words = st.number_input("Skill Activities (words)", min_value=200, value=400, step=50, key="skill_activity_words")
-            stem_activity_words = st.number_input("STEM Activities (words)", min_value=200, value=400, step=50, key="stem_activity_words")
-            art_learning_words = st.number_input("Art Learning (words)", min_value=200, value=400, step=50, key="art_learning_words")
+        if subject_type == "Mathematics Primary (Classes 1-4)":
+            # Special word limits for Primary Mathematics
+            st.markdown("**Mathematics Primary (Classes 1-4) Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                hook_words = st.number_input("Chapter Opener - The Hook (words)", min_value=100, value=150, step=10, key="primary_hook_words")
+                discover_words = st.number_input("Let's Discover - Concept & Practice (words)", min_value=1000, value=1500, step=100, key="primary_discover_words")
+            
+            with col2:
+                activity_words = st.number_input("Activity Zone - Hands-on (words)", min_value=200, value=300, step=25, key="primary_activity_words")
+                recap_words = st.number_input("Quick Recap - Revision (words)", min_value=150, value=200, step=25, key="primary_recap_words")
+            
+            # Store word limits for primary mathematics
+            st.session_state.word_limits = {
+                'hook': hook_words,
+                'discover': discover_words,
+                'activity': activity_words,
+                'recap': recap_words
+            }
+        else:
+            # Standard word limits for other subjects
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.markdown("**Core Sections**")
+                hook_words = st.number_input("Hook (words)", min_value=20, value=80, step=10, key="hook_words")
+                learning_outcome_words = st.number_input("Learning Outcome (words)", min_value=30, value=70, step=10, key="learning_outcome_words")
+                real_world_words = st.number_input("Real World Connection (words)", min_value=30, value=50, step=10, key="real_world_words")
+                previous_class_words = st.number_input("Previous Class Concept (words)", min_value=30, value=100, step=10, key="previous_class_words")
+                history_words = st.number_input("History (words)", min_value=50, value=100, step=10, key="history_words")
+            
+            with col2:
+                st.markdown("**Main Content**")
+                current_concepts_words = st.number_input("Current Concepts (words)", min_value=500, value=1200, step=100, key="current_concepts_words")
+                summary_words = st.number_input("Summary (words)", min_value=300, value=700, step=50, key="summary_words")
+                link_learn_words = st.number_input("Link and Learn Questions (words)", min_value=100, value=250, step=25, key="link_learn_words")
+                image_based_words = st.number_input("Image Based Questions (words)", min_value=100, value=250, step=25, key="image_based_words")
+            
+            with col3:
+                st.markdown("**Activities & Exercises**")
+                exercises_words = st.number_input("Exercise Questions (words)", min_value=300, value=800, step=50, key="exercises_words")
+                skill_activity_words = st.number_input("Skill Activities (words)", min_value=200, value=400, step=50, key="skill_activity_words")
+                stem_activity_words = st.number_input("STEM Activities (words)", min_value=200, value=400, step=50, key="stem_activity_words")
+                art_learning_words = st.number_input("Art Learning (words)", min_value=200, value=400, step=50, key="art_learning_words")
 
-        # Store word limits in session state
-        st.session_state.word_limits = {
-            'hook': hook_words,
-            'learning_outcome': learning_outcome_words,
-            'real_world': real_world_words,
-            'previous_class': previous_class_words,
-            'history': history_words,
-            'current_concepts': current_concepts_words,
-            'summary': summary_words,
-            'link_learn': link_learn_words,
-            'image_based': image_based_words,
-            'exercises': exercises_words,
-            'skill_activity': skill_activity_words,
-            'stem_activity': stem_activity_words,
-            'art_learning': art_learning_words
-        }
+            # Store word limits in session state
+            st.session_state.word_limits = {
+                'hook': hook_words,
+                'learning_outcome': learning_outcome_words,
+                'real_world': real_world_words,
+                'previous_class': previous_class_words,
+                'history': history_words,
+                'current_concepts': current_concepts_words,
+                'summary': summary_words,
+                'link_learn': link_learn_words,
+                'image_based': image_based_words,
+                'exercises': exercises_words,
+                'skill_activity': skill_activity_words,
+                'stem_activity': stem_activity_words,
+                'art_learning': art_learning_words
+            }
 
     # Analysis Method Selector
     analysis_method = st.radio(
@@ -3476,17 +3655,28 @@ with tab1:
             
             st.subheader("🚀 Generate New Content")
 
-            # Generate Chapter Content Button
-            generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
-            
-            # Generate Exercises Button
-            generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
-            
-            # Generate Skill Activities Button
-            generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
-            
-            # Generate Art Learning Button
-            generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
+            if subject_type == "Mathematics Primary (Classes 1-4)":
+                # For primary mathematics, only show chapter content generation
+                st.info("📘 **Mathematics Primary Mode**: For Classes 1-4, we generate a complete chapter transformation that includes all components (Hook, Let's Discover, Activity Zone, and Quick Recap) in one comprehensive package.")
+                
+                # Only show the chapter content button for primary mathematics
+                generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
+                generate_exercises = False
+                generate_skills = False  
+                generate_art = False
+            else:
+                # Standard buttons for other subjects
+                # Generate Chapter Content Button
+                generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
+                
+                # Generate Exercises Button
+                generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
+                
+                # Generate Skill Activities Button
+                generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
+                
+                # Generate Art Learning Button
+                generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
             
             # Download All Button (outside columns)
             download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
@@ -3975,7 +4165,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
