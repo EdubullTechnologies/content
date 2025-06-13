@@ -218,7 +218,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-pro-preview"  # You can change this to "anthropic/claude-sonnet-4" when available
+MODEL_NAME = "anthropic/claude-sonnet-4"  # You can change this to "anthropic/claude-sonnet-4" when available
 
 # --- Helper Functions ---
 
@@ -1477,18 +1477,13 @@ def create_computer_chapter_prompt(grade_level, model_progression_text, word_lim
     if word_limits is None:
         word_limits = {
             'hook': 80,
-            'learning_outcome': 125,
-            'real_world': 100,
+            'learning_outcome': 70,
+            'real_world': 70,
             'previous_class': 100,
-            'history': 150,
             'current_concepts': 4500,
-            'summary': 600,
-            'link_learn': 300,
-            'image_based': 300,
-            'exercises': 600,
-            'skill_activity': 400,
-            'stem_activity': 400,
-            'art_learning': 400
+            'summary': 100,
+            'exercises': 1000,
+            'skill_activity': 100
         }
     
     return f"""You are an expert in computer science education content development, specifically for CBSE curriculum.
@@ -1524,13 +1519,13 @@ Your task is to generate COMPREHENSIVE COMPUTER SCIENCE CHAPTER CONTENT followin
    - Connect to students' digital experiences and interests
    - Include a detailed image prompt for a compelling tech visual
 
-3. **Real-World Connection** (Target: {word_limits.get('real_world', 100)} words)
+3. **Real-World Connection** (Target: {word_limits.get('real_world', 70)} words)
    - Provide multiple real-world applications of the computer science concepts
    - Show how technology is transforming various industries
    - Include examples from gaming, apps, AI, robotics, web development, etc.
    - Connect to tech careers and future opportunities
 
-4. **Learning Outcomes** (Target: {word_limits.get('learning_outcome', 125)} words)
+4. **Learning Outcomes** (Target: {word_limits.get('learning_outcome', 70)} words)
    - List specific, measurable computer science learning objectives
    - Use action verbs (code, debug, design, implement, analyze, create, etc.)
    - Align with Bloom's Taxonomy for computational thinking
@@ -1545,7 +1540,7 @@ Your task is to generate COMPREHENSIVE COMPUTER SCIENCE CHAPTER CONTENT followin
    - Visual layout of computer science concepts (flowchart or mind map description)
    - Show progression from basic to advanced concepts
 
-7. **Meet the Character (EeeBee)** (50-100 words)
+7. **Meet the Character (EeeBee)** (30-50 words)
    - Introduce EeeBee as a digital guide/coding buddy throughout the chapter
 
 ## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
@@ -1555,16 +1550,11 @@ Your task is to generate COMPREHENSIVE COMPUTER SCIENCE CHAPTER CONTENT followin
    - Explain the importance of the computer science concepts to be learned
    - Connect to the broader digital literacy curriculum
 
-9. **History and Evolution** (Target: {word_limits.get('history', 150)} words per section)
-   - Provide historical background of the technology/concept
-   - Include key computer scientists, innovations, and milestones
-   - Explain how the technology has evolved over time
+9. **Warm-up Activities** (100 words per section)
+   - Create 5-7 engaging warm-up activities that connect to prior tech knowledge
+   - Include unplugged activities, quick challenges, or digital puzzles
 
-10. **Warm-up Activities** (100 words per section)
-    - Create 5-7 engaging warm-up activities that connect to prior tech knowledge
-    - Include unplugged activities, quick challenges, or digital puzzles
-
-11. **Current Concepts** (Target: {word_limits.get('current_concepts', 4500)} words minimum PER SECTION)
+10. **Current Concepts** (Target: {word_limits.get('current_concepts', 4500)} words minimum PER SECTION)
     
     For each major concept in EACH section, include ALL of the following:
     
@@ -1622,62 +1612,62 @@ Your task is to generate COMPREHENSIVE COMPUTER SCIENCE CHAPTER CONTENT followin
     - Highlighted technical vocabulary
     - Clear definitions with examples
     
-    **I. Digital Citizenship Note** (150-200 words per concept)
-    - Ethical considerations related to the concept
-    - Cyber safety and responsible technology use
-    
-    **J. Tech Facts** (100-150 words per concept)
+    **I. Tech Facts** (100-150 words per concept)
     - Interesting facts about the technology
     - Current trends and future possibilities
     
-    **K. Explore More** (100-150 words per concept)
-    - Links to online resources (describe what they would find)
-    - Suggested experiments and explorations
-    
-    **L. Quick Tips** (150-200 words per concept)
+    **J. Quick Tips** (150-200 words per concept)
     - Best practices and shortcuts
     - Common mistakes to avoid
-
-## III. Special Features (Apply to the ENTIRE chapter, not just one section)
-
-12. **Common Programming Errors** (200-300 words)
-    - 2-3 common mistakes per concept
-    - How to identify and fix them
-
-13. **21st Century Skills Focus** (300-400 words)
-    - Digital Design Challenge
-    - Collaborative Coding Project
-    - Innovation Lab
-
-14. **Differentiation** (200-300 words)
-    - Advanced challenges for gifted learners
-    - Support activities for struggling students
-
-15. **Technology Integration** (150-200 words)
-    - Online platforms and tools
-    - Digital simulations and virtual labs
-
-16. **Character Integration** (Throughout)
-    - EeeBee appears as a coding companion
+    
+    **K. Fun With Colors** (50-80 words per concept)
+    - Color-coded programming concepts or visual elements
+    - Creative activities using colors to understand technical concepts
+    
+    **L. Unscramble the Letters** (30-50 words per concept)
+    - Word puzzles related to computer science terminology
+    - Technical vocabulary building exercises
+    
+    **M. Health, Safety & Ethics Corner/Computer Etiquettes** (100-120 words per concept)
+    - Digital wellness and ergonomics
+    - Ethical considerations in technology use
+    - Proper computer usage and digital citizenship
+    
+    **N. Shortcut Keys** (50-80 words per concept)
+    - Relevant keyboard shortcuts for the concept
+    - Efficiency tips for computer operations
 
 ## IV. Chapter Wrap-Up (For the ENTIRE chapter)
 
-17. **Self-Assessment Checklist** (200-250 words)
+11. **Common Programming Errors** (80-100 words)
+    - 2-3 common mistakes per concept
+    - How to identify and fix them
+
+12. **Summary/Points to Remember** (Target: {word_limits.get('summary', 100)} words)
+    - Key takeaways from the chapter
+    - Essential concepts and skills learned
+    - Important technical points to remember
+
+13. **Self-Assessment Checklist** (80-100 words)
     - Programming skills checklist
     - Concept understanding verification
 
-18. **Chapter-wise Lab Exercise** (Target: {word_limits.get('exercises', 600)} words)
+14. **Chapter-wise Lab Exercise** (Target: {word_limits.get('exercises', 1000)} words)
     - Comprehensive Lab Project
     - Multiple Choice Questions (5)
+    - Fill in the Blanks (5)
+    - Abbreviations (5)
     - Debugging Exercises (3)
-    - Algorithm Design (2)
+    - Match The Following (5)
     - Code Writing Tasks (3)
     - Technical Concept Mapping
     - True/False with Explanation (5)
     - Case Study Analysis (1)
     - Innovation Challenge (1)
+    - Answer the Following Questions - Short (5)
+    - Answer the Following Questions - Long (5)
 
-19. **Apply Your Digital Skills** (Target: {word_limits.get('skill_activity', 400)} words)
+15. **Apply Your Digital Skills** (Target: {word_limits.get('skill_activity', 100)} words)
     - Real-world technology project
     - Cross-curricular integration
 
