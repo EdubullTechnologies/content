@@ -630,21 +630,20 @@ def create_specific_prompt(content_type, grade_level, model_progression_text, su
             return create_math_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
             return create_math_art_prompt(grade_level, model_progression_text, word_limits)
-    elif subject_type == "Mathematics Primary (Classes 1-4)":
+    elif subject_type == "Mathematics Primary (Classes 1-5)":
         if content_type == "chapter":
             return create_math_primary_chapter_prompt(grade_level, word_limits)
+        elif content_type == "exercises":
+            return create_math_primary_exercises_prompt(grade_level, word_limits)
         else:
-            # For Mathematics Primary, we only support chapter content generation
-            # Other content types are not applicable for this age group
-            return f"""This content type '{content_type}' is not supported for Mathematics Primary (Classes 1-4).
+            # For Mathematics Primary, we only support chapter and exercises generation
+            return f"""This content type '{content_type}' is not supported for Mathematics Primary (Classes 1-5).
             
-For primary mathematics (Classes 1-4), only complete chapter transformation is supported as it includes all necessary components:
-- Chapter Opener (Hook)
-- Let's Discover (Concept & Practice)  
-- Activity Zone (Hands-on Activities)
-- Quick Recap (Revision)
+For primary mathematics (Classes 1-5), we support:
+- Chapter Content: Complete chapter transformation with all components
+- Exercises: MCQs, Match the Column, Puzzles, Mental Math, Thinking Activities, and Math Lab Activities
 
-Please use the "Generate Chapter Content" option instead."""
+Please use the appropriate generation option."""
     elif subject_type == "Computer Science":
         if content_type == "chapter":
             return create_computer_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -664,9 +663,9 @@ Please use the "Generate Chapter Content" option instead."""
         elif content_type == "art":
             return create_science_art_prompt(grade_level, model_progression_text, word_limits)
 
-# Mathematics Primary Classes (1-4) specific prompt function
+# Mathematics Primary Classes (1-5) specific prompt function
 def create_math_primary_chapter_prompt(grade_level, word_limits=None):
-    """Creates a mathematics-specific chapter content prompt for Classes 1-4 following the lean structure"""
+    """Creates a mathematics-specific chapter content prompt for Classes 1-5 following the lean structure"""
     # Default word limits if none provided
     if word_limits is None:
         word_limits = {
@@ -676,18 +675,18 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
             'recap': 200
         }
     
-    return f"""You are an Expert Indian Educator and Content Editor specializing in Mathematics textbook transformation for Classes 1-4.
+    return f"""You are an Expert Indian Educator and Content Editor specializing in Mathematics textbook transformation for Classes 1-5.
 
-**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Mathematics Classes 1-4. DO NOT apply Model Chapter Progression or any other structure. Follow ONLY the structure specified below.
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Mathematics Classes 1-5. DO NOT apply Model Chapter Progression or any other structure. Follow ONLY the structure specified below.
 
 **Section 0: Prompt Scope and Limitation**
-- Specific Application: This is exclusively for transforming Mathematics textbooks for Classes 1 through 4
+- Specific Application: This is exclusively for transforming Mathematics textbooks for Classes 1 through 5
 - Do NOT extend this structure to any other subject or higher grade levels
 - This requires a fundamentally different pedagogical approach than secondary education
 
 **Your Role**: Transform the provided PDF chapter into a new, market-leading format using expert pedagogical judgment.
 
-**Target Audience**: {grade_level} (Primary Mathematics - Ages 6-10)
+**Target Audience**: {grade_level} (Primary Mathematics - Ages 6-11)
 
 **Three Golden Rules for Transformation**:
 1. **PRESERVE THE CORE CONCEPT**: Identify the core mathematical concept(s) and fundamental pedagogical sequence in the PDF
@@ -695,7 +694,7 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 3. **DETERMINE OPTIMAL LENGTH**: Use expert judgment based on topic complexity (no fixed page limits)
 
 **Guiding Philosophy**:
-- **Crystal Clear Language**: Extremely simple, clear language for children aged 6-10
+- **Crystal Clear Language**: Extremely simple, clear language for children aged 6-11
 - **Brevity and Impact**: Every page must be purposeful and packed with value
 - **Experiential Learning First**: Let children DO or EXPERIENCE the concept
 - **CPA Approach**: Concrete-Pictorial-Abstract sequence
@@ -709,7 +708,7 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 **Requirements**:
 - Create a captivating full-page illustration description and story
 - Set in rich Indian context (Indian names, places, festivals, objects, currency)
-- Age-appropriate for 6-10 year olds (positive, encouraging themes)
+- Age-appropriate for 6-11 year olds (positive, encouraging themes)
 - Introduce the mathematical concept through story/scenario
 - Include detailed image prompt for illustration
 - Make it experiential - child should feel connected to the math concept
@@ -735,6 +734,8 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 - Simple introduction with concrete example
 - Pictorial representation with Indian context
 - Abstract mathematical representation
+- **2 Concept-wise Examples**: Provide 2 different examples for each concept using Indian context
+- **Fun Fact**: Include 1 interesting mathematical fun fact related to each concept
 - 2-4 immediate practice questions
 - 1 Brain Booster question (💡)
 
@@ -751,7 +752,7 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 - Indian context and examples
 - Step-by-step instructions in simple language
 - Promote collaboration and positive values
-- Age-appropriate for 6-10 year olds
+- Age-appropriate for 6-11 year olds
 
 **Format**:
 - Activity 1: Maths Lab Activity (hands-on exploration)
@@ -780,7 +781,7 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 - **Teacher's Notes**: Add practical teaching tips throughout
 - **Indian Context**: Replace ALL generic examples with Indian ones (names, places, currency, festivals)
 - **Language**: Kind, encouraging, simple voice throughout
-- **Safety & Appropriateness**: All content suitable for ages 6-10
+- **Safety & Appropriateness**: All content suitable for ages 6-11
 - **Inclusivity**: Gender-neutral, culturally diverse, ability-inclusive
 
 **What to Remove from PDF and Replace**:
@@ -798,6 +799,89 @@ def create_math_primary_chapter_prompt(grade_level, word_limits=None):
 Analyze the provided PDF thoroughly and transform it according to this structure. Focus on making mathematics fun, accessible, and meaningful for young Indian children while preserving the core mathematical concepts and learning sequence.
 
 Provide ONLY the transformed mathematics chapter content in Markdown format following the four-part structure above.
+"""
+
+def create_math_primary_exercises_prompt(grade_level, word_limits=None):
+    """Creates a mathematics-specific exercises prompt for Classes 1-5"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'exercises': 800
+        }
+    
+    return f"""You are an Expert Indian Educator and Content Editor specializing in Mathematics exercises for Classes 1-5.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Mathematics Classes 1-5 exercises. Create age-appropriate, engaging mathematical exercises.
+
+**Target Audience**: {grade_level} (Primary Mathematics - Ages 6-11)
+
+Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapter content in the PDF.
+**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
+
+**REQUIRED EXERCISE TYPES:**
+
+## A. Multiple Choice Questions (MCQs) - 3 Questions
+- Create 3 age-appropriate MCQs based on the mathematical concepts
+- Use simple language suitable for Classes 1-5
+- Include 4 options (A, B, C, D) for each question
+- Use Indian context and examples (names, objects, currency)
+- Ensure questions test understanding, not just memorization
+
+## B. Match the Column - 5 Pairs
+- Create 5 matching pairs related to the mathematical concepts
+- Column A: Mathematical concepts, numbers, or problems
+- Column B: Corresponding answers, definitions, or examples
+- Use visual elements where appropriate (shapes, numbers, objects)
+- Include Indian cultural context
+
+## C. Mathematical Puzzle - 1 Puzzle
+- Create 1 engaging mathematical puzzle that reinforces the chapter concepts
+- Make it fun and challenging but age-appropriate
+- Can be number puzzles, pattern puzzles, or logic puzzles
+- Include clear instructions and solution approach
+- Use colorful, engaging presentation
+
+## D. Mental Math - 3 Questions
+- Create 3 mental mathematics questions for quick calculation practice
+- Focus on the mathematical concepts from the chapter
+- Encourage mental calculation strategies
+- Use real-life scenarios familiar to Indian children
+- Provide tips for mental calculation where helpful
+
+## E. Thinking Based Activity - 1 Activity
+- Create 1 higher-order thinking activity that applies the mathematical concepts
+- Encourage problem-solving and critical thinking
+- Can involve real-world applications or creative scenarios
+- Should promote discussion and multiple solution approaches
+- Include guiding questions to support thinking
+
+## F. Math Lab Activity - 1 Activity
+- Create 1 hands-on mathematical laboratory activity
+- Use easily available materials (household items, simple manipulatives)
+- Include step-by-step instructions
+- Connect to the mathematical concepts from the chapter
+- Promote experiential learning and discovery
+- Include observation questions and conclusions
+
+**Content Requirements:**
+- **Age-Appropriate Language**: Simple, clear instructions suitable for Classes 1-5
+- **Indian Context**: Use Indian names, places, currency, festivals, and cultural elements
+- **Visual Elements**: Include descriptions for diagrams, pictures, or visual aids where needed
+- **Progressive Difficulty**: Start with easier questions and gradually increase complexity
+- **Engaging Content**: Make mathematics fun and interesting for young learners
+- **Clear Instructions**: Provide clear, step-by-step instructions for all activities
+- **Safety Considerations**: Ensure all activities are safe for young children
+
+**Formatting Requirements:**
+- Use clear headings for each exercise type
+- Number all questions and activities clearly
+- Include answer keys or solution approaches where appropriate
+- Use bullet points and numbered lists for clarity
+- Mark any materials needed for activities
+
+Ensure that all exercises directly relate to the mathematical concepts covered in the PDF chapter and provide meaningful practice opportunities for young learners.
+
+Provide ONLY the comprehensive mathematics exercises in Markdown format.
 """
 
 # Mathematics-specific prompt functions
@@ -2062,7 +2146,7 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
         # Standard approach
         try:
             # Get the specific prompt (Mathematics Primary doesn't use model_progression_text)
-            if subject_type == "Mathematics Primary (Classes 1-4)":
+            if subject_type == "Mathematics Primary (Classes 1-5)":
                 prompt = create_specific_prompt(content_type, grade_level, None, subject_type, word_limits)
             else:
                 prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
@@ -2797,7 +2881,7 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     Returns a generator that yields response chunks.
     """
     # Get the specific prompt (Mathematics Primary doesn't use model_progression_text)
-    if subject_type == "Mathematics Primary (Classes 1-4)":
+    if subject_type == "Mathematics Primary (Classes 1-5)":
         prompt = create_specific_prompt(content_type, grade_level, None, subject_type, word_limits)
     else:
         prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
@@ -3361,33 +3445,35 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science"],
-        help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-4)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Computer Science"],
+        help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-5)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
         key="subject_selector_tab1"
     )
 
     # Word Limit Controls
     st.subheader("📝 Content Length Settings")
     with st.expander("Configure Word Limits for Each Section", expanded=False):
-        if subject_type == "Mathematics Primary (Classes 1-4)":
+        if subject_type == "Mathematics Primary (Classes 1-5)":
             # Special word limits for Primary Mathematics
-            st.markdown("**Mathematics Primary (Classes 1-4) Structure**")
+            st.markdown("**Mathematics Primary (Classes 1-5) Structure**")
             col1, col2 = st.columns(2)
             
             with col1:
                 hook_words = st.number_input("Chapter Opener - The Hook (words)", min_value=100, value=150, step=10, key="primary_hook_words")
                 discover_words = st.number_input("Let's Discover - Concept & Practice (words)", min_value=1000, value=1500, step=100, key="primary_discover_words")
+                activity_words = st.number_input("Activity Zone - Hands-on (words)", min_value=200, value=300, step=25, key="primary_activity_words")
             
             with col2:
-                activity_words = st.number_input("Activity Zone - Hands-on (words)", min_value=200, value=300, step=25, key="primary_activity_words")
                 recap_words = st.number_input("Quick Recap - Revision (words)", min_value=150, value=200, step=25, key="primary_recap_words")
+                exercises_words = st.number_input("Exercises (words)", min_value=500, value=800, step=50, key="primary_exercises_words")
             
             # Store word limits for primary mathematics
             st.session_state.word_limits = {
                 'hook': hook_words,
                 'discover': discover_words,
                 'activity': activity_words,
-                'recap': recap_words
+                'recap': recap_words,
+                'exercises': exercises_words
             }
         else:
             # Standard word limits for other subjects
@@ -3649,13 +3735,19 @@ with tab1:
             
             st.subheader("🚀 Generate New Content")
 
-            if subject_type == "Mathematics Primary (Classes 1-4)":
-                # For primary mathematics, only show chapter content generation
-                st.info("📘 **Mathematics Primary Mode**: For Classes 1-4, we generate a complete chapter transformation that includes all components (Hook, Let's Discover, Activity Zone, and Quick Recap) in one comprehensive package.")
+            if subject_type == "Mathematics Primary (Classes 1-5)":
+                # For primary mathematics, show chapter and exercises generation
+                st.info("📘 **Mathematics Primary Mode**: For Classes 1-5, we provide specialized content generation designed for young learners.")
                 
-                # Only show the chapter content button for primary mathematics
-                generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
-                generate_exercises = False
+                # Show chapter and exercises buttons for primary mathematics
+                prim_col1, prim_col2 = st.columns(2)
+                
+                with prim_col1:
+                    generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
+                
+                with prim_col2:
+                    generate_exercises = st.button("📝 Generate Mathematics Exercises", key="gen_primary_exercises")
+                
                 generate_skills = False  
                 generate_art = False
             else:
@@ -4159,7 +4251,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
