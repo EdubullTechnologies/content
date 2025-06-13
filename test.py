@@ -3326,45 +3326,488 @@ def hybrid_content_expander(content: str, content_type: str, grade_level: str, s
             st.info("No saved expansions yet. Use the other tabs to create expansions.")
 
 # --- Streamlit App ---
-st.set_page_config(layout="wide")
-st.title("📚 EeeBee Content Development Suite ✨ (OpenRouter Edition)")
+st.set_page_config(
+    page_title="EeeBee Content Suite",
+    page_icon="📚",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
+# Custom CSS for modern, professional look
 st.markdown("""
-Welcome to the EeeBee Content Development Suite powered by Claude via OpenRouter! 
-Choose between improving existing chapters or chatting with EeeBee for content assistance.
-""")
+<style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    /* Global Styles */
+    .main {
+        padding-top: 2rem;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Custom Header */
+    .main-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
+        color: white;
+        text-align: center;
+    }
+    
+    .main-header h1 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 3rem;
+        margin: 0;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .main-header p {
+        font-size: 1.2rem;
+        margin: 1rem 0 0 0;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+    
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2rem;
+        background: transparent;
+        border-bottom: 2px solid #f0f2f6;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        height: 4rem;
+        padding: 0 2rem;
+        background: white;
+        border-radius: 15px 15px 0 0;
+        border: 2px solid #e0e4e7;
+        border-bottom: none;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        border-color: #667eea;
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+    }
+    
+    /* Card Containers */
+    .content-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f0f2f6;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .content-card:hover {
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4) !important;
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0) !important;
+    }
+    
+    /* Special button variants */
+    .cancel-button button {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
+        box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3) !important;
+    }
+    
+    .download-button button {
+        background: linear-gradient(135deg, #2ed573 0%, #26de81 100%) !important;
+        box-shadow: 0 4px 16px rgba(46, 213, 115, 0.3) !important;
+    }
+    
+    /* Selectboxes and Inputs */
+    .stSelectbox > div > div {
+        background: white;
+        border: 2px solid #e0e4e7;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .stSelectbox > div > div:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .stNumberInput > div > div {
+        background: white;
+        border: 2px solid #e0e4e7;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .stNumberInput > div > div:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* File Uploader */
+    .stFileUploader > div {
+        background: white;
+        border: 2px dashed #e0e4e7;
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stFileUploader > div:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+    
+    /* Expanders */
+    .streamlit-expanderHeader {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0fe 100%);
+        border: 1px solid #e0e4e7;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    /* Progress and Status */
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+    }
+    
+    /* Info boxes */
+    .stInfo {
+        background: linear-gradient(135deg, #e8f0fe 0%, #f8f9ff 100%);
+        border-left: 4px solid #667eea;
+        border-radius: 12px;
+    }
+    
+    .stSuccess {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+        border-left: 4px solid #2ed573;
+        border-radius: 12px;
+    }
+    
+    .stWarning {
+        background: linear-gradient(135deg, #fff8e1 0%, #fef7cd 100%);
+        border-left: 4px solid #ffa726;
+        border-radius: 12px;
+    }
+    
+    .stError {
+        background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+        border-left: 4px solid #ff6b6b;
+        border-radius: 12px;
+    }
+    
+    /* Sidebar */
+    .css-1d391kg {
+        background: linear-gradient(180deg, #f8f9ff 0%, #e8f0fe 100%);
+    }
+    
+    /* Section Headers */
+    .section-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.3rem;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+    }
+    
+    /* Content Status Cards */
+    .status-card {
+        background: white;
+        border: 2px solid #e0e4e7;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        margin: 0.5rem 0;
+    }
+    
+    .status-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.1);
+    }
+    
+    .status-available {
+        border-color: #2ed573;
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+    }
+    
+    /* Chat Interface */
+    .stChatMessage {
+        background: white;
+        border-radius: 15px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Custom spacing */
+    .big-gap {
+        margin: 2rem 0;
+    }
+    
+    .small-gap {
+        margin: 1rem 0;
+    }
+    
+    /* Loading animation */
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    .loading {
+        animation: pulse 2s infinite;
+    }
+    
+    /* Enhanced Content Cards */
+    .feature-card {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0fe 100%);
+        border: 2px solid #e0e4e7;
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 48px rgba(102, 126, 234, 0.15);
+        border-color: #667eea;
+    }
+    
+    /* Status badges */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin: 0.25rem;
+    }
+    
+    .status-success {
+        background: linear-gradient(135deg, #2ed573 0%, #26de81 100%);
+        color: white;
+    }
+    
+    .status-info {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .status-warning {
+        background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+        color: white;
+    }
+    
+    /* Enhanced subheaders */
+    .stSubheader {
+        color: #2d3748;
+        font-weight: 600;
+        border-bottom: 2px solid #e0e4e7;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Improved metrics display */
+    .metric-container {
+        background: white;
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        border: 2px solid #f0f2f6;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-container:hover {
+        border-color: #667eea;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Custom text styling */
+    .highlight-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 600;
+    }
+    
+    /* Loading states */
+    .loading-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0fe 100%);
+        border-radius: 15px;
+        margin: 1rem 0;
+    }
+    
+    /* Enhanced dividers */
+    .custom-divider {
+        height: 2px;
+        background: linear-gradient(90deg, transparent 0%, #667eea 50%, transparent 100%);
+        margin: 2rem 0;
+        border: none;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .main-header h1 {
+            font-size: 2rem;
+        }
+        
+        .main-header p {
+            font-size: 1rem;
+        }
+        
+        .content-card, .feature-card {
+            padding: 1rem;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Beautiful Modern Header
+st.markdown("""
+<div class="main-header">
+    <h1>📚 EeeBee Content Development Suite</h1>
+    <p>✨ Powered by AI • Transform educational content with intelligent analysis & generation</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Create tabs for different functionalities
 tab1, tab2 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee"])
 
 with tab1:
-    st.header("📚 Book Chapter Improver Tool")
+    # Enhanced section header
     st.markdown("""
-    Upload your book chapter in PDF format. This tool will analyze it using EeeBee (Claude)
-    based on the 'Model Chapter Progression and Elements' and suggest improvements.
-    Select which part of the content you want to generate.
+    <div class="section-header">
+        📚 Book Chapter Improver Tool
+    </div>
+    """, unsafe_allow_html=True)
     
-    ✨ **New Features**: 
-    - **Content Protection**: Your content is automatically saved with multiple backups to prevent loss
-    - **Expand Content**: Use the **"Expand Content"** buttons to enhance any generated content with:
-      - **Auto-Section Detection**: Click specific sections to expand
-      - **Manual Text Selection**: Paste any text you want to develop further  
-      - **Global Enhancement**: Make entire content longer or add more examples/activities
+    # Feature cards for better visual organization
+    st.markdown("""
+    <div class="feature-card">
+        <h3>🚀 Transform Your Educational Content</h3>
+        <p>Upload your book chapter in PDF format. This tool will analyze it using EeeBee (Claude) based on the 'Model Chapter Progression and Elements' and suggest comprehensive improvements.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    💾 **Content Status**: Check the sidebar to monitor your content safety and recovery options.
-    """)
+    # Features showcase
+    col_feat1, col_feat2, col_feat3 = st.columns(3)
+    
+    with col_feat1:
+        st.markdown("""
+        <div class="metric-container">
+            <h4>✨ Content Protection</h4>
+            <p>Multiple backup strategies ensure your content is never lost during generation</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_feat2:
+        st.markdown("""
+        <div class="metric-container">
+            <h4>🔍 Intelligent Expansion</h4>
+            <p>AI-powered content expansion with section detection and manual text selection</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col_feat3:
+        st.markdown("""
+        <div class="metric-container">
+            <h4>💾 Real-time Monitoring</h4>
+            <p>Live content status tracking and recovery options in the sidebar</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Grade Level Selector
-    grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
-    selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8, key="grade_selector_tab1") # Default to Grade 9
+    # Enhanced configuration section
+    st.markdown("""
+    <div class="section-header" style="font-size: 1.1rem; padding: 1rem;">
+        ⚙️ Configuration Settings
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Settings in columns for better layout
+    config_col1, config_col2 = st.columns(2)
+    
+    with config_col1:
+        st.markdown("**🎯 Target Audience**")
+        grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
+        selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8, key="grade_selector_tab1") # Default to Grade 9
 
-    # Subject Type Selector
-    subject_type = st.selectbox(
-        "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science"],
-        help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-4)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
-        key="subject_selector_tab1"
-    )
+    with config_col2:
+        st.markdown("**📚 Subject Area**")
+        subject_type = st.selectbox(
+            "Select Subject Type:",
+            ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-4)", "Computer Science"],
+            help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-4)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
+            key="subject_selector_tab1"
+        )
 
     # Word Limit Controls
     st.subheader("📝 Content Length Settings")
@@ -3473,12 +3916,17 @@ with tab1:
         st.sidebar.subheader("Model Chapter Progression:")
         st.sidebar.text_area("Model Details", model_progression, height=300, disabled=True)
 
-        # Display previously generated content (MOVED OUTSIDE FILE UPLOAD CONDITION)
-        col_header1, col_header2 = st.columns([4, 1])
-        with col_header1:
-            st.subheader("📋 Previously Generated Content")
-        with col_header2:
-            if st.button("🗑️ Clear All Content", key="clear_all_content", help="Clear all generated content from session"):
+        # Enhanced content status section
+        st.markdown("""
+        <div class="section-header">
+            📋 Previously Generated Content
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Clear all button with better styling
+        clear_col1, clear_col2, clear_col3 = st.columns([2, 1, 2])
+        with clear_col2:
+            if st.button("🗑️ Clear All Content", key="clear_all_content", help="Clear all generated content from session", use_container_width=True):
                 st.session_state.chapter_content = None
                 st.session_state.exercises = None
                 st.session_state.skill_activities = None
@@ -3633,10 +4081,30 @@ with tab1:
                 st.session_state.show_art_expander = False
                 st.rerun()
 
-        uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
+        # Enhanced file upload section
+        st.markdown("""
+        <div class="section-header">
+            📄 Upload Your Document
+        </div>
+        """, unsafe_allow_html=True)
+        
+        uploaded_file_st = st.file_uploader(
+            "Choose your PDF chapter file", 
+            type="pdf", 
+            key="pdf_uploader_tab1",
+            help="Upload a PDF file containing your educational content for analysis and improvement"
+        )
 
         if uploaded_file_st is not None:
-            st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade}...")
+            # Enhanced file processing indicator
+            st.markdown(f"""
+            <div class="feature-card">
+                <h4>✅ File Successfully Uploaded</h4>
+                <p><strong>File:</strong> {uploaded_file_st.name}</p>
+                <p><strong>Target Grade:</strong> <span class="highlight-text">{selected_grade}</span></p>
+                <p><strong>Subject:</strong> <span class="highlight-text">{subject_type}</span></p>
+            </div>
+            """, unsafe_allow_html=True)
             
             # Get PDF bytes for processing
             pdf_bytes = uploaded_file_st.getvalue()
@@ -3647,11 +4115,21 @@ with tab1:
 
             st.divider()
             
-            st.subheader("🚀 Generate New Content")
+            # Enhanced generation section
+            st.markdown("""
+            <div class="section-header">
+                🚀 Generate New Content
+            </div>
+            """, unsafe_allow_html=True)
 
             if subject_type == "Mathematics Primary (Classes 1-4)":
                 # For primary mathematics, only show chapter content generation
-                st.info("📘 **Mathematics Primary Mode**: For Classes 1-4, we generate a complete chapter transformation that includes all components (Hook, Let's Discover, Activity Zone, and Quick Recap) in one comprehensive package.")
+                st.markdown("""
+                <div class="feature-card">
+                    <h4>📘 Mathematics Primary Mode (Classes 1-4)</h4>
+                    <p>Generate a complete chapter transformation that includes all components: <strong>Hook</strong>, <strong>Let's Discover</strong>, <strong>Activity Zone</strong>, and <strong>Quick Recap</strong> in one comprehensive package.</p>
+                </div>
+                """, unsafe_allow_html=True)
                 
                 # Only show the chapter content button for primary mathematics
                 generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
@@ -3659,18 +4137,23 @@ with tab1:
                 generate_skills = False  
                 generate_art = False
             else:
-                # Standard buttons for other subjects
-                # Generate Chapter Content Button
-                generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
+                # Enhanced button layout for standard subjects
+                st.markdown("**Choose the type of content you want to generate:**")
                 
-                # Generate Exercises Button
-                generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
+                gen_col1, gen_col2 = st.columns(2)
+                gen_col3, gen_col4 = st.columns(2)
                 
-                # Generate Skill Activities Button
-                generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
+                with gen_col1:
+                    generate_chapter = st.button("🔍 Generate Chapter Content", key="gen_chapter", use_container_width=True)
                 
-                # Generate Art Learning Button
-                generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
+                with gen_col2:
+                    generate_exercises = st.button("📝 Generate Exercises", key="gen_exercises", use_container_width=True)
+                
+                with gen_col3:
+                    generate_skills = st.button("🛠️ Generate Skill Activities", key="gen_skills", use_container_width=True)
+                
+                with gen_col4:
+                    generate_art = st.button("🎨 Generate Art-Integrated Learning", key="gen_art", use_container_width=True)
             
             # Download All Button (outside columns)
             download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
@@ -4137,11 +4620,19 @@ with tab1:
         st.error("Failed to load the Model Chapter Progression. The tool cannot proceed without it.")
 
 with tab2:
-    st.header("💬 Content Chat with EeeBee")
+    # Enhanced chat header
     st.markdown("""
-    Chat with EeeBee (powered by Claude) for content development assistance! Upload PDFs for context or ask questions directly.
-    EeeBee can help with content creation, modification, curriculum alignment, and educational guidance.
-    """)
+    <div class="section-header">
+        💬 Content Chat with EeeBee
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="feature-card">
+        <h3>🤖 Your AI Educational Assistant</h3>
+        <p>Chat with EeeBee (powered by Claude) for content development assistance! Upload PDFs for context or ask questions directly. EeeBee can help with content creation, modification, curriculum alignment, and educational guidance.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Move chat settings to main area (above chat)
     col1, col2, col3 = st.columns([1, 1, 1])
