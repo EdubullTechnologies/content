@@ -2602,7 +2602,7 @@ Format the content in Markdown with proper formatting for code examples.
 Provide ONLY the Computer Science Creative Projects and Case Studies in Markdown format.
 """
 
-def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
+def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=True):
     """Generates specific content based on content type"""
     if not use_chunked:
         # Standard approach
@@ -2696,7 +2696,7 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
                                                                  grade_level, model_progression_text, subject_type, word_limits, use_openrouter_method, pdf_method)
 
 def analyze_with_chunked_approach_for_specific_content(content_type, pdf_bytes, pdf_filename, 
-                                                       grade_level, model_progression_text, subject_type, word_limits, use_openrouter_method, pdf_method="Text Extraction (Original)"):
+                                                       grade_level, model_progression_text, subject_type, word_limits, use_openrouter_method=True):
     """Specialized chunked approach for specific content types"""
     st.info(f"Using chunked approach to generate {content_type} content...")
     
@@ -3359,19 +3359,12 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     else:
         prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
-    if use_openrouter_method:
-        # Create messages with direct PDF upload
-        messages = create_messages_with_pdf_openrouter(prompt, pdf_bytes, pdf_filename)
-        plugins = [{"id": "file-parser", "pdf": {"engine": "pdf-text"}}]
-    else:
-        # Extract text and images from PDF
-        pdf_text = extract_text_from_pdf(pdf_bytes)
-        pdf_images = extract_images_from_pdf(pdf_bytes)
-        messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
-        plugins = None
+    # Always use OpenRouter Direct PDF Upload for optimal performance
+    messages = create_messages_with_pdf_openrouter(prompt, pdf_bytes, pdf_filename)
+    plugins = [{"id": "file-parser", "pdf": {"engine": "pdf-text"}}]
     
-    # Determine max tokens based on content type
-    max_tokens = 131072 if (subject_type == "Mathematics" and content_type == "chapter") else 65536
+    # Determine max tokens based on content type (reduced for streaming reliability)
+    max_tokens = 32768 if (subject_type == "Mathematics" and content_type == "chapter") else 16384
     
     # Create cancel event (can be controlled from UI)
     cancel_event = st.session_state.get('cancel_event', Event())
@@ -3406,7 +3399,7 @@ def handle_streaming_generation(content_type, pdf_bytes, pdf_filename, selected_
         content_saved = False
         
         try:
-            # Stream the content
+            # Stream the content using OpenRouter Direct Upload
             for chunk in generate_specific_content_streaming(
                 content_type,
                 pdf_bytes, 
@@ -4043,18 +4036,8 @@ with tab1:
         key="analysis_method_tab1"
     )
 
-    # PDF Processing Method Selector
-    pdf_method = st.radio(
-        "Choose PDF Processing Method:",
-        ["Text Extraction (Original)", "Mistral OCR (Advanced)", "Direct PDF Upload (OpenRouter Recommended)"],
-        help="Original: Basic text extraction | Mistral OCR: Advanced OCR with structure preservation | Direct Upload: Sends PDF to OpenRouter",
-        key="pdf_method_tab1"
-    )
-    
-    # Show info for Mistral OCR
-    if pdf_method == "Mistral OCR (Advanced)":
-        st.info("🔬 **Mistral OCR Features:** Preserves document structure, handles complex layouts, extracts text from images, maintains tables and formulas in markdown format")
-        st.info("📋 **Requirements:** Mistral API key (add MISTRAL_API_KEY to Streamlit secrets)")
+    # Using OpenRouter Direct PDF Upload (most reliable method)
+    st.info("📄 **PDF Processing:** Using OpenRouter Direct Upload for optimal performance with all file sizes and types")
 
     # Streaming Mode Toggle
     use_streaming = st.checkbox(
@@ -4358,7 +4341,7 @@ with tab1:
                                     model_progression, 
                                     subject_type,
                                     word_limits,
-                                    use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)")
+                                    use_openrouter_method=True
                                 ):
                                     if st.session_state.cancel_event.is_set():
                                         st.warning("⚠️ Generation cancelled by user.")
@@ -4444,8 +4427,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"),
-                            pdf_method=pdf_method
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.chapter_content = content
@@ -4529,8 +4511,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"),
-                            pdf_method=pdf_method
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.exercises = content
@@ -4614,8 +4595,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"),
-                            pdf_method=pdf_method
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.skill_activities = content
@@ -4699,8 +4679,7 @@ with tab1:
                             subject_type, 
                             word_limits,
                             use_chunked=(analysis_method == "Chunked (For Complex Documents)"), 
-                            use_openrouter_method=(pdf_method == "Direct PDF Upload (OpenRouter Recommended)"),
-                            pdf_method=pdf_method
+                            use_openrouter_method=True
                         )
                         if content:
                             st.session_state.art_learning = content
@@ -4901,125 +4880,3 @@ with tab2:
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
 
-# Mistral OCR Functions
-def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
-    """Process PDF using Mistral OCR API for advanced text extraction with structure preservation."""
-    try:
-        import requests
-        import base64
-        import os
-        
-        # Get Mistral API key from Streamlit secrets
-        try:
-            mistral_api_key = st.secrets["MISTRAL_API_KEY"]
-        except KeyError:
-            st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to Streamlit secrets")
-            st.info("📋 **How to add:** Create `.streamlit/secrets.toml` file with: `MISTRAL_API_KEY = \"your-key-here\"`")
-            return None, None
-        
-        # Encode PDF to base64
-        base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-        
-        # Prepare the request
-        url = "https://api.mistral.ai/v1/ocr"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {mistral_api_key}"
-        }
-        
-        data = {
-            "model": "mistral-ocr-latest",
-            "document": {
-                "type": "document_url",
-                "document_url": f"data:application/pdf;base64,{base64_pdf}"
-            },
-            "include_image_base64": True
-        }
-        
-        st.info("🔬 Processing PDF with Mistral OCR...")
-        
-        # Make the API request
-        response = requests.post(url, headers=headers, json=data, timeout=300)
-        
-        if response.status_code == 200:
-            ocr_result = response.json()
-            
-            # Extract text and images from OCR result
-            extracted_text = ""
-            extracted_images = []
-            
-            pages_processed = len(ocr_result.get('pages', []))
-            st.success(f"✅ Successfully processed {pages_processed} pages with Mistral OCR")
-            
-            for page_data in ocr_result.get('pages', []):
-                page_num = page_data.get('index', 1)
-                markdown_content = page_data.get('markdown', '')
-                
-                # Add page header and content
-                extracted_text += f"\n\n--- Page {page_num} (Mistral OCR) ---\n"
-                extracted_text += markdown_content
-                
-                # Extract images if available
-                if 'images' in page_data:
-                    for img_idx, img_data in enumerate(page_data['images']):
-                        if 'base64' in img_data:
-                            extracted_images.append({
-                                "page": page_num,
-                                "base64": f"data:image/png;base64,{img_data['base64']}",
-                                "description": f"Image {img_idx + 1} from page {page_num} (Mistral OCR)",
-                                "bbox": img_data.get('bbox', {})
-                            })
-            
-            # Add processing summary
-            usage_info = ocr_result.get('usage_info', {})
-            extracted_text += f"\n\n=== MISTRAL OCR SUMMARY ===\n"
-            extracted_text += f"Pages processed: {usage_info.get('pages_processed', pages_processed)}\n"
-            extracted_text += f"Document size: {usage_info.get('doc_size_bytes', 'Unknown')} bytes\n"
-            extracted_text += f"OCR Model: {ocr_result.get('model', 'mistral-ocr-latest')}\n"
-            extracted_text += f"Structure preserved: Headers, tables, lists, and formatting maintained in markdown\n"
-            
-            return extracted_text, extracted_images
-            
-        else:
-            error_msg = f"Mistral OCR API error: {response.status_code} - {response.text}"
-            st.error(f"❌ {error_msg}")
-            return None, None
-            
-    except ImportError:
-        st.error("❌ **Missing dependency:** Install requests with `pip install requests`")
-        return None, None
-    except Exception as e:
-        st.error(f"❌ **Mistral OCR Error:** {str(e)}")
-        return None, None
-
-def create_messages_with_mistral_ocr_content(prompt, ocr_text, ocr_images=None):
-    """Creates messages array for OpenAI API with Mistral OCR content."""
-    messages = []
-    
-    # Add the main prompt with OCR text content
-    content_parts = [{"type": "text", "text": prompt}]
-    
-    # Add OCR text (already in markdown format)
-    if ocr_text:
-        content_parts.append({
-            "type": "text", 
-            "text": f"\n\nDocument Content (Processed with Mistral OCR):\n{ocr_text}"
-        })
-    
-    # Add images if available
-    if ocr_images:
-        for img in ocr_images:
-            content_parts.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": img["base64"],
-                    "detail": "high"  # Use high detail for best quality
-                }
-            })
-    
-    messages.append({
-        "role": "user",
-        "content": content_parts
-    })
-    
-    return messages
