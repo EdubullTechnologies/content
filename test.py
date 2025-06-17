@@ -2647,13 +2647,17 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             else:
                 # Use text extraction method (original or Mistral OCR)
                 if pdf_method == "Mistral OCR (Advanced)":
+                    st.info("🔍 **DEBUG:** Attempting Mistral OCR processing...")
                     # Use Mistral OCR for advanced text extraction
                     pdf_text, pdf_images = process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename)
                     if pdf_text is None:
+                        st.error("🔍 **DEBUG:** Mistral OCR failed - returning error")
                         return None, "Failed to process PDF with Mistral OCR"
+                    st.success("🔍 **DEBUG:** Mistral OCR succeeded - proceeding with OCR content")
                     # Create messages with Mistral OCR content
                     messages = create_messages_with_mistral_ocr_content(prompt, pdf_text, pdf_images)
                 else:
+                    st.info(f"🔍 **DEBUG:** Using method: {pdf_method}")
                     # Use original text extraction method
                     pdf_text = extract_text_from_pdf(pdf_bytes)
                     pdf_images = extract_images_from_pdf(pdf_bytes)
