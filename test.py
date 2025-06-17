@@ -644,6 +644,46 @@ For primary mathematics (Classes 1-5), we support:
 - Exercises: MCQs, Match the Column, Puzzles, Mental Math, Thinking Activities, and Math Lab Activities
 
 Please use the appropriate generation option."""
+    elif subject_type == "Science & E.V.S. (Classes 1-2)":
+        # Extract class number to validate
+        class_num = grade_level.split()[-1]
+        if class_num not in ['1', '2']:
+            return "Science & E.V.S. (Classes 1-2) can only be used with Grade 1 or Grade 2."
+        
+        if content_type == "chapter":
+            return create_science_evs_foundational_chapter_prompt(grade_level, word_limits)
+        elif content_type == "exercises":
+            return create_science_evs_foundational_exercises_prompt(grade_level, word_limits)
+        else:
+            # For Science EVS Classes 1-2, we only support chapter and exercises (activities) generation
+            return f"""This content type '{content_type}' is not supported for Science & E.V.S. (Classes 1-2).
+            
+For Science & E.V.S. Classes 1-2, we support:
+- Chapter Content: Complete play-based chapter transformation
+- Activities: Play-based learning activities (not formal exercises)
+
+Please use the appropriate generation option."""
+    elif subject_type == "Science & E.V.S. (Classes 3-5)":
+        # Extract class number to validate
+        class_num = grade_level.split()[-1]
+        if class_num not in ['3', '4', '5']:
+            return "Science & E.V.S. (Classes 3-5) can only be used with Grade 3, 4, or 5."
+        
+        if content_type == "chapter":
+            return create_science_evs_preparatory_chapter_prompt(grade_level, word_limits)
+        elif content_type == "exercises":
+            return create_science_evs_preparatory_exercises_prompt(grade_level, word_limits)
+        else:
+            # For Science EVS Classes 3-5, we only support chapter and exercises generation
+            return f"""This content type '{content_type}' is not supported for Science & E.V.S. (Classes 3-5).
+            
+For Science & E.V.S. Classes 3-5, we support:
+- Chapter Content: Complete inquiry-based chapter transformation
+- Exercises: Comprehensive assessment exercises
+
+Note: Skills and Art activities are integrated within the chapter content for this subject type.
+
+Please use the appropriate generation option."""
     elif subject_type == "Computer Science":
         if content_type == "chapter":
             return create_computer_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -882,6 +922,428 @@ Your task is to generate COMPREHENSIVE MATHEMATICS EXERCISES based on the chapte
 Ensure that all exercises directly relate to the mathematical concepts covered in the PDF chapter and provide meaningful practice opportunities for young learners.
 
 Provide ONLY the comprehensive mathematics exercises in Markdown format.
+"""
+
+# Science & E.V.S. Classes 1-2 (Foundational Stage) specific prompt functions
+def create_science_evs_foundational_chapter_prompt(grade_level, word_limits=None):
+    """Creates a Science & E.V.S. chapter content prompt for Classes 1-2 following play-based pedagogy"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'opener': 200,
+            'activity': 250,
+            'concept': 200,
+            'closer': 150
+        }
+    
+    # Extract the class number from grade_level (e.g., "Grade 1" -> "1")
+    class_num = grade_level.split()[-1]
+    if class_num not in ['1', '2']:
+        return "This prompt is only for Science & E.V.S. Classes 1-2. Please select Grade 1 or 2."
+    
+    return f"""You are an ECCE Specialist and Early Years Curriculum Designer.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 1-2. DO NOT apply Model Chapter Progression or any other structure. Follow ONLY the Foundational Chapter Blueprint specified below.
+
+**Your Role**: You are an expert in Early Childhood Care and Education (ECCE). Your mission is to create a Science & E.V.S. "activity book" chapter for {grade_level}. This must be joyful, playful, and perfectly aligned with the play-based pedagogy of the NEP 2020 Foundational Stage.
+
+**Target Audience**: {grade_level} (Ages 6-8, Foundational Stage)
+
+**Section 1: The Guiding Philosophy - "Purposeful Play"**
+- **Sensory and Experiential**: Learning must happen through seeing, touching, hearing, and doing
+- **Story and Rhyme Driven**: All concepts must be introduced through engaging stories, simple rhymes, or captivating oral narratives
+- **Visually-Led Learning**: The book must be dominated by large, colourful illustrations. Text for the child is minimal (labels, simple oral questions)
+- **Focus on Competencies**: The goal is to develop skills like observation, curiosity, and classification, not the rote learning of facts
+
+**Section 2: The Core Task - The Transformation Engine**
+Extract the Core Theme: Identify the single, simple core concept from the PDF (e.g., Water, Plants, Animals)
+Architect a Playful Journey: Discard the old structure entirely. Rebuild the chapter using the simplified "Foundational Chapter Blueprint" below. The chapter should be a short, engaging experience, likely 4-6 pages long.
+
+**Section 3: The Foundational Chapter Blueprint (Mandatory Structure)**
+
+## Part 1: Chapter Opener - Story and Wonder (1 Page) (Target: {word_limits.get('opener', 200)} words)
+**Action**: The chapter begins one time with this single, immersive page.
+
+**Content**:
+- **EeeBee's Introduction 🐝**: Our mascot, EeeBee, welcomes the child to the chapter's topic in a speech bubble
+- **Story/Narrative**: A short, simple story for the teacher to read aloud, related to the main illustration
+- **Main "Spark" Illustration**: A large, beautiful, full-page illustration
+- **Oral "Wonder" Questions**: 2-3 oral discussion questions related to the scene
+
+## The Learning Cycle (Repeated for Each Simple Concept within the Chapter)
+After the opener, explore themes by repeating the following two-part cycle for each simple concept:
+
+### Part A of the Cycle: Let's Play & Do (Target: {word_limits.get('activity', 250)} words per activity)
+**Action**: A simple, hands-on, game-like activity for the child.
+**Instructions**: Pictorial or simple, numbered steps.
+**Examples**:
+- For "Water": Playing with water in different containers
+- For "Plants": Leaf printing activity
+- For "Animals": Animal movement game
+
+### Part B of the Cycle: Concept Connect (Target: {word_limits.get('concept', 200)} words per concept)
+**Action**: Immediately following the activity, this page elaborates on the learning.
+**Content**: 
+- A large, central infographic
+- A "Read Aloud" explanation for the teacher
+- "EeeBee's Takeaway" in a speech bubble to reinforce the concept
+
+## Part 4: Chapter Closer - The 'Learning Together' Corner (1 Page) (Target: {word_limits.get('closer', 150)} words)
+**Action**: The chapter concludes one time with this single, consolidated page.
+
+**Content**: Three dedicated sections:
+1. **For You! - My Fun Checklist 🌟** (for the student)
+   - Simple visual checklist of activities completed
+   - Sticker/stamp spaces for achievements
+   
+2. **For the Teacher - Observation Guide 🧑‍🏫** 
+   - Learning Outcomes aligned with NCF
+   - Simple observation points
+   - Assessment through play suggestions
+   
+3. **For the Parent - Home Connect 🏠**
+   - Simple home activities using everyday materials
+   - Questions to ask the child
+   - Extension activities for curious learners
+
+**Visual and Language Requirements**:
+- **Illustrations**: Large, colorful, child-friendly with Indian contexts
+- **Text**: Minimal text for children, mostly labels and speech bubbles
+- **Teacher Text**: Clear, simple instructions for read-alouds
+- **Safety**: Age-appropriate content with no scary elements
+- **Inclusivity**: Diverse representation of Indian children
+- **Materials**: Only easily available household items
+
+**Key Differences from Older Classes**:
+- NO formal exercises or written work
+- NO complex explanations or definitions
+- NO abstract concepts without concrete experiences
+- Focus on DOING, not memorizing
+- Assessment through observation, not testing
+
+Transform the PDF content into this playful, experiential format suitable for young learners.
+
+Provide ONLY the transformed Science & E.V.S. chapter content in Markdown format following the Foundational Chapter Blueprint.
+"""
+
+def create_science_evs_foundational_exercises_prompt(grade_level, word_limits=None):
+    """Creates a Science & E.V.S. exercises prompt for Classes 1-2 focusing on activities rather than formal exercises"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'activities': 600
+        }
+    
+    # Extract the class number from grade_level
+    class_num = grade_level.split()[-1]
+    if class_num not in ['1', '2']:
+        return "This prompt is only for Science & E.V.S. Classes 1-2. Please select Grade 1 or 2."
+    
+    return f"""You are an ECCE Specialist and Early Years Curriculum Designer.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 1-2 activities. Create age-appropriate, play-based learning activities, NOT formal exercises.
+
+**Target Audience**: {grade_level} (Ages 6-8, Foundational Stage)
+
+Your task is to generate PLAY-BASED LEARNING ACTIVITIES based on the chapter content in the PDF.
+**Target Total Word Count for All Activities**: {word_limits.get('activities', 600)} words
+
+**REQUIRED ACTIVITY TYPES:**
+
+## A. Observation Activities - 2 Activities
+- Simple observation tasks using the five senses
+- Draw and color activities
+- Spot the difference or find the object activities
+- Use large, clear illustrations
+
+## B. Sorting and Classifying Games - 1 Activity
+- Sort objects by color, size, shape, or type
+- Group living/non-living things
+- Match parent and baby animals
+- Use picture cards or real objects
+
+## C. Story-Based Activities - 1 Activity
+- Complete a simple story with pictures
+- Sequence story cards in order
+- Act out a story with movements
+- Create sound effects for a story
+
+## D. Nature Walk Activity - 1 Activity
+- Guided outdoor exploration
+- Simple collection activities (leaves, stones)
+- Observation checklist with pictures
+- Safety rules clearly stated
+
+## E. Art and Craft - 1 Activity
+- Simple craft using natural materials
+- Finger painting or hand printing
+- Making simple models with clay
+- Creating patterns with shapes
+
+## F. Circle Time Games - 2 Activities
+- Movement games related to the concept
+- Simple songs or rhymes with actions
+- Show and tell activities
+- Group discussion prompts
+
+**Activity Requirements**:
+- **Picture-Based Instructions**: Use mostly pictures with minimal text
+- **Safety First**: All activities must be completely safe for young children
+- **Adult Supervision**: Clearly indicate when adult help is needed
+- **Indian Context**: Use familiar Indian contexts and materials
+- **Inclusive**: Ensure all children can participate regardless of ability
+- **Fun Focus**: Make every activity enjoyable and engaging
+- **No Writing**: Activities should not require writing skills
+
+**Format for Each Activity**:
+- Activity name with fun emoji
+- What you need (with pictures)
+- How to play (step-by-step with illustrations)
+- What to observe/discover
+- Extension ideas for home
+
+Remember: These are NOT exercises but joyful learning experiences. Focus on exploration, discovery, and play.
+
+Provide ONLY the play-based learning activities in Markdown format.
+"""
+
+# Science & E.V.S. Classes 3-5 (Preparatory Stage) specific prompt functions  
+def create_science_evs_preparatory_chapter_prompt(grade_level, word_limits=None):
+    """Creates a Science & E.V.S. chapter content prompt for Classes 3-5 following inquiry-based approach"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'opener': 300,
+            'exploration': 2000,
+            'project': 400,
+            'summary': 250,
+            'exercises': 600
+        }
+    
+    # Extract the class number from grade_level
+    class_num = grade_level.split()[-1]
+    if class_num not in ['3', '4', '5']:
+        return "This prompt is only for Science & E.V.S. Classes 3-5. Please select Grade 3, 4, or 5."
+    
+    return f"""You are a Master Educator and Curriculum Architect specializing in Indian primary education.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 3-5. DO NOT apply standard Model Chapter Progression. Follow ONLY the Final Chapter Blueprint specified below.
+
+**Your Role**: You are a visionary curriculum designer creating Science & E.V.S. textbooks for {grade_level} that are pedagogically advanced, with a comprehensive and engaging assessment structure that ensures concept mastery and sets a new market standard.
+
+**Target Audience**: {grade_level} (Ages 8-11, Preparatory Stage)
+
+**Section 1: The Guiding Philosophy - "Inquiry with Clarity"**
+- **The Core Mission**: Create dynamic chapters where the student discovers through doing. The book is a guide for exploration, with a clear focus on building scientific process skills
+- **Principle of Balanced Dynamism**: Primary focus on clear communication of core concepts. 'Monotony-Breaker' elements and inline questions must support and enrich, never clutter or distract
+- **Activity-Led Explanation**: The hands-on activity is the catalyst for the explanation. Students must DO first, then learn the theory
+
+**Section 2: The Core Task - The Transformation Engine**
+1. **Determine Subject Title**: Analyze the source PDF to determine if it's EVS or Science
+2. **Extract the Skeleton**: Identify every core concept and sub-concept. None should be omitted
+3. **Architect the New Body**: Rebuild using the Final Chapter Blueprint below
+4. **Determine Optimal Content Depth**: Explanations must be well-structured, elaborative paragraphs
+
+**Section 3: The Final Chapter Blueprint (Mandatory Structure)**
+
+## Part 1: The Chapter Opener Page (1 Page) (Target: {word_limits.get('opener', 300)} words)
+- **The "Learning Roadmap" with EeeBee 🐝**:
+  * Previous Knowledge Connections
+  * Learning Outcomes (clear, measurable)
+  * NCF Learning Goals alignment
+- **The "Spark Illustration"**: Captivating visual related to the chapter theme
+- **"Let's Wonder..." Questions**: 3-4 thought-provoking questions to spark curiosity
+
+## Part 2: The Exploration - "Let's Uncover the Secrets" (Variable Pages) (Target: {word_limits.get('exploration', 2000)} words)
+**Structure**: Break down the main topic into logical sub-parts, mirroring the source material.
+
+**Content Flow for Each Sub-part**:
+1. **Quick In-Class Activity** or intriguing question to introduce the sub-part
+2. **Detailed Explanation** in elaborative paragraphs:
+   - Clear, age-appropriate language
+   - Step-by-step concept building
+   - Real-world connections
+3. **Strategic Integration of Monotony-Breakers**:
+   - [Amazing Fact! 🌟]: Fascinating facts related to the concept
+   - [Think & Talk 💭]: Discussion prompts for peer learning
+   - [Misconception Alert! ⚠️]: Common errors to avoid
+   - [Science Story Time 📖]: Brief narratives connecting to the concept
+   - [Quick Quiz Corner 🎯]: Single MCQ for immediate assessment
+4. **Checkpoint: What We Just Learnt**: Bullet-point summary box
+5. **Science Around You**: Real-life applications box
+
+## Part 3: The Chapter Capstone Project (1-2 Pages) (Target: {word_limits.get('project', 400)} words)
+**Action**: A mandatory, culminating project synthesizing chapter learning.
+
+**Types**:
+- Detailed experiment with materials, procedure, observations
+- Model making with step-by-step instructions
+- Research-based chart/poster presentation
+- Field observation project
+
+**Structure**:
+- Project Title and Objective
+- Materials Required (easily available)
+- Step-by-Step Procedure
+- Observation Sheet/Recording Format
+- Conclusion Questions
+- Presentation Guidelines
+
+## Part 4: Chapter Summary & Revision Tools (1 Page) (Target: {word_limits.get('summary', 250)} words)
+**Content**:
+- **In a Nutshell**: Bulleted summary of key concepts
+- **Key Words / Word Lab**: Glossary of new scientific terms
+- **Concept Map**: Visual diagram showing relationships between concepts
+- **Quick Revision Questions**: 5-6 rapid-fire questions
+
+## Part 5: Comprehensive End-of-Chapter Exercise (1-2 Pages) (Target: {word_limits.get('exercises', 600)} words)
+**Section A: Remembering & Understanding**
+- Fill in the Blanks (5 questions)
+- True/False with Corrections (5 questions)
+- MCQs (5 questions)
+- Name the Following (5 items)
+- Match the Column (5 pairs)
+
+**Section B: Application, Analysis & Evaluation**
+- Give Reasons (3 questions)
+- Differentiate Between (2 pairs)
+- Answer in Brief (3 questions)
+- Answer in Detail (2 questions)
+- HOTS/Pondering Questions (2 questions)
+
+**Content Requirements**:
+- **Age-Appropriate Complexity**: Match depth to {grade_level} cognitive abilities
+- **Indian Context**: Use Indian examples, names, places, scenarios
+- **Scientific Accuracy**: Ensure all content is scientifically correct
+- **Process Skills Focus**: Emphasize observation, classification, inference
+- **Environmental Awareness**: Include eco-friendly practices
+- **Health & Safety**: Integrate health consciousness where relevant
+
+**Quality Control**:
+- Simple, clear language appropriate for {grade_level}
+- Gender-inclusive and culturally sensitive
+- Urban and rural balance in examples
+- Emphasis on hands-on learning
+- Integration of values and life skills
+
+Transform the PDF content into this inquiry-based format that makes science exciting and accessible.
+
+Provide ONLY the transformed Science & E.V.S. chapter content in Markdown format following the Final Chapter Blueprint.
+"""
+
+def create_science_evs_preparatory_exercises_prompt(grade_level, word_limits=None):
+    """Creates a Science & E.V.S. exercises prompt for Classes 3-5 with comprehensive assessment"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'exercises': 800
+        }
+    
+    # Extract the class number from grade_level
+    class_num = grade_level.split()[-1]
+    if class_num not in ['3', '4', '5']:
+        return "This prompt is only for Science & E.V.S. Classes 3-5. Please select Grade 3, 4, or 5."
+    
+    return f"""You are a Master Educator and Curriculum Architect specializing in Indian primary education.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 3-5 exercises. Create comprehensive, inquiry-based assessment exercises.
+
+**Target Audience**: {grade_level} (Ages 8-11, Preparatory Stage)
+
+Your task is to generate COMPREHENSIVE SCIENCE & E.V.S. EXERCISES based on the chapter content in the PDF.
+**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
+
+**REQUIRED EXERCISE STRUCTURE:**
+
+## Section A: Remembering & Understanding
+
+### 1. Fill in the Blanks - 5 Questions
+- Test key vocabulary and concepts
+- Use scientific terms from the chapter
+- Progress from simple to complex
+
+### 2. True/False with Corrections - 5 Questions
+- Include common misconceptions
+- Require students to correct false statements
+- Test conceptual understanding
+
+### 3. Multiple Choice Questions (MCQs) - 5 Questions
+- Include 4 options (a, b, c, d) for each
+- Test various cognitive levels
+- Include diagram-based questions where relevant
+
+### 4. Name the Following - 5 Items
+- Quick recall questions
+- Include examples, definitions, and identifications
+- Cover all major concepts from the chapter
+
+### 5. Match the Column - 5 Pairs
+- Column A: Terms/Concepts
+- Column B: Definitions/Examples
+- Ensure logical connections
+
+## Section B: Application, Analysis & Evaluation
+
+### 1. Give Reasons - 3 Questions
+- "Why" questions requiring scientific explanation
+- Test cause-effect understanding
+- Encourage logical thinking
+
+### 2. Differentiate Between - 2 Pairs
+- Compare and contrast related concepts
+- Use tabular format for answers
+- Test deeper understanding
+
+### 3. Answer in Brief - 3 Questions
+- 2-3 sentence answers expected
+- Test application of concepts
+- Include real-world scenarios
+
+### 4. Answer in Detail - 2 Questions
+- 5-6 sentence answers expected
+- Comprehensive understanding required
+- May include diagram drawing
+
+### 5. HOTS (Higher Order Thinking Skills) - 2 Questions
+- Open-ended, thought-provoking questions
+- Encourage critical thinking
+- Connect to real-world problems
+
+## Additional Components:
+
+### Activity-Based Questions - 2 Questions
+- Based on experiments/activities in the chapter
+- Test procedural knowledge
+- Include observation and inference
+
+### Diagram-Based Questions - 2 Questions
+- Label the diagram
+- Draw and explain
+- Interpret given diagrams
+
+### Value-Based Questions - 1 Question
+- Connect science to daily life values
+- Environmental consciousness
+- Social responsibility
+
+**Question Design Principles**:
+- **Progressive Difficulty**: Start simple, increase complexity
+- **Comprehensive Coverage**: Address all chapter concepts
+- **Clear Language**: Age-appropriate vocabulary
+- **Indian Context**: Use local examples and scenarios
+- **Visual Elements**: Include diagrams where helpful
+- **Life Skills Integration**: Connect to practical applications
+
+**Assessment Objectives**:
+- Test factual knowledge and conceptual understanding
+- Develop scientific reasoning
+- Encourage observation and inference skills
+- Build environmental awareness
+- Foster scientific temper
+
+Ensure all questions are directly related to the chapter content and appropriate for {grade_level} students.
+
+Provide ONLY the comprehensive Science & E.V.S. exercises in Markdown format.
 """
 
 # Mathematics-specific prompt functions
@@ -3445,8 +3907,8 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Computer Science"],
-        help="Choose 'Mathematics' for secondary math content, 'Mathematics Primary (Classes 1-5)' for primary math structure, 'Computer Science' for CS-specific content, or 'Science' for science subjects.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science"],
+        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades.",
         key="subject_selector_tab1"
     )
 
@@ -3473,6 +3935,50 @@ with tab1:
                 'discover': discover_words,
                 'activity': activity_words,
                 'recap': recap_words,
+                'exercises': exercises_words
+            }
+        elif subject_type == "Science & E.V.S. (Classes 1-2)":
+            # Special word limits for Science EVS Classes 1-2
+            st.markdown("**Science & E.V.S. (Classes 1-2) Play-Based Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                opener_words = st.number_input("Chapter Opener - Story and Wonder (words)", min_value=100, value=200, step=25, key="evs12_opener_words")
+                activity_words = st.number_input("Let's Play & Do - Per Activity (words)", min_value=150, value=250, step=25, key="evs12_activity_words")
+                concept_words = st.number_input("Concept Connect - Per Concept (words)", min_value=100, value=200, step=25, key="evs12_concept_words")
+            
+            with col2:
+                closer_words = st.number_input("Chapter Closer - Learning Together (words)", min_value=100, value=150, step=25, key="evs12_closer_words")
+                activities_words = st.number_input("Play-Based Activities Total (words)", min_value=400, value=600, step=50, key="evs12_activities_words")
+            
+            # Store word limits for Science EVS Classes 1-2
+            st.session_state.word_limits = {
+                'opener': opener_words,
+                'activity': activity_words,
+                'concept': concept_words,
+                'closer': closer_words,
+                'activities': activities_words
+            }
+        elif subject_type == "Science & E.V.S. (Classes 3-5)":
+            # Special word limits for Science EVS Classes 3-5
+            st.markdown("**Science & E.V.S. (Classes 3-5) Inquiry-Based Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                opener_words = st.number_input("Chapter Opener Page (words)", min_value=200, value=300, step=25, key="evs35_opener_words")
+                exploration_words = st.number_input("Let's Uncover the Secrets (words)", min_value=1500, value=2000, step=100, key="evs35_exploration_words")
+                project_words = st.number_input("Capstone Project (words)", min_value=300, value=400, step=50, key="evs35_project_words")
+            
+            with col2:
+                summary_words = st.number_input("Summary & Revision Tools (words)", min_value=200, value=250, step=25, key="evs35_summary_words")
+                exercises_words = st.number_input("End-of-Chapter Exercises (words)", min_value=500, value=600, step=50, key="evs35_exercises_words")
+            
+            # Store word limits for Science EVS Classes 3-5
+            st.session_state.word_limits = {
+                'opener': opener_words,
+                'exploration': exploration_words,
+                'project': project_words,
+                'summary': summary_words,
                 'exercises': exercises_words
             }
         else:
@@ -3747,6 +4253,36 @@ with tab1:
                 
                 with prim_col2:
                     generate_exercises = st.button("📝 Generate Mathematics Exercises", key="gen_primary_exercises")
+                
+                generate_skills = False  
+                generate_art = False
+            elif subject_type == "Science & E.V.S. (Classes 1-2)":
+                # For Science EVS Classes 1-2, show chapter and activities generation
+                st.info("🌱 **Science & E.V.S. Classes 1-2**: Play-based learning approach for foundational stage. Activities are integrated within the chapter.")
+                
+                # Show chapter and activities buttons for Science EVS Classes 1-2
+                evs12_col1, evs12_col2 = st.columns(2)
+                
+                with evs12_col1:
+                    generate_chapter = st.button("🔍 Generate Play-Based Chapter", key="gen_evs12_chapter")
+                
+                with evs12_col2:
+                    generate_exercises = st.button("🎮 Generate Play Activities", key="gen_evs12_activities")
+                
+                generate_skills = False  
+                generate_art = False
+            elif subject_type == "Science & E.V.S. (Classes 3-5)":
+                # For Science EVS Classes 3-5, show chapter and exercises generation
+                st.info("🔬 **Science & E.V.S. Classes 3-5**: Inquiry-based learning approach for preparatory stage. Skills and art activities are integrated within the chapter.")
+                
+                # Show chapter and exercises buttons for Science EVS Classes 3-5
+                evs35_col1, evs35_col2 = st.columns(2)
+                
+                with evs35_col1:
+                    generate_chapter = st.button("🔍 Generate Inquiry-Based Chapter", key="gen_evs35_chapter")
+                
+                with evs35_col2:
+                    generate_exercises = st.button("📝 Generate Assessment Exercises", key="gen_evs35_exercises")
                 
                 generate_skills = False  
                 generate_art = False
@@ -4251,7 +4787,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
