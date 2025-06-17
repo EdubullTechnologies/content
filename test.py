@@ -302,6 +302,129 @@ def create_messages_with_pdf_content(prompt, pdf_text, pdf_images=None):
     
     return messages
 
+# Mistral OCR Functions
+def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
+    """Process PDF using Mistral OCR API for advanced text extraction with structure preservation."""
+    try:
+        import requests
+        import base64
+        import os
+        
+        # Get Mistral API key from Streamlit secrets
+        try:
+            mistral_api_key = st.secrets["MISTRAL_API_KEY"]
+        except KeyError:
+            st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to Streamlit secrets")
+            st.info("📋 **How to add:** Create `.streamlit/secrets.toml` file with: `MISTRAL_API_KEY = \"your-key-here\"`")
+            return None, None
+        
+        # Encode PDF to base64
+        base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
+        
+        # Prepare the request
+        url = "https://api.mistral.ai/v1/ocr"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {mistral_api_key}"
+        }
+        
+        data = {
+            "model": "mistral-ocr-latest",
+            "document": {
+                "type": "document_url",
+                "document_url": f"data:application/pdf;base64,{base64_pdf}"
+            },
+            "include_image_base64": True
+        }
+        
+        st.info("🔬 Processing PDF with Mistral OCR...")
+        
+        # Make the API request
+        response = requests.post(url, headers=headers, json=data, timeout=300)
+        
+        if response.status_code == 200:
+            ocr_result = response.json()
+            
+            # Extract text and images from OCR result
+            extracted_text = ""
+            extracted_images = []
+            
+            pages_processed = len(ocr_result.get('pages', []))
+            st.success(f"✅ Successfully processed {pages_processed} pages with Mistral OCR")
+            
+            for page_data in ocr_result.get('pages', []):
+                page_num = page_data.get('index', 1)
+                markdown_content = page_data.get('markdown', '')
+                
+                # Add page header and content
+                extracted_text += f"\n\n--- Page {page_num} (Mistral OCR) ---\n"
+                extracted_text += markdown_content
+                
+                # Extract images if available
+                if 'images' in page_data:
+                    for img_idx, img_data in enumerate(page_data['images']):
+                        if 'base64' in img_data:
+                            extracted_images.append({
+                                "page": page_num,
+                                "base64": f"data:image/png;base64,{img_data['base64']}",
+                                "description": f"Image {img_idx + 1} from page {page_num} (Mistral OCR)",
+                                "bbox": img_data.get('bbox', {})
+                            })
+            
+            # Add processing summary
+            usage_info = ocr_result.get('usage_info', {})
+            extracted_text += f"\n\n=== MISTRAL OCR SUMMARY ===\n"
+            extracted_text += f"Pages processed: {usage_info.get('pages_processed', pages_processed)}\n"
+            extracted_text += f"Document size: {usage_info.get('doc_size_bytes', 'Unknown')} bytes\n"
+            extracted_text += f"OCR Model: {ocr_result.get('model', 'mistral-ocr-latest')}\n"
+            extracted_text += f"Structure preserved: Headers, tables, lists, and formatting maintained in markdown\n"
+            
+            return extracted_text, extracted_images
+            
+        else:
+            error_msg = f"Mistral OCR API error: {response.status_code} - {response.text}"
+            st.error(f"❌ {error_msg}")
+            return None, None
+            
+    except ImportError:
+        st.error("❌ **Missing dependency:** Install requests with `pip install requests`")
+        return None, None
+    except Exception as e:
+        st.error(f"❌ **Mistral OCR Error:** {str(e)}")
+        return None, None
+
+def create_messages_with_mistral_ocr_content(prompt, ocr_text, ocr_images=None):
+    """Creates messages array for OpenAI API with Mistral OCR content."""
+    messages = []
+    
+    # Add the main prompt with OCR text content
+    content_parts = [{"type": "text", "text": prompt}]
+    
+    # Add OCR text (already in markdown format)
+    if ocr_text:
+        content_parts.append({
+            "type": "text", 
+            "text": f"\n\nDocument Content (Processed with Mistral OCR):\n{ocr_text}"
+        })
+    
+    # Add images if available
+    if ocr_images:
+        for img in ocr_images:
+            content_parts.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": img["base64"],
+                    "detail": "high"  # Use high detail for best quality
+                }
+            })
+    
+    messages.append({
+        "role": "user",
+        "content": content_parts
+    })
+    
+    return messages
+
 def analyze_with_llm(pdf_file_bytes, pdf_filename, model_progression_text, grade_level):
     """Analyzes the uploaded PDF chapter using OpenRouter API."""
     st.info("Extracting content from PDF...")
@@ -4916,125 +5039,3 @@ with tab2:
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
 
-# Mistral OCR Functions
-def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
-    """Process PDF using Mistral OCR API for advanced text extraction with structure preservation."""
-    try:
-        import requests
-        import base64
-        import os
-        
-        # Get Mistral API key from Streamlit secrets
-        try:
-            mistral_api_key = st.secrets["MISTRAL_API_KEY"]
-        except KeyError:
-            st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to Streamlit secrets")
-            st.info("📋 **How to add:** Create `.streamlit/secrets.toml` file with: `MISTRAL_API_KEY = \"your-key-here\"`")
-            return None, None
-        
-        # Encode PDF to base64
-        base64_pdf = base64.b64encode(pdf_bytes).decode('utf-8')
-        
-        # Prepare the request
-        url = "https://api.mistral.ai/v1/ocr"
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {mistral_api_key}"
-        }
-        
-        data = {
-            "model": "mistral-ocr-latest",
-            "document": {
-                "type": "document_url",
-                "document_url": f"data:application/pdf;base64,{base64_pdf}"
-            },
-            "include_image_base64": True
-        }
-        
-        st.info("🔬 Processing PDF with Mistral OCR...")
-        
-        # Make the API request
-        response = requests.post(url, headers=headers, json=data, timeout=300)
-        
-        if response.status_code == 200:
-            ocr_result = response.json()
-            
-            # Extract text and images from OCR result
-            extracted_text = ""
-            extracted_images = []
-            
-            pages_processed = len(ocr_result.get('pages', []))
-            st.success(f"✅ Successfully processed {pages_processed} pages with Mistral OCR")
-            
-            for page_data in ocr_result.get('pages', []):
-                page_num = page_data.get('index', 1)
-                markdown_content = page_data.get('markdown', '')
-                
-                # Add page header and content
-                extracted_text += f"\n\n--- Page {page_num} (Mistral OCR) ---\n"
-                extracted_text += markdown_content
-                
-                # Extract images if available
-                if 'images' in page_data:
-                    for img_idx, img_data in enumerate(page_data['images']):
-                        if 'base64' in img_data:
-                            extracted_images.append({
-                                "page": page_num,
-                                "base64": f"data:image/png;base64,{img_data['base64']}",
-                                "description": f"Image {img_idx + 1} from page {page_num} (Mistral OCR)",
-                                "bbox": img_data.get('bbox', {})
-                            })
-            
-            # Add processing summary
-            usage_info = ocr_result.get('usage_info', {})
-            extracted_text += f"\n\n=== MISTRAL OCR SUMMARY ===\n"
-            extracted_text += f"Pages processed: {usage_info.get('pages_processed', pages_processed)}\n"
-            extracted_text += f"Document size: {usage_info.get('doc_size_bytes', 'Unknown')} bytes\n"
-            extracted_text += f"OCR Model: {ocr_result.get('model', 'mistral-ocr-latest')}\n"
-            extracted_text += f"Structure preserved: Headers, tables, lists, and formatting maintained in markdown\n"
-            
-            return extracted_text, extracted_images
-            
-        else:
-            error_msg = f"Mistral OCR API error: {response.status_code} - {response.text}"
-            st.error(f"❌ {error_msg}")
-            return None, None
-            
-    except ImportError:
-        st.error("❌ **Missing dependency:** Install requests with `pip install requests`")
-        return None, None
-    except Exception as e:
-        st.error(f"❌ **Mistral OCR Error:** {str(e)}")
-        return None, None
-
-def create_messages_with_mistral_ocr_content(prompt, ocr_text, ocr_images=None):
-    """Creates messages array for OpenAI API with Mistral OCR content."""
-    messages = []
-    
-    # Add the main prompt with OCR text content
-    content_parts = [{"type": "text", "text": prompt}]
-    
-    # Add OCR text (already in markdown format)
-    if ocr_text:
-        content_parts.append({
-            "type": "text", 
-            "text": f"\n\nDocument Content (Processed with Mistral OCR):\n{ocr_text}"
-        })
-    
-    # Add images if available
-    if ocr_images:
-        for img in ocr_images:
-            content_parts.append({
-                "type": "image_url",
-                "image_url": {
-                    "url": img["base64"],
-                    "detail": "high"  # Use high detail for best quality
-                }
-            })
-    
-    messages.append({
-        "role": "user",
-        "content": content_parts
-    })
-    
-    return messages
