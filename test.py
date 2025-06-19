@@ -1064,89 +1064,47 @@ def create_science_evs_foundational_chapter_prompt(grade_level, word_limits=None
     if class_num not in ['1', '2']:
         return "This prompt is only for Science & E.V.S. Classes 1-2. Please select Grade 1 or 2."
     
-    return f"""You are an ECCE Specialist and Early Years Curriculum Designer.
-
-**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 1-2. DO NOT apply Model Chapter Progression or any other structure. Follow ONLY the Foundational Chapter Blueprint specified below.
-
-**Your Role**: You are an expert in Early Childhood Care and Education (ECCE). Your mission is to create a Science & E.V.S. "activity book" chapter for {grade_level}. This must be joyful, playful, and perfectly aligned with the play-based pedagogy of the NEP 2020 Foundational Stage.
+    return f"""You are an expert in Early Childhood Education for Science & E.V.S. Classes 1-2.
 
 **Target Audience**: {grade_level} (Ages 6-8, Foundational Stage)
 
-**Section 1: The Guiding Philosophy - "Purposeful Play"**
-- **Sensory and Experiential**: Learning must happen through seeing, touching, hearing, and doing
-- **Story and Rhyme Driven**: All concepts must be introduced through engaging stories, simple rhymes, or captivating oral narratives
-- **Visually-Led Learning**: The book must be dominated by large, colourful illustrations. Text for the child is minimal (labels, simple oral questions)
-- **Focus on Competencies**: The goal is to develop skills like observation, curiosity, and classification, not the rote learning of facts
+Create a play-based Science & E.V.S. chapter following this structure:
 
-**Section 2: The Core Task - The Transformation Engine**
-Extract the Core Theme: Identify the single, simple core concept from the PDF (e.g., Water, Plants, Animals)
-Architect a Playful Journey: Discard the old structure entirely. Rebuild the chapter using the simplified "Foundational Chapter Blueprint" below. The chapter should be a short, engaging experience, likely 4-6 pages long.
+## Part 1: Chapter Opener (Target: {word_limits.get('opener', 200)} words)
+- EeeBee's welcome message
+- Simple story related to the topic
+- Wonder questions for discussion
 
-**Section 3: The Foundational Chapter Blueprint (Mandatory Structure)**
+## Part 2: Learning Activities (Target: {word_limits.get('activity', 250)} words per activity)
+- **Hands-on activities** for each concept
+- **Simple explanations**: Basic theoretical understanding in child-friendly language
+- **What we learn**: Key facts and concepts children should understand
+- **Simple, pictorial instructions**: Visual guidance for activities
+- **Use everyday materials**: Accessible resources for exploration
 
-## Part 1: Chapter Opener - Story and Wonder (1 Page) (Target: {word_limits.get('opener', 200)} words)
-**Action**: The chapter begins one time with this single, immersive page.
+## Part 3: Concept Understanding (Target: {word_limits.get('concept', 200)} words per concept)
+- **Theoretical Explanation**: Clear, simple explanations of the concept using age-appropriate language
+- **Why This Happens**: Basic scientific reasoning behind the concept
+- **Key Facts**: Important information children should understand about the concept
+- **Visual infographics**: Supporting diagrams and illustrations
+- **EeeBee's key takeaways**: Summary points for reinforcement
 
-**Content**:
-- **EeeBee's Introduction 🐝**: Our mascot, EeeBee, welcomes the child to the chapter's topic in a speech bubble
-- **Story/Narrative**: A short, simple story for the teacher to read aloud, related to the main illustration
-- **Main "Spark" Illustration**: A large, beautiful, full-page illustration
-- **Oral "Wonder" Questions**: 2-3 oral discussion questions related to the scene
+## Part 4: Chapter Closer (Target: {word_limits.get('closer', 150)} words)
+- Student checklist with achievements
+- Teacher observation guide
+- Parent home connection activities
 
-## The Learning Cycle (Repeated for Each Simple Concept within the Chapter)
-After the opener, explore themes by repeating the following two-part cycle for each simple concept:
+**Requirements**:
+- **Balanced approach**: Combine hands-on activities with simple theoretical explanations
+- **Age-appropriate language** for {grade_level} with basic concept explanations
+- **Focus on understanding**: Help children learn both through doing AND knowing
+- **Large, colorful illustrations** to support theoretical concepts
+- **Safety-conscious activities** with educational value
+- **Indian cultural context** in both activities and explanations
 
-### Part A of the Cycle: Let's Play & Do (Target: {word_limits.get('activity', 250)} words per activity)
-**Action**: A simple, hands-on, game-like activity for the child.
-**Instructions**: Pictorial or simple, numbered steps.
-**Examples**:
-- For "Water": Playing with water in different containers
-- For "Plants": Leaf printing activity
-- For "Animals": Animal movement game
+Transform the PDF content into this playful format suitable for young learners.
 
-### Part B of the Cycle: Concept Connect (Target: {word_limits.get('concept', 200)} words per concept)
-**Action**: Immediately following the activity, this page elaborates on the learning.
-**Content**: 
-- A large, central infographic
-- A "Read Aloud" explanation for the teacher
-- "EeeBee's Takeaway" in a speech bubble to reinforce the concept
-
-## Part 4: Chapter Closer - The 'Learning Together' Corner (1 Page) (Target: {word_limits.get('closer', 150)} words)
-**Action**: The chapter concludes one time with this single, consolidated page.
-
-**Content**: Three dedicated sections:
-1. **For You! - My Fun Checklist 🌟** (for the student)
-   - Simple visual checklist of activities completed
-   - Sticker/stamp spaces for achievements
-   
-2. **For the Teacher - Observation Guide 🧑‍🏫** 
-   - Learning Outcomes aligned with NCF
-   - Simple observation points
-   - Assessment through play suggestions
-   
-3. **For the Parent - Home Connect 🏠**
-   - Simple home activities using everyday materials
-   - Questions to ask the child
-   - Extension activities for curious learners
-
-**Visual and Language Requirements**:
-- **Illustrations**: Large, colorful, child-friendly with Indian contexts
-- **Text**: Minimal text for children, mostly labels and speech bubbles
-- **Teacher Text**: Clear, simple instructions for read-alouds
-- **Safety**: Age-appropriate content with no scary elements
-- **Inclusivity**: Diverse representation of Indian children
-- **Materials**: Only easily available household items
-
-**Key Differences from Older Classes**:
-- NO formal exercises or written work
-- NO complex explanations or definitions
-- NO abstract concepts without concrete experiences
-- Focus on DOING, not memorizing
-- Assessment through observation, not testing
-
-Transform the PDF content into this playful, experiential format suitable for young learners.
-
-Provide ONLY the transformed Science & E.V.S. chapter content in Markdown format following the Foundational Chapter Blueprint.
+Provide the Science & E.V.S. chapter content in Markdown format.
 """
 
 def create_science_evs_foundational_exercises_prompt(grade_level, word_limits=None):
@@ -1162,72 +1120,38 @@ def create_science_evs_foundational_exercises_prompt(grade_level, word_limits=No
     if class_num not in ['1', '2']:
         return "This prompt is only for Science & E.V.S. Classes 1-2. Please select Grade 1 or 2."
     
-    return f"""You are an ECCE Specialist and Early Years Curriculum Designer.
-
-**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 1-2 activities. Create age-appropriate, play-based learning activities, NOT formal exercises.
+    return f"""You are an expert in Early Childhood Education for Science & E.V.S. Classes 1-2.
 
 **Target Audience**: {grade_level} (Ages 6-8, Foundational Stage)
 
-Your task is to generate PLAY-BASED LEARNING ACTIVITIES based on the chapter content in the PDF.
-**Target Total Word Count for All Activities**: {word_limits.get('activities', 600)} words
+Create play-based learning activities based on the chapter content.
+**Target Total Word Count**: {word_limits.get('activities', 600)} words
 
-**REQUIRED ACTIVITY TYPES:**
-
-## A. Observation Activities - 2 Activities
-- Simple observation tasks using the five senses
-- Draw and color activities
-- Spot the difference or find the object activities
-- Use large, clear illustrations
-
-## B. Sorting and Classifying Games - 1 Activity
-- Sort objects by color, size, shape, or type
-- Group living/non-living things
-- Match parent and baby animals
-- Use picture cards or real objects
-
-## C. Story-Based Activities - 1 Activity
-- Complete a simple story with pictures
-- Sequence story cards in order
-- Act out a story with movements
-- Create sound effects for a story
-
-## D. Nature Walk Activity - 1 Activity
-- Guided outdoor exploration
-- Simple collection activities (leaves, stones)
-- Observation checklist with pictures
-- Safety rules clearly stated
-
-## E. Art and Craft - 1 Activity
-- Simple craft using natural materials
-- Finger painting or hand printing
-- Making simple models with clay
-- Creating patterns with shapes
-
-## F. Circle Time Games - 2 Activities
-- Movement games related to the concept
-- Simple songs or rhymes with actions
-- Show and tell activities
-- Group discussion prompts
+**Required Activity Types:**
+- Observation activities (2 activities)
+- Sorting and classifying games (1 activity)
+- Story-based activities (1 activity)
+- Nature walk activity (1 activity)
+- Art and craft (1 activity)
+- Circle time games (2 activities)
 
 **Activity Requirements**:
-- **Picture-Based Instructions**: Use mostly pictures with minimal text
-- **Safety First**: All activities must be completely safe for young children
-- **Adult Supervision**: Clearly indicate when adult help is needed
-- **Indian Context**: Use familiar Indian contexts and materials
-- **Inclusive**: Ensure all children can participate regardless of ability
-- **Fun Focus**: Make every activity enjoyable and engaging
-- **No Writing**: Activities should not require writing skills
+- Picture-based instructions with minimal text
+- Safe for young children
+- Use familiar Indian materials
+- Fun and engaging
+- No writing skills required
 
 **Format for Each Activity**:
-- Activity name with fun emoji
-- What you need (with pictures)
-- How to play (step-by-step with illustrations)
+- Activity name with emoji
+- Materials needed
+- Step-by-step instructions
 - What to observe/discover
 - Extension ideas for home
 
-Remember: These are NOT exercises but joyful learning experiences. Focus on exploration, discovery, and play.
+Focus on exploration, discovery, and play rather than formal exercises.
 
-Provide ONLY the play-based learning activities in Markdown format.
+Provide the play-based learning activities in Markdown format.
 """
 
 # Science & E.V.S. Classes 3-5 (Preparatory Stage) specific prompt functions  
@@ -1248,110 +1172,56 @@ def create_science_evs_preparatory_chapter_prompt(grade_level, word_limits=None)
     if class_num not in ['3', '4', '5']:
         return "This prompt is only for Science & E.V.S. Classes 3-5. Please select Grade 3, 4, or 5."
     
-    return f"""You are a Master Educator and Curriculum Architect specializing in Indian primary education.
-
-**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 3-5. DO NOT apply standard Model Chapter Progression. Follow ONLY the Final Chapter Blueprint specified below.
-
-**Your Role**: You are a visionary curriculum designer creating Science & E.V.S. textbooks for {grade_level} that are pedagogically advanced, with a comprehensive and engaging assessment structure that ensures concept mastery and sets a new market standard.
+    return f"""You are an expert in Science & E.V.S. education for Classes 3-5.
 
 **Target Audience**: {grade_level} (Ages 8-11, Preparatory Stage)
 
-**Section 1: The Guiding Philosophy - "Inquiry with Clarity"**
-- **The Core Mission**: Create dynamic chapters where the student discovers through doing. The book is a guide for exploration, with a clear focus on building scientific process skills
-- **Principle of Balanced Dynamism**: Primary focus on clear communication of core concepts. 'Monotony-Breaker' elements and inline questions must support and enrich, never clutter or distract
-- **Activity-Led Explanation**: The hands-on activity is the catalyst for the explanation. Students must DO first, then learn the theory
+Create an inquiry-based Science & E.V.S. chapter following this structure:
 
-**Section 2: The Core Task - The Transformation Engine**
-1. **Determine Subject Title**: Analyze the source PDF to determine if it's EVS or Science
-2. **Extract the Skeleton**: Identify every core concept and sub-concept. None should be omitted
-3. **Architect the New Body**: Rebuild using the Final Chapter Blueprint below
-4. **Determine Optimal Content Depth**: Explanations must be well-structured, elaborative paragraphs
+## Part 1: Chapter Opener (Target: {word_limits.get('opener', 300)} words)
+- Learning roadmap with EeeBee
+- Previous knowledge connections
+- Learning outcomes
+- Wonder questions to spark curiosity
 
-**Section 3: The Final Chapter Blueprint (Mandatory Structure)**
+## Part 2: Exploration - "Let's Uncover the Secrets" (Target: {word_limits.get('exploration', 2000)} words)
+For each concept:
+- **Quick activity** or intriguing question to introduce the concept
+- **Theoretical Foundation**: Detailed explanations of the scientific/environmental concepts
+- **How and Why**: Scientific reasoning and cause-effect relationships
+- **Concept Breakdown**: Step-by-step explanation of processes and phenomena
+- **Real-world connections**: Practical applications and examples
+- **Scientific Facts**: Important theoretical knowledge students should learn
+- **Fun facts and discussion prompts**: Engaging additional information
+- **Summary boxes**: Key theoretical points for each concept
 
-## Part 1: The Chapter Opener Page (1 Page) (Target: {word_limits.get('opener', 300)} words)
-- **The "Learning Roadmap" with EeeBee 🐝**:
-  * Previous Knowledge Connections
-  * Learning Outcomes (clear, measurable)
-  * NCF Learning Goals alignment
-- **The "Spark Illustration"**: Captivating visual related to the chapter theme
-- **"Let's Wonder..." Questions**: 3-4 thought-provoking questions to spark curiosity
+## Part 3: Chapter Project (Target: {word_limits.get('project', 400)} words)
+- Hands-on project synthesizing learning
+- Materials and step-by-step procedure
+- Observation recording format
+- Conclusion questions
 
-## Part 2: The Exploration - "Let's Uncover the Secrets" (Variable Pages) (Target: {word_limits.get('exploration', 2000)} words)
-**Structure**: Break down the main topic into logical sub-parts, mirroring the source material.
+## Part 4: Summary & Revision (Target: {word_limits.get('summary', 250)} words)
+- Key concepts summary
+- Glossary of new terms
+- Concept map
+- Quick revision questions
 
-**Content Flow for Each Sub-part**:
-1. **Quick In-Class Activity** or intriguing question to introduce the sub-part
-2. **Detailed Explanation** in elaborative paragraphs:
-   - Clear, age-appropriate language
-   - Step-by-step concept building
-   - Real-world connections
-3. **Strategic Integration of Monotony-Breakers**:
-   - [Amazing Fact! 🌟]: Fascinating facts related to the concept
-   - [Think & Talk 💭]: Discussion prompts for peer learning
-   - [Misconception Alert! ⚠️]: Common errors to avoid
-   - [Science Story Time 📖]: Brief narratives connecting to the concept
-   - [Quick Quiz Corner 🎯]: Single MCQ for immediate assessment
-4. **Checkpoint: What We Just Learnt**: Bullet-point summary box
-5. **Science Around You**: Real-life applications box
+## Part 5: Exercises (Target: {word_limits.get('exercises', 600)} words)
+**Section A**: Fill blanks, True/False, MCQs, Name items, Match columns
+**Section B**: Give reasons, Differentiate, Brief answers, Detail answers, HOTS questions
 
-## Part 3: The Chapter Capstone Project (1-2 Pages) (Target: {word_limits.get('project', 400)} words)
-**Action**: A mandatory, culminating project synthesizing chapter learning.
+**Requirements**:
+- **Theoretical depth**: Include substantial conceptual explanations and scientific reasoning
+- **Age-appropriate language** for {grade_level} with proper scientific terminology
+- **Indian cultural context** in both theoretical examples and practical applications
+- **Scientific accuracy** in all theoretical explanations and concepts
+- **Balanced learning**: Combine hands-on activities with strong theoretical foundation
+- **Environmental awareness** supported by scientific understanding
 
-**Types**:
-- Detailed experiment with materials, procedure, observations
-- Model making with step-by-step instructions
-- Research-based chart/poster presentation
-- Field observation project
+Transform the PDF content into this inquiry-based format.
 
-**Structure**:
-- Project Title and Objective
-- Materials Required (easily available)
-- Step-by-Step Procedure
-- Observation Sheet/Recording Format
-- Conclusion Questions
-- Presentation Guidelines
-
-## Part 4: Chapter Summary & Revision Tools (1 Page) (Target: {word_limits.get('summary', 250)} words)
-**Content**:
-- **In a Nutshell**: Bulleted summary of key concepts
-- **Key Words / Word Lab**: Glossary of new scientific terms
-- **Concept Map**: Visual diagram showing relationships between concepts
-- **Quick Revision Questions**: 5-6 rapid-fire questions
-
-## Part 5: Comprehensive End-of-Chapter Exercise (1-2 Pages) (Target: {word_limits.get('exercises', 600)} words)
-**Section A: Remembering & Understanding**
-- Fill in the Blanks (5 questions)
-- True/False with Corrections (5 questions)
-- MCQs (5 questions)
-- Name the Following (5 items)
-- Match the Column (5 pairs)
-
-**Section B: Application, Analysis & Evaluation**
-- Give Reasons (3 questions)
-- Differentiate Between (2 pairs)
-- Answer in Brief (3 questions)
-- Answer in Detail (2 questions)
-- HOTS/Pondering Questions (2 questions)
-
-**Content Requirements**:
-- **Age-Appropriate Complexity**: Match depth to {grade_level} cognitive abilities
-- **Indian Context**: Use Indian examples, names, places, scenarios
-- **Scientific Accuracy**: Ensure all content is scientifically correct
-- **Process Skills Focus**: Emphasize observation, classification, inference
-- **Environmental Awareness**: Include eco-friendly practices
-- **Health & Safety**: Integrate health consciousness where relevant
-
-**Quality Control**:
-- Simple, clear language appropriate for {grade_level}
-- Gender-inclusive and culturally sensitive
-- Urban and rural balance in examples
-- Emphasis on hands-on learning
-- Integration of values and life skills
-
-Transform the PDF content into this inquiry-based format that makes science exciting and accessible.
-
-Provide ONLY the transformed Science & E.V.S. chapter content in Markdown format following the Final Chapter Blueprint.
+Provide the Science & E.V.S. chapter content in Markdown format.
 """
 
 def create_science_evs_preparatory_exercises_prompt(grade_level, word_limits=None):
@@ -1367,106 +1237,45 @@ def create_science_evs_preparatory_exercises_prompt(grade_level, word_limits=Non
     if class_num not in ['3', '4', '5']:
         return "This prompt is only for Science & E.V.S. Classes 3-5. Please select Grade 3, 4, or 5."
     
-    return f"""You are a Master Educator and Curriculum Architect specializing in Indian primary education.
-
-**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for Science & E.V.S. Classes 3-5 exercises. Create comprehensive, inquiry-based assessment exercises.
+    return f"""You are an expert in Science & E.V.S. education for Classes 3-5.
 
 **Target Audience**: {grade_level} (Ages 8-11, Preparatory Stage)
 
-Your task is to generate COMPREHENSIVE SCIENCE & E.V.S. EXERCISES based on the chapter content in the PDF.
-**Target Total Word Count for All Exercises**: {word_limits.get('exercises', 800)} words
+Create comprehensive Science & E.V.S. exercises based on the chapter content.
+**Target Total Word Count**: {word_limits.get('exercises', 800)} words
 
-**REQUIRED EXERCISE STRUCTURE:**
+**Exercise Structure:**
 
 ## Section A: Remembering & Understanding
-
-### 1. Fill in the Blanks - 5 Questions
-- Test key vocabulary and concepts
-- Use scientific terms from the chapter
-- Progress from simple to complex
-
-### 2. True/False with Corrections - 5 Questions
-- Include common misconceptions
-- Require students to correct false statements
-- Test conceptual understanding
-
-### 3. Multiple Choice Questions (MCQs) - 5 Questions
-- Include 4 options (a, b, c, d) for each
-- Test various cognitive levels
-- Include diagram-based questions where relevant
-
-### 4. Name the Following - 5 Items
-- Quick recall questions
-- Include examples, definitions, and identifications
-- Cover all major concepts from the chapter
-
-### 5. Match the Column - 5 Pairs
-- Column A: Terms/Concepts
-- Column B: Definitions/Examples
-- Ensure logical connections
+- Fill in the Blanks (5 questions)
+- True/False with Corrections (5 questions)
+- Multiple Choice Questions (5 questions)
+- Name the Following (5 items)
+- Match the Column (5 pairs)
 
 ## Section B: Application, Analysis & Evaluation
-
-### 1. Give Reasons - 3 Questions
-- "Why" questions requiring scientific explanation
-- Test cause-effect understanding
-- Encourage logical thinking
-
-### 2. Differentiate Between - 2 Pairs
-- Compare and contrast related concepts
-- Use tabular format for answers
-- Test deeper understanding
-
-### 3. Answer in Brief - 3 Questions
-- 2-3 sentence answers expected
-- Test application of concepts
-- Include real-world scenarios
-
-### 4. Answer in Detail - 2 Questions
-- 5-6 sentence answers expected
-- Comprehensive understanding required
-- May include diagram drawing
-
-### 5. HOTS (Higher Order Thinking Skills) - 2 Questions
-- Open-ended, thought-provoking questions
-- Encourage critical thinking
-- Connect to real-world problems
+- Give Reasons (3 questions)
+- Differentiate Between (2 pairs)
+- Answer in Brief (3 questions)
+- Answer in Detail (2 questions)
+- HOTS Questions (2 questions)
 
 ## Additional Components:
+- Activity-Based Questions (2 questions)
+- Diagram-Based Questions (2 questions)
+- Value-Based Questions (1 question)
 
-### Activity-Based Questions - 2 Questions
-- Based on experiments/activities in the chapter
-- Test procedural knowledge
-- Include observation and inference
-
-### Diagram-Based Questions - 2 Questions
-- Label the diagram
-- Draw and explain
-- Interpret given diagrams
-
-### Value-Based Questions - 1 Question
-- Connect science to daily life values
-- Environmental consciousness
-- Social responsibility
-
-**Question Design Principles**:
-- **Progressive Difficulty**: Start simple, increase complexity
-- **Comprehensive Coverage**: Address all chapter concepts
-- **Clear Language**: Age-appropriate vocabulary
-- **Indian Context**: Use local examples and scenarios
-- **Visual Elements**: Include diagrams where helpful
-- **Life Skills Integration**: Connect to practical applications
-
-**Assessment Objectives**:
-- Test factual knowledge and conceptual understanding
-- Develop scientific reasoning
-- Encourage observation and inference skills
+**Requirements**:
+- Progressive difficulty levels
+- Age-appropriate vocabulary for {grade_level}
+- Indian cultural context
+- Include diagrams where helpful
+- Connect to practical applications
 - Build environmental awareness
-- Foster scientific temper
 
-Ensure all questions are directly related to the chapter content and appropriate for {grade_level} students.
+Ensure all questions relate to the chapter content and are appropriate for {grade_level} students.
 
-Provide ONLY the comprehensive Science & E.V.S. exercises in Markdown format.
+Provide the comprehensive Science & E.V.S. exercises in Markdown format.
 """
 
 # Mathematics-specific prompt functions
@@ -3700,7 +3509,10 @@ def expand_text_with_ai(selected_text: str, expansion_type: str, context: str, c
         'activities': "Add hands-on activities, experiments, and interactive exercises",
         'simplify': "Make the explanation simpler and clearer for students",
         'questions': "Add thought-provoking questions and assessments",
-        'connections': "Add connections to other concepts and real-world applications"
+        'connections': "Add connections to other concepts and real-world applications",
+        'shorten': "Make the content more concise and brief while keeping key information",
+        'summarize': "Create a condensed summary of the main points",
+        'bullet_points': "Convert the content into clear, concise bullet points"
     }
     
     prompt = f"""You are an expert educational content developer for CBSE {grade_level} curriculum.
@@ -3720,7 +3532,7 @@ REQUIREMENTS:
 1. Keep the same educational tone and CBSE alignment
 2. Make content appropriate for {grade_level} students
 3. Maintain consistency with existing content
-4. Target expansion: 2-3x the original length
+4. Target length: {"50-70% of original length (make it more concise)" if expansion_type in ['shorten', 'summarize', 'bullet_points'] else "2-3x the original length (expand it)"}
 5. Use clear, engaging language
 6. Include proper formatting (markdown)
 
@@ -3779,7 +3591,7 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
             # Show expansion options if button was clicked
             if st.session_state.get(f"show_expansion_options_{i}", False):
                 with st.container():
-                    st.markdown("**Choose expansion type:**")
+                    st.markdown("**Expand Content:**")
                     exp_col1, exp_col2, exp_col3, exp_col4 = st.columns(4)
                     
                     expansion_type = None
@@ -3791,6 +3603,16 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
                         expansion_type = "activities"
                     if exp_col4.button("📖 Simplify", key=f"simplify_{i}"):
                         expansion_type = "simplify"
+                    
+                    st.markdown("**Shorten Content:**")
+                    short_col1, short_col2, short_col3 = st.columns(3)
+                    
+                    if short_col1.button("✂️ Make Shorter", key=f"shorten_{i}"):
+                        expansion_type = "shorten"
+                    if short_col2.button("📋 Summarize", key=f"summarize_{i}"):
+                        expansion_type = "summarize"
+                    if short_col3.button("• Bullet Points", key=f"bullets_{i}"):
+                        expansion_type = "bullet_points"
                     
                     if expansion_type:
                         with st.spinner(f"🧠 Expanding section with {expansion_type}..."):
@@ -3835,7 +3657,7 @@ def display_manual_text_expander(original_content: str, content_type: str, grade
     
     if selected_text.strip():
         # Expansion type selection
-        st.markdown("**Choose how to expand this text:**")
+        st.markdown("**Expand Content:**")
         exp_col1, exp_col2, exp_col3 = st.columns(3)
         exp_col4, exp_col5, exp_col6 = st.columns(3)
         
@@ -3852,6 +3674,16 @@ def display_manual_text_expander(original_content: str, content_type: str, grade
             expansion_type = "questions"
         if exp_col6.button("🔗 Add Connections", key="manual_connections"):
             expansion_type = "connections"
+        
+        st.markdown("**Shorten Content:**")
+        short_col1, short_col2, short_col3 = st.columns(3)
+        
+        if short_col1.button("✂️ Make Shorter", key="manual_shorten"):
+            expansion_type = "shorten"
+        if short_col2.button("📋 Summarize", key="manual_summarize"):
+            expansion_type = "summarize"
+        if short_col3.button("• Bullet Points", key="manual_bullets"):
+            expansion_type = "bullet_points"
         
         if expansion_type:
             with st.spinner(f"🧠 Expanding your text with {expansion_type}..."):
@@ -3895,6 +3727,7 @@ def display_global_content_expander(original_content: str, content_type: str, gr
     st.subheader("🚀 Global Content Enhancement")
     st.markdown("*Enhance the entire content with specific improvements.*")
     
+    st.markdown("**Expand Content:**")
     col1, col2, col3 = st.columns(3)
     
     global_action = None
@@ -3904,6 +3737,16 @@ def display_global_content_expander(original_content: str, content_type: str, gr
         global_action = "activities"
     if col3.button("💡 Add More Examples", key="global_examples"):
         global_action = "examples"
+    
+    st.markdown("**Shorten Content:**")
+    short_col1, short_col2, short_col3 = st.columns(3)
+    
+    if short_col1.button("✂️ Make Shorter", key="global_shorten"):
+        global_action = "shorten"
+    if short_col2.button("📋 Summarize All", key="global_summarize"):
+        global_action = "summarize"
+    if short_col3.button("• Key Points Only", key="global_bullets"):
+        global_action = "bullet_points"
     
     if global_action:
         with st.spinner(f"🧠 Enhancing entire content..."):
@@ -3930,6 +3773,30 @@ Original Content:
 {original_content}
 
 Include diverse examples that help students understand concepts better."""
+                
+            elif global_action == "shorten":
+                prompt = f"""Make this {content_type} content more concise and brief for {grade_level} CBSE students while keeping all essential information and concepts.
+
+Original Content:
+{original_content}
+
+Remove unnecessary details, redundant explanations, and verbose sections while maintaining educational quality and completeness."""
+                
+            elif global_action == "summarize":
+                prompt = f"""Create a condensed summary of this {content_type} content for {grade_level} CBSE students, focusing on key concepts and main points.
+
+Original Content:
+{original_content}
+
+Extract and present the most important information in a clear, organized summary format."""
+                
+            elif global_action == "bullet_points":
+                prompt = f"""Convert this {content_type} content into clear, concise bullet points for {grade_level} CBSE students.
+
+Original Content:
+{original_content}
+
+Organize the content into well-structured bullet points that capture all key concepts and information."""
             
             try:
                 messages = [{"role": "user", "content": prompt}]
