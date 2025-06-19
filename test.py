@@ -3635,9 +3635,42 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
                     st.markdown(st.session_state[f"expanded_content_{i}"])
                     
                     # Option to replace original content
-                    if st.button("🔄 Replace Original", key=f"replace_{i}"):
-                        # Here you could update the original content
-                        st.success("Content replacement functionality can be added here!")
+                    col1, col2 = st.columns(2)
+                    if col1.button("🔄 Replace Section", key=f"replace_{i}"):
+                        # Replace the specific section in the original content
+                        original_content = ""
+                        if content_type == "chapter":
+                            original_content = st.session_state.get("chapter_content", "")
+                        elif content_type == "exercises":
+                            original_content = st.session_state.get("exercises", "")
+                        elif content_type == "skills":
+                            original_content = st.session_state.get("skill_activities", "")
+                        elif content_type == "art":
+                            original_content = st.session_state.get("art_learning", "")
+                        
+                        if original_content and section['text'] in original_content:
+                            # Replace the section in the original content
+                            updated_content = original_content.replace(section['text'], st.session_state[f"expanded_content_{i}"])
+                            
+                            # Update the session state with the modified content
+                            if content_type == "chapter":
+                                st.session_state.chapter_content = updated_content
+                            elif content_type == "exercises":
+                                st.session_state.exercises = updated_content
+                            elif content_type == "skills":
+                                st.session_state.skill_activities = updated_content
+                            elif content_type == "art":
+                                st.session_state.art_learning = updated_content
+                            
+                            # Save the updated content
+                            save_content_safely(content_type, updated_content)
+                            st.success("✅ Section replaced in original content!")
+                            st.rerun()
+                        else:
+                            st.error("❌ Could not find the original section to replace.")
+                    
+                    if col2.button("💾 Keep Both", key=f"keep_{i}"):
+                        st.success("✅ Expanded content saved separately! Original content unchanged.")
             
             st.divider()
 
@@ -3707,8 +3740,43 @@ def display_manual_text_expander(original_content: str, content_type: str, grade
                 st.markdown("### ✨ Expanded Content:")
                 st.markdown(expanded_content)
                 
-                # Option to save expanded content
-                if st.button("💾 Save Expansion", key="save_manual_expansion"):
+                # Options for the expanded content
+                col1, col2, col3 = st.columns(3)
+                
+                if col1.button("🔄 Replace Original", key="replace_manual_expansion"):
+                    # Replace the selected text in the original content
+                    original_content_state = ""
+                    if content_type == "chapter":
+                        original_content_state = st.session_state.get("chapter_content", "")
+                    elif content_type == "exercises":
+                        original_content_state = st.session_state.get("exercises", "")
+                    elif content_type == "skills":
+                        original_content_state = st.session_state.get("skill_activities", "")
+                    elif content_type == "art":
+                        original_content_state = st.session_state.get("art_learning", "")
+                    
+                    if original_content_state and selected_text in original_content_state:
+                        # Replace the selected text with expanded content
+                        updated_content = original_content_state.replace(selected_text, expanded_content)
+                        
+                        # Update the session state
+                        if content_type == "chapter":
+                            st.session_state.chapter_content = updated_content
+                        elif content_type == "exercises":
+                            st.session_state.exercises = updated_content
+                        elif content_type == "skills":
+                            st.session_state.skill_activities = updated_content
+                        elif content_type == "art":
+                            st.session_state.art_learning = updated_content
+                        
+                        # Save the updated content
+                        save_content_safely(content_type, updated_content)
+                        st.success("✅ Original content updated with expansion!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Could not find the selected text in original content to replace.")
+                
+                if col2.button("💾 Save Expansion", key="save_manual_expansion"):
                     # Store in session state for later use
                     if 'saved_expansions' not in st.session_state:
                         st.session_state.saved_expansions = []
@@ -3720,6 +3788,10 @@ def display_manual_text_expander(original_content: str, content_type: str, grade
                         'timestamp': time.time()
                     })
                     st.success("✅ Expansion saved! You can view all saved expansions below.")
+                
+                if col3.button("📋 Copy to Clipboard", key="copy_manual_expansion"):
+                    # This would copy to clipboard if we had JavaScript support
+                    st.info("💡 You can manually copy the expanded content above.")
 
 def display_global_content_expander(original_content: str, content_type: str, grade_level: str, subject_type: str):
     """Global content expansion options"""
