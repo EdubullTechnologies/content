@@ -816,6 +816,30 @@ Please use the appropriate generation option."""
             return create_computer_skills_prompt(grade_level, model_progression_text, word_limits)
         elif content_type == "art":
             return create_computer_art_prompt(grade_level, model_progression_text, word_limits)
+    elif subject_type == "English Communication & Grammar (Classes 1-8)":
+        # Extract class number to validate
+        class_num = int(grade_level.split()[-1])
+        if class_num not in range(1, 9):  # Classes 1-8
+            return "English Communication & Grammar (Classes 1-8) can only be used with Grades 1 through 8."
+        
+        if content_type == "chapter":
+            return create_english_chapter_prompt(grade_level, word_limits)
+        elif content_type == "exercises":
+            return create_english_exercises_prompt(grade_level, word_limits)
+        elif content_type == "skills":
+            return create_english_skills_prompt(grade_level, word_limits)
+        elif content_type == "art":
+            return create_english_projects_prompt(grade_level, word_limits)
+        else:
+            return f"""This content type '{content_type}' is not supported for English Communication & Grammar.
+            
+For English Communication & Grammar (Classes 1-8), we support:
+- Chapter Content: Complete language learning chapter with Oxford/Cambridge standards
+- Exercises: Grammar, vocabulary, comprehension, and communication exercises
+- Skills: Speaking, listening, reading, and writing skill activities
+- Projects: Creative language projects and communication activities
+
+Please use the appropriate generation option."""
     else:
         if content_type == "chapter":
             return create_science_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -2534,6 +2558,251 @@ Format the content in Markdown with proper formatting for code examples.
 Provide ONLY the Computer Science Creative Projects and Case Studies in Markdown format.
 """
 
+# English Communication & Grammar (Classes 1-8) specific prompt functions
+def create_english_chapter_prompt(grade_level, word_limits=None):
+    """Creates an English Communication & Grammar chapter prompt with Oxford/Cambridge standards"""
+    # Extract class number for appropriate structure
+    class_num = int(grade_level.split()[-1])
+    
+    # Default word limits based on class level
+    if word_limits is None:
+        if class_num <= 3:
+            word_limits = {
+                'warm_up': 200,
+                'vocabulary': 300,
+                'grammar_intro': 250,
+                'practice': 400,
+                'communication': 300,
+                'exercises': 600
+            }
+        elif class_num <= 5:
+            word_limits = {
+                'introduction': 250,
+                'reading': 600,
+                'grammar': 500,
+                'vocabulary': 350,
+                'writing': 450,
+                'speaking': 350,
+                'exercises': 700
+            }
+        else:
+            word_limits = {
+                'introduction': 300,
+                'reading': 800,
+                'grammar': 600,
+                'vocabulary': 400,
+                'writing': 600,
+                'speaking': 400,
+                'literature': 500,
+                'exercises': 900,
+                'projects': 300
+            }
+    
+    if class_num <= 3:
+        return f"""You are an Expert English Language Educator specializing in foundational English Communication & Grammar for Classes 1-3, following the best practices of Oxford, Cambridge, and Wren & Martin publications.
+
+**CRITICAL INSTRUCTIONS**: This prompt is EXCLUSIVELY for English Communication & Grammar Classes 1-3. Create content that builds strong language foundations using play-based and interactive methodologies.
+
+**Target Audience**: {grade_level} (Primary English Learners - Ages 6-9)
+
+**Educational Philosophy**:
+- **Oxford Method**: Systematic phonics and vocabulary building
+- **Cambridge Approach**: Communicative language teaching with real-world contexts
+- **Wren & Martin Foundation**: Clear grammar rules with simple explanations
+- **Indian Context**: Use familiar Indian names, places, festivals, and cultural elements
+
+**MANDATORY CHAPTER STRUCTURE** (Transform PDF content to fit this EXACT structure):
+
+## 1. Warm-Up Activity - Let's Begin! (Target: {word_limits.get('warm_up', 200)} words)
+Create an interactive warm-up activity with Indian cultural elements, visual descriptions, and clear instructions.
+
+## 2. Vocabulary Building - New Words, New Worlds (Target: {word_limits.get('vocabulary', 300)} words)
+Introduce 8-12 new words with pronunciations, definitions, and Indian contexts.
+
+## 3. Grammar Introduction - Language Rules Made Easy (Target: {word_limits.get('grammar_intro', 250)} words)
+Simple grammar concepts with clear explanations and visual aids.
+
+## 4. Practice Activities - Let's Try Together (Target: {word_limits.get('practice', 400)} words)
+Multiple activity types with progressive difficulty and Indian contexts.
+
+## 5. Communication Skills - Let's Talk and Share (Target: {word_limits.get('communication', 300)} words)
+Speaking and listening activities using Cambridge communicative approach.
+
+## 6. Assessment & Review - How Well Did I Learn? (Target: {word_limits.get('exercises', 600)} words)
+Comprehensive assessment with various question types and self-evaluation.
+
+Transform the PDF content following Oxford precision, Cambridge engagement, and Wren & Martin clarity.
+
+Provide ONLY the comprehensive English chapter content in Markdown format.
+"""
+    
+    elif class_num <= 5:
+        return f"""You are an Expert English Language Educator for Classes 4-5, following Oxford, Cambridge, and Wren & Martin best practices.
+
+**Target Audience**: {grade_level} (Elementary English Learners - Ages 9-11)
+
+**MANDATORY CHAPTER STRUCTURE**:
+
+## 1. Chapter Introduction (Target: {word_limits.get('introduction', 250)} words)
+## 2. Reading & Comprehension (Target: {word_limits.get('reading', 600)} words)
+## 3. Grammar Focus (Target: {word_limits.get('grammar', 500)} words)
+## 4. Vocabulary Expansion (Target: {word_limits.get('vocabulary', 350)} words)
+## 5. Writing Skills (Target: {word_limits.get('writing', 450)} words)
+## 6. Speaking & Listening (Target: {word_limits.get('speaking', 350)} words)
+## 7. Practice & Assessment (Target: {word_limits.get('exercises', 700)} words)
+
+Follow Oxford systematic development, Cambridge integrated skills, and Wren & Martin practical application.
+
+Provide ONLY the comprehensive English chapter content in Markdown format.
+"""
+    
+    else:  # Classes 6-8
+        return f"""You are an Expert English Language Educator for Classes 6-8, following Oxford, Cambridge, and Wren & Martin excellence standards.
+
+**Target Audience**: {grade_level} (Middle School English Learners - Ages 11-14)
+
+**MANDATORY CHAPTER STRUCTURE**:
+
+## 1. Chapter Introduction & Context (Target: {word_limits.get('introduction', 300)} words)
+## 2. Reading & Critical Analysis (Target: {word_limits.get('reading', 800)} words)
+## 3. Grammar & Language Usage (Target: {word_limits.get('grammar', 600)} words)
+## 4. Vocabulary & Etymology (Target: {word_limits.get('vocabulary', 400)} words)
+## 5. Composition & Creative Writing (Target: {word_limits.get('writing', 600)} words)
+## 6. Speaking & Presentation Skills (Target: {word_limits.get('speaking', 400)} words)
+## 7. Literature Appreciation (Target: {word_limits.get('literature', 500)} words)
+## 8. Comprehensive Assessment (Target: {word_limits.get('exercises', 900)} words)
+## 9. Language Projects (Target: {word_limits.get('projects', 300)} words)
+
+Follow Oxford academic rigor, Cambridge critical thinking, and Wren & Martin comprehensive mastery.
+
+Provide ONLY the comprehensive English chapter content in Markdown format.
+"""
+
+def create_english_exercises_prompt(grade_level, word_limits=None):
+    """Creates comprehensive English exercises following Oxford/Cambridge/Wren & Martin standards"""
+    class_num = int(grade_level.split()[-1])
+    
+    if word_limits is None:
+        word_limits = {'exercises': 800 if class_num <= 5 else 1000}
+    
+    return f"""You are an Expert English Language Assessment Specialist for {grade_level}, following Oxford, Cambridge, and Wren & Martin assessment standards.
+
+**Target Word Count**: {word_limits.get('exercises', 800)} words
+
+Create COMPREHENSIVE ENGLISH EXERCISES based on the chapter content in the PDF.
+
+**EXERCISE STRUCTURE** (adjust complexity for {grade_level}):
+
+## A. Vocabulary Exercises
+- Word meanings, synonyms, antonyms
+- Usage in sentences with Indian contexts
+- Word formation and families
+
+## B. Grammar Practice  
+- Fill in the blanks, error correction
+- Sentence transformation
+- Grammar rules application
+
+## C. Reading Comprehension
+- Passage with Indian cultural context
+- Multiple choice and short answer questions
+- Inference and analysis questions
+
+## D. Writing Skills
+- Creative and functional writing prompts
+- Letter writing, paragraph writing
+- Essay writing (for higher classes)
+
+## E. Communication Assessment
+- Speaking activities and presentation topics
+- Listening comprehension exercises
+- Group discussion and debate topics
+
+Use age-appropriate complexity, Indian cultural contexts, and international standards.
+
+Provide ONLY the comprehensive English exercises in Markdown format.
+"""
+
+def create_english_skills_prompt(grade_level, word_limits=None):
+    """Creates English skills activities following international best practices"""
+    class_num = int(grade_level.split()[-1])
+    
+    if word_limits is None:
+        word_limits = {'skills': 600 if class_num <= 5 else 800}
+    
+    return f"""You are an Expert English Language Skills Developer for {grade_level}, specializing in the four core language skills.
+
+**Target Word Count**: {word_limits.get('skills', 600)} words
+
+Create COMPREHENSIVE ENGLISH SKILLS ACTIVITIES based on the chapter content.
+
+**FOUR CORE SKILLS DEVELOPMENT**:
+
+## 1. Listening Skills (25% of content)
+- Audio descriptions and listening activities
+- Progressive difficulty levels
+- Indian accents and contexts
+
+## 2. Speaking Skills (25% of content)
+- Structured conversation practice
+- Presentation and pronunciation activities
+- Confidence-building strategies
+
+## 3. Reading Skills (25% of content)
+- Reading strategies and text analysis
+- Multiple text types and genres
+- Critical reading development
+
+## 4. Writing Skills (25% of content)
+- Creative and functional writing
+- Process writing approach
+- Editing and revision skills
+
+Include self-assessment opportunities and teacher guidance.
+
+Provide ONLY the comprehensive English skills activities in Markdown format.
+"""
+
+def create_english_projects_prompt(grade_level, word_limits=None):
+    """Creates creative English language projects following international standards"""
+    class_num = int(grade_level.split()[-1])
+    
+    if word_limits is None:
+        word_limits = {'projects': 400 if class_num <= 5 else 600}
+    
+    return f"""You are an Expert English Language Project Designer for {grade_level}, creating innovative language projects.
+
+**Target Word Count**: {word_limits.get('projects', 400)} words
+
+Create INNOVATIVE ENGLISH LANGUAGE PROJECTS based on the chapter content.
+
+**PROJECT CATEGORIES**:
+
+## 1. Creative Expression Project (30% of content)
+- Creative writing, storytelling, or drama
+- Indian cultural integration
+- Original creative work with language objectives
+
+## 2. Communication Project (30% of content)
+- Interview, presentation, or multimedia creation
+- Community engagement and research
+- Real communication with authentic audience
+
+## 3. Research & Analysis Project (25% of content)
+- Research report or comparative study
+- Academic investigation with Indian context
+- Structured research presentation
+
+## 4. Collaborative Learning Project (15% of content)
+- Group presentation or collaborative writing
+- Teamwork and leadership development
+- Shared learning outcomes
+
+Include clear guidelines, assessment rubrics, and cultural integration.
+
+Provide ONLY the comprehensive English language projects in Markdown format.
+"""
+
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
     """Generates specific content based on content type"""
     if not use_chunked:
@@ -2590,11 +2859,11 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
                     messages = create_messages_with_mistral_ocr_content(prompt, pdf_text, pdf_images)
                 else:
                     st.info(f"🔍 **DEBUG:** Using method: {pdf_method}")
-                    # Use original text extraction method
-                    pdf_text = extract_text_from_pdf(pdf_bytes)
-                    pdf_images = extract_images_from_pdf(pdf_bytes)
-                    # Create messages with PDF content
-                    messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
+                # Use original text extraction method
+                pdf_text = extract_text_from_pdf(pdf_bytes)
+                pdf_images = extract_images_from_pdf(pdf_bytes)
+                # Create messages with PDF content
+                messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
                 
                 # Determine max tokens based on content type
                 max_tokens = 131072 if (subject_type == "Mathematics" and content_type == "chapter") else 65536
@@ -3310,9 +3579,9 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
         else:
             st.info(f"🔍 **DEBUG (Streaming):** Using method: {pdf_method}")
             # Extract text and images from PDF using original method
-            pdf_text = extract_text_from_pdf(pdf_bytes)
-            pdf_images = extract_images_from_pdf(pdf_bytes)
-            messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
+        pdf_text = extract_text_from_pdf(pdf_bytes)
+        pdf_images = extract_images_from_pdf(pdf_bytes)
+        messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
         plugins = None
     
     # Determine max tokens based on content type (reduced for streaming reliability)
@@ -3565,6 +3834,18 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
     st.subheader("🔍 Section-by-Section Expansion")
     st.markdown("*Click the expand button next to any section you want to develop further.*")
     
+    # Get fresh content from session state to ensure we have the latest version
+    def get_current_content():
+        if content_type == "chapter":
+            return st.session_state.get("chapter_content", "")
+        elif content_type == "exercises":
+            return st.session_state.get("exercises", "")
+        elif content_type == "skills":
+            return st.session_state.get("skill_activities", "")
+        elif content_type == "art":
+            return st.session_state.get("art_learning", "")
+        return ""
+    
     for i, section in enumerate(sections):
         # Create container for each section
         with st.container():
@@ -3637,16 +3918,8 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
                     # Option to replace original content
                     col1, col2 = st.columns(2)
                     if col1.button("🔄 Replace Section", key=f"replace_{i}"):
-                        # Replace the specific section in the original content
-                        original_content = ""
-                        if content_type == "chapter":
-                            original_content = st.session_state.get("chapter_content", "")
-                        elif content_type == "exercises":
-                            original_content = st.session_state.get("exercises", "")
-                        elif content_type == "skills":
-                            original_content = st.session_state.get("skill_activities", "")
-                        elif content_type == "art":
-                            original_content = st.session_state.get("art_learning", "")
+                        # Get the current content (fresh from session state)
+                        original_content = get_current_content()
                         
                         if original_content and section['text'] in original_content:
                             # Replace the section in the original content
@@ -3664,10 +3937,62 @@ def display_section_expander(sections: List[Dict[str, Any]], content_type: str, 
                             
                             # Save the updated content
                             save_content_safely(content_type, updated_content)
+                            
+                            # Clear the expanded content and expansion options to prevent stale data
+                            st.session_state.pop(f"expanded_content_{i}", None)
+                            st.session_state.pop(f"show_expansion_options_{i}", None)
+                            
                             st.success("✅ Section replaced in original content!")
                             st.rerun()
                         else:
-                            st.error("❌ Could not find the original section to replace.")
+                            # Try to find a partial match if exact match fails
+                            section_words = section['text'].split()[:10]  # First 10 words
+                            section_start = " ".join(section_words)
+                            
+                            if section_start in original_content:
+                                # Find the full section in original content
+                                start_idx = original_content.find(section_start)
+                                # Try to find the end of the section (next paragraph or section)
+                                remaining_content = original_content[start_idx:]
+                                lines = remaining_content.split('\n')
+                                
+                                # Reconstruct the full section
+                                full_section = ""
+                                for line in lines:
+                                    if line.strip():
+                                        full_section += line + "\n"
+                                    else:
+                                        break
+                                
+                                full_section = full_section.strip()
+                                
+                                if full_section:
+                                    # Replace with the reconstructed section
+                                    updated_content = original_content.replace(full_section, st.session_state[f"expanded_content_{i}"])
+                                    
+                                    # Update the session state
+                                    if content_type == "chapter":
+                                        st.session_state.chapter_content = updated_content
+                                    elif content_type == "exercises":
+                                        st.session_state.exercises = updated_content
+                                    elif content_type == "skills":
+                                        st.session_state.skill_activities = updated_content
+                                    elif content_type == "art":
+                                        st.session_state.art_learning = updated_content
+                                    
+                                    # Save the updated content
+                                    save_content_safely(content_type, updated_content)
+                                    
+                                    # Clear the expanded content and expansion options
+                                    st.session_state.pop(f"expanded_content_{i}", None)
+                                    st.session_state.pop(f"show_expansion_options_{i}", None)
+                                    
+                                    st.success("✅ Section replaced in original content!")
+                                    st.rerun()
+                                else:
+                                    st.error("❌ Could not reconstruct the original section to replace.")
+                            else:
+                                st.error("❌ Could not find the original section to replace. Try using the Manual Text Expansion instead.")
                     
                     if col2.button("💾 Keep Both", key=f"keep_{i}"):
                         st.success("✅ Expanded content saved separately! Original content unchanged.")
@@ -3924,23 +4249,38 @@ def hybrid_content_expander(content: str, content_type: str, grade_level: str, s
     st.header("✨ Content Expansion Studio")
     st.markdown("*Enhance your generated content with AI-powered expansions*")
     
-    # Parse content into sections
-    sections = parse_content_sections(content)
+    # Get fresh content from session state
+    def get_fresh_content():
+        if content_type == "chapter":
+            return st.session_state.get("chapter_content", "")
+        elif content_type == "exercises":
+            return st.session_state.get("exercises", "")
+        elif content_type == "skills":
+            return st.session_state.get("skill_activities", "")
+        elif content_type == "art":
+            return st.session_state.get("art_learning", "")
+        return content  # fallback to original content
     
     # Tab interface for different expansion methods
     tab1, tab2, tab3, tab4 = st.tabs(["🔍 Auto-Sections", "🎯 Manual Select", "🚀 Global Enhance", "💾 Saved Expansions"])
     
     with tab1:
+        # Get fresh content and re-parse sections each time the tab is accessed
+        fresh_content = get_fresh_content()
+        sections = parse_content_sections(fresh_content)
+        
         if sections:
             display_section_expander(sections, content_type, grade_level, subject_type)
         else:
             st.info("No expandable sections detected. Try the Manual Select tab to expand specific text.")
     
     with tab2:
-        display_manual_text_expander(content, content_type, grade_level, subject_type)
+        fresh_content = get_fresh_content()
+        display_manual_text_expander(fresh_content, content_type, grade_level, subject_type)
     
     with tab3:
-        display_global_content_expander(content, content_type, grade_level, subject_type)
+        fresh_content = get_fresh_content()
+        display_global_content_expander(fresh_content, content_type, grade_level, subject_type)
     
     with tab4:
         st.subheader("💾 Your Saved Expansions")
@@ -3994,8 +4334,8 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science"],
-        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)"],
+        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin.",
         key="subject_selector_tab1"
     )
 
@@ -4068,6 +4408,94 @@ with tab1:
                 'summary': summary_words,
                 'exercises': exercises_words
             }
+        elif subject_type == "English Communication & Grammar (Classes 1-8)":
+            # Special word limits for English Communication & Grammar
+            st.markdown("**English Communication & Grammar (Oxford/Cambridge Style)**")
+            
+            # Determine class level for appropriate structure
+            class_num = int(selected_grade.split()[-1])
+            
+            if class_num <= 3:
+                st.markdown("*Primary Level (Classes 1-3): Foundation Building*")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    warm_up_words = st.number_input("Warm-Up Activity (words)", min_value=100, value=200, step=25, key="eng_warmup_words")
+                    vocabulary_words = st.number_input("Vocabulary Building (words)", min_value=200, value=300, step=25, key="eng_vocab_words")
+                    grammar_intro_words = st.number_input("Grammar Introduction (words)", min_value=150, value=250, step=25, key="eng_grammar_words")
+                
+                with col2:
+                    practice_words = st.number_input("Practice Activities (words)", min_value=300, value=400, step=50, key="eng_practice_words")
+                    communication_words = st.number_input("Communication Skills (words)", min_value=200, value=300, step=25, key="eng_comm_words")
+                    exercises_words = st.number_input("Exercises & Assessment (words)", min_value=400, value=600, step=50, key="eng_exercises_words")
+                
+                st.session_state.word_limits = {
+                    'warm_up': warm_up_words,
+                    'vocabulary': vocabulary_words,
+                    'grammar_intro': grammar_intro_words,
+                    'practice': practice_words,
+                    'communication': communication_words,
+                    'exercises': exercises_words
+                }
+            
+            elif class_num <= 5:
+                st.markdown("*Elementary Level (Classes 4-5): Skill Development*")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    introduction_words = st.number_input("Chapter Introduction (words)", min_value=150, value=250, step=25, key="eng_intro_words")
+                    reading_words = st.number_input("Reading Comprehension (words)", min_value=400, value=600, step=50, key="eng_reading_words")
+                    grammar_words = st.number_input("Grammar Focus (words)", min_value=300, value=500, step=50, key="eng_grammar_focus_words")
+                    vocabulary_words = st.number_input("Vocabulary Expansion (words)", min_value=250, value=350, step=25, key="eng_vocab_exp_words")
+                
+                with col2:
+                    writing_words = st.number_input("Writing Skills (words)", min_value=300, value=450, step=50, key="eng_writing_words")
+                    speaking_words = st.number_input("Speaking & Listening (words)", min_value=250, value=350, step=25, key="eng_speaking_words")
+                    exercises_words = st.number_input("Practice Exercises (words)", min_value=500, value=700, step=50, key="eng_exercises_elem_words")
+                
+                st.session_state.word_limits = {
+                    'introduction': introduction_words,
+                    'reading': reading_words,
+                    'grammar': grammar_words,
+                    'vocabulary': vocabulary_words,
+                    'writing': writing_words,
+                    'speaking': speaking_words,
+                    'exercises': exercises_words
+                }
+            
+            else:  # Classes 6-8
+                st.markdown("*Middle School Level (Classes 6-8): Advanced Communication*")
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.markdown("**Core Skills**")
+                    introduction_words = st.number_input("Chapter Introduction (words)", min_value=200, value=300, step=25, key="eng_intro_mid_words")
+                    reading_words = st.number_input("Reading & Comprehension (words)", min_value=500, value=800, step=50, key="eng_reading_mid_words")
+                    grammar_words = st.number_input("Grammar & Usage (words)", min_value=400, value=600, step=50, key="eng_grammar_mid_words")
+                
+                with col2:
+                    st.markdown("**Communication**")
+                    vocabulary_words = st.number_input("Vocabulary & Etymology (words)", min_value=300, value=400, step=25, key="eng_vocab_mid_words")
+                    writing_words = st.number_input("Composition & Writing (words)", min_value=400, value=600, step=50, key="eng_writing_mid_words")
+                    speaking_words = st.number_input("Speaking & Presentation (words)", min_value=300, value=400, step=25, key="eng_speaking_mid_words")
+                
+                with col3:
+                    st.markdown("**Assessment**")
+                    literature_words = st.number_input("Literature Appreciation (words)", min_value=300, value=500, step=50, key="eng_lit_words")
+                    exercises_words = st.number_input("Comprehensive Exercises (words)", min_value=600, value=900, step=50, key="eng_exercises_mid_words")
+                    projects_words = st.number_input("Language Projects (words)", min_value=200, value=300, step=25, key="eng_projects_words")
+                
+                st.session_state.word_limits = {
+                    'introduction': introduction_words,
+                    'reading': reading_words,
+                    'grammar': grammar_words,
+                    'vocabulary': vocabulary_words,
+                    'writing': writing_words,
+                    'speaking': speaking_words,
+                    'literature': literature_words,
+                    'exercises': exercises_words,
+                    'projects': projects_words
+                }
         else:
             # Standard word limits for other subjects
             col1, col2, col3 = st.columns(3)
