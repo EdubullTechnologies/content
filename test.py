@@ -4865,7 +4865,7 @@ Choose between improving existing chapters or chatting with EeeBee for content a
 """)
 
 # Create tabs for different functionalities
-tab1, tab2 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee"])
+tab1, tab2, tab3 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee", "📝 Canvas Mode"])
 
 with tab1:
     st.header("📚 Book Chapter Improver Tool")
@@ -5959,6 +5959,268 @@ with tab2:
                     error_message = f"I encountered an error: {str(e)}. Please try asking your question again."
                     response_placeholder.markdown(error_message)
                     st.session_state.chat_messages.append({"role": "assistant", "content": error_message})
+
+with tab3:
+    st.header("📝 Canvas Mode")
+    st.markdown("""
+    Interactive canvas for editing and refining your content with AI assistance.
+    Select text portions to edit, enhance, or modify with targeted AI suggestions.
+    """)
+    
+    # Initialize canvas session state
+    if 'canvas_content' not in st.session_state:
+        st.session_state.canvas_content = ""
+    if 'canvas_history' not in st.session_state:
+        st.session_state.canvas_history = []
+    if 'canvas_selection' not in st.session_state:
+        st.session_state.canvas_selection = {"start": 0, "end": 0, "text": ""}
+    
+    # Create two columns for chat and canvas
+    chat_col, canvas_col = st.columns([1, 2])
+    
+    with chat_col:
+        st.subheader("💬 AI Assistant")
+        
+        # Selection info
+        if st.session_state.canvas_selection["text"]:
+            with st.info(f"Selected: \"{st.session_state.canvas_selection['text'][:50]}...\"" 
+                        if len(st.session_state.canvas_selection['text']) > 50 
+                        else f"Selected: \"{st.session_state.canvas_selection['text']}\""):
+                pass
+        
+        # Quick action buttons for selected text
+        if st.session_state.canvas_selection["text"]:
+            st.markdown("**Quick Actions:**")
+            action_cols = st.columns(3)
+            
+            with action_cols[0]:
+                if st.button("✏️ Improve", key="canvas_improve"):
+                    st.session_state.canvas_action = "improve"
+                if st.button("📝 Expand", key="canvas_expand"):
+                    st.session_state.canvas_action = "expand"
+            
+            with action_cols[1]:
+                if st.button("🎯 Simplify", key="canvas_simplify"):
+                    st.session_state.canvas_action = "simplify"
+                if st.button("✂️ Shorten", key="canvas_shorten"):
+                    st.session_state.canvas_action = "shorten"
+            
+            with action_cols[2]:
+                if st.button("💡 Examples", key="canvas_examples"):
+                    st.session_state.canvas_action = "examples"
+                if st.button("🔄 Rephrase", key="canvas_rephrase"):
+                    st.session_state.canvas_action = "rephrase"
+        
+        # Custom instruction input
+        st.markdown("**Custom Instruction:**")
+        custom_instruction = st.text_area(
+            "What would you like to do with the selected text?",
+            height=100,
+            placeholder="E.g., 'Make this more engaging for 5th graders' or 'Add a real-world example'",
+            key="canvas_custom_instruction"
+        )
+        
+        if st.button("🚀 Apply Changes", key="canvas_apply", type="primary"):
+            if st.session_state.canvas_selection["text"] and (custom_instruction or st.session_state.get("canvas_action")):
+                # Process the selected text with AI
+                with st.spinner("Processing your request..."):
+                    # Determine the action
+                    if custom_instruction:
+                        action_prompt = custom_instruction
+                    else:
+                        action = st.session_state.get("canvas_action", "improve")
+                        action_prompts = {
+                            "improve": "Improve this text to make it clearer and more engaging",
+                            "expand": "Expand this text with more detail and explanation",
+                            "simplify": "Simplify this text to make it easier to understand",
+                            "shorten": "Make this text more concise while keeping the key points",
+                            "examples": "Add relevant examples to illustrate this concept",
+                            "rephrase": "Rephrase this text in a different way while maintaining the meaning"
+                        }
+                        action_prompt = action_prompts.get(action, "Improve this text")
+                    
+                    # Call AI to process the text
+                    messages = [{
+                        "role": "user",
+                        "content": f"""You are helping edit educational content. 
+                        
+Original text: "{st.session_state.canvas_selection['text']}"
+
+Task: {action_prompt}
+
+Context: This is part of educational content for {st.session_state.get('grade_selector_tab1', 'Grade 9')} {st.session_state.get('subject_selector_tab1', 'Science')}.
+
+Please provide the improved version of the text. Keep the same general structure and length unless specifically asked to expand or shorten."""
+                    }]
+                    
+                    try:
+                        headers = {
+                            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                            "HTTP-Referer": YOUR_SITE_URL,
+                            "X-Title": YOUR_SITE_NAME,
+                            "Content-Type": "application/json"
+                        }
+                        
+                        response = requests.post(
+                            "https://openrouter.ai/api/v1/chat/completions",
+                            headers=headers,
+                            json={
+                                "model": MODEL_NAME,
+                                "messages": messages,
+                                "max_tokens": 1000,
+                                "temperature": 0.7
+                            }
+                        )
+                        
+                        if response.status_code == 200:
+                            result = response.json()
+                            new_text = result['choices'][0]['message']['content']
+                            
+                            # Save to history
+                            st.session_state.canvas_history.append({
+                                "original": st.session_state.canvas_content,
+                                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            })
+                            
+                            # Replace the selected text in canvas content
+                            start = st.session_state.canvas_selection["start"]
+                            end = st.session_state.canvas_selection["end"]
+                            
+                            st.session_state.canvas_content = (
+                                st.session_state.canvas_content[:start] + 
+                                new_text + 
+                                st.session_state.canvas_content[end:]
+                            )
+                            
+                            # Clear selection
+                            st.session_state.canvas_selection = {"start": 0, "end": 0, "text": ""}
+                            st.success("✅ Changes applied!")
+                            st.rerun()
+                        else:
+                            st.error(f"API Error: {response.status_code}")
+                    
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
+            else:
+                st.warning("Please select text and provide instructions or choose an action.")
+        
+        # History
+        if st.session_state.canvas_history:
+            st.markdown("---")
+            st.markdown("**📜 History:**")
+            if st.button("↩️ Undo Last Change", key="canvas_undo"):
+                if st.session_state.canvas_history:
+                    last_state = st.session_state.canvas_history.pop()
+                    st.session_state.canvas_content = last_state["original"]
+                    st.rerun()
+    
+    with canvas_col:
+        st.subheader("📄 Canvas")
+        
+        # Toolbar
+        toolbar_cols = st.columns([1, 1, 1, 1, 4])
+        
+        with toolbar_cols[0]:
+            if st.button("📋 Import", key="canvas_import"):
+                st.session_state.show_canvas_import = True
+        
+        with toolbar_cols[1]:
+            if st.button("💾 Export", key="canvas_export"):
+                if st.session_state.canvas_content:
+                    doc = create_word_document(st.session_state.canvas_content)
+                    doc_io = io.BytesIO()
+                    doc.save(doc_io)
+                    doc_io.seek(0)
+                    st.download_button(
+                        label="📥 Download as Word",
+                        data=doc_io,
+                        file_name="canvas_content.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        key="canvas_download"
+                    )
+        
+        with toolbar_cols[2]:
+            if st.button("🗑️ Clear", key="canvas_clear"):
+                if st.session_state.canvas_content:
+                    st.session_state.canvas_history.append({
+                        "original": st.session_state.canvas_content,
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    })
+                    st.session_state.canvas_content = ""
+                    st.rerun()
+        
+        # Import dialog
+        if st.session_state.get('show_canvas_import', False):
+            with st.container():
+                st.markdown("**Import Content:**")
+                import_cols = st.columns(4)
+                
+                with import_cols[0]:
+                    if st.button("📄 Chapter", key="import_chapter"):
+                        if st.session_state.get('chapter_content'):
+                            st.session_state.canvas_content = st.session_state.chapter_content
+                            st.session_state.show_canvas_import = False
+                            st.rerun()
+                
+                with import_cols[1]:
+                    if st.button("📝 Exercises", key="import_exercises"):
+                        if st.session_state.get('exercises'):
+                            st.session_state.canvas_content = st.session_state.exercises
+                            st.session_state.show_canvas_import = False
+                            st.rerun()
+                
+                with import_cols[2]:
+                    if st.button("🎯 Skills", key="import_skills"):
+                        if st.session_state.get('skill_activities'):
+                            st.session_state.canvas_content = st.session_state.skill_activities
+                            st.session_state.show_canvas_import = False
+                            st.rerun()
+                
+                with import_cols[3]:
+                    if st.button("❌ Cancel", key="import_cancel"):
+                        st.session_state.show_canvas_import = False
+                        st.rerun()
+        
+        # Canvas content area
+        st.markdown("---")
+        
+        # Main canvas text area
+        canvas_content = st.text_area(
+            "Canvas Content",
+            value=st.session_state.canvas_content,
+            height=600,
+            key="canvas_textarea",
+            placeholder="Paste or import content here to start editing...",
+            label_visibility="collapsed"
+        )
+        
+        # Update content if changed
+        if canvas_content != st.session_state.canvas_content:
+            st.session_state.canvas_content = canvas_content
+        
+        # Selection simulation (since Streamlit doesn't support text selection in text_area)
+        st.markdown("---")
+        st.markdown("**✂️ Text Selection:**")
+        selection_text = st.text_area(
+            "Paste the text you want to edit:",
+            height=100,
+            key="canvas_selection_input",
+            placeholder="Copy and paste a portion of text from the canvas above that you want to edit..."
+        )
+        
+        if selection_text and selection_text.strip() in st.session_state.canvas_content:
+            # Find the position of the selected text
+            start_pos = st.session_state.canvas_content.find(selection_text.strip())
+            end_pos = start_pos + len(selection_text.strip())
+            
+            st.session_state.canvas_selection = {
+                "start": start_pos,
+                "end": end_pos,
+                "text": selection_text.strip()
+            }
+            st.success("✅ Text selected! Choose an action from the left panel.")
+        elif selection_text and selection_text.strip():
+            st.warning("⚠️ Selected text not found in canvas. Please copy exact text from the canvas above.")
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
