@@ -6184,122 +6184,203 @@ Please provide the improved version of the text. Keep the same general structure
         # Canvas content area
         st.markdown("---")
         
-        # Main canvas text area
+        # Main canvas text area with unique identifier
         canvas_content = st.text_area(
             "Canvas Content",
             value=st.session_state.canvas_content,
             height=600,
-            key="canvas_textarea",
+            key="canvas_textarea_main",
             placeholder="Paste or import content here to start editing...",
-            label_visibility="collapsed"
+            label_visibility="collapsed",
+            help="This is your main canvas where you can edit and refine content"
         )
         
         # Update content if changed
         if canvas_content != st.session_state.canvas_content:
             st.session_state.canvas_content = canvas_content
         
-        # Enhanced text selection with JavaScript
+        # Text selection interface
         st.markdown("---")
-        
-        # JavaScript for text selection
-        selection_js = f"""
-        <script>
-        // Function to get selected text and position
-        function getSelectionInfo() {{
-            const textarea = document.querySelector('textarea[aria-label="Canvas Content"]');
-            if (textarea) {{
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                const selectedText = textarea.value.substring(start, end);
-                
-                if (selectedText) {{
-                    // Store selection in hidden div for Streamlit to read
-                    const selectionData = {{
-                        start: start,
-                        end: end,
-                        text: selectedText
-                    }};
-                    
-                    // Send to Streamlit via custom component
-                    window.parent.postMessage({{
-                        type: 'canvas_selection',
-                        data: selectionData
-                    }}, '*');
-                }}
-            }}
-        }}
-        
-        // Add event listeners
-        document.addEventListener('DOMContentLoaded', function() {{
-            const textarea = document.querySelector('textarea[aria-label="Canvas Content"]');
-            if (textarea) {{
-                // Add selection button
-                const selectionBtn = document.createElement('button');
-                selectionBtn.textContent = '✂️ Use Selected Text';
-                selectionBtn.style.cssText = 'margin: 10px 0; padding: 8px 16px; background: #0068C9; color: white; border: none; border-radius: 4px; cursor: pointer;';
-                selectionBtn.onclick = getSelectionInfo;
-                
-                // Insert button after textarea
-                textarea.parentNode.insertBefore(selectionBtn, textarea.nextSibling);
-                
-                // Also trigger on mouseup and keyup for automatic selection
-                textarea.addEventListener('mouseup', getSelectionInfo);
-                textarea.addEventListener('keyup', function(e) {{
-                    if (e.shiftKey) getSelectionInfo();
-                }});
-            }}
-        }});
-        
-        // Listen for messages from iframe
-        window.addEventListener('message', function(e) {{
-            if (e.data.type === 'canvas_selection') {{
-                // Store in localStorage for persistence
-                localStorage.setItem('canvas_selection', JSON.stringify(e.data.data));
-            }}
-        }});
-        </script>
-        """
-        
-        # Display the JavaScript
-        st.components.v1.html(selection_js, height=0)
-        
-        # Alternative selection method (fallback)
         st.markdown("**✂️ Text Selection:**")
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            st.info("💡 **Tip**: Select text in the canvas above and click 'Use Selected Text' or use the fallback method below")
-        with col2:
-            if st.button("🔄 Refresh Selection", key="refresh_selection"):
-                # Try to get selection from localStorage
-                try:
-                    selection_js_get = """
-                    <script>
-                    const selection = localStorage.getItem('canvas_selection');
-                    if (selection) {
-                        const data = JSON.parse(selection);
-                        // Create a temporary element to pass data to Streamlit
-                        const elem = document.createElement('div');
-                        elem.id = 'selection-data';
-                        elem.textContent = selection;
-                        elem.style.display = 'none';
-                        document.body.appendChild(elem);
-                    }
-                    </script>
-                    """
-                    st.components.v1.html(selection_js_get, height=0)
-                except:
-                    pass
         
-        # Fallback manual selection
-        with st.expander("📝 Manual Selection (Fallback)", expanded=False):
-            selection_text = st.text_area(
-                "If automatic selection doesn't work, paste the text you want to edit here:",
-                height=100,
-                key="canvas_selection_input",
-                placeholder="Copy and paste a portion of text from the canvas above that you want to edit..."
-            )
+        # Create a container for the JavaScript button
+        button_container = st.container()
+        with button_container:
+            # JavaScript injection with proper Streamlit component
+            js_html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {
+                        margin: 0;
+                        padding: 10px;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    }
+                    #use-selection-btn {
+                        background-color: #0068C9;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 16px;
+                        font-weight: 500;
+                        display: inline-block;
+                        margin-bottom: 10px;
+                        transition: background-color 0.3s;
+                    }
+                    #use-selection-btn:hover {
+                        background-color: #0056A8;
+                    }
+                    .selection-info {
+                        background-color: #f0f2f6;
+                        padding: 12px;
+                        border-radius: 4px;
+                        margin-top: 10px;
+                        font-family: 'Monaco', 'Consolas', monospace;
+                        font-size: 13px;
+                        color: #333;
+                        border: 1px solid #ddd;
+                    }
+                    .instruction-text {
+                        color: #666;
+                        font-size: 14px;
+                        margin-bottom: 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="instruction-text">Click the button after selecting text in the canvas above:</div>
+                <button id="use-selection-btn" onclick="captureSelection()">✂️ Use Selected Text</button>
+                <div id="selection-display" class="selection-info" style="display: none;"></div>
+                
+                <script>
+                function captureSelection() {
+                    try {
+                        // Access parent window's document
+                        const parentDoc = window.parent.document;
+                        
+                        // Find all textareas
+                        const textareas = parentDoc.querySelectorAll('textarea');
+                        let canvasTextarea = null;
+                        
+                        // Strategy 1: Find by placeholder text
+                        for (let ta of textareas) {
+                            if (ta.placeholder && ta.placeholder.includes('Paste or import content')) {
+                                canvasTextarea = ta;
+                                break;
+                            }
+                        }
+                        
+                        // Strategy 2: Find by height
+                        if (!canvasTextarea) {
+                            for (let ta of textareas) {
+                                const computedStyle = window.getComputedStyle(ta);
+                                const height = parseInt(computedStyle.height);
+                                if (height > 500) {  // Canvas is 600px
+                                    canvasTextarea = ta;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Strategy 3: Find by label/aria-label
+                        if (!canvasTextarea) {
+                            for (let ta of textareas) {
+                                if (ta.getAttribute('aria-label') === 'Canvas Content') {
+                                    canvasTextarea = ta;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (canvasTextarea) {
+                            const start = canvasTextarea.selectionStart;
+                            const end = canvasTextarea.selectionEnd;
+                            const selectedText = canvasTextarea.value.substring(start, end);
+                            
+                            if (selectedText && selectedText.trim()) {
+                                // Display the selection
+                                const display = document.getElementById('selection-display');
+                                display.style.display = 'block';
+                                display.innerHTML = '<strong>Selected:</strong> "' + 
+                                    selectedText.substring(0, 100) + 
+                                    (selectedText.length > 100 ? '..."' : '"') + 
+                                    '<br><strong>Length:</strong> ' + selectedText.length + ' characters' +
+                                    '<br><strong>Position:</strong> ' + start + ' to ' + end;
+                                
+                                // Store in localStorage for persistence
+                                localStorage.setItem('canvas_selection', JSON.stringify({
+                                    start: start,
+                                    end: end,
+                                    text: selectedText
+                                }));
+                                
+                                // Copy to clipboard for easy pasting
+                                navigator.clipboard.writeText(selectedText).then(() => {
+                                    alert('Text selected and copied to clipboard! Now paste it in the text area below to proceed.');
+                                }).catch(() => {
+                                    alert('Text selected! Please manually copy and paste it in the text area below to proceed.');
+                                });
+                            } else {
+                                alert('Please select some text in the canvas first!');
+                            }
+                        } else {
+                            alert('Could not find the canvas. Please use the manual selection method below.');
+                            console.error('Canvas textarea not found. Available textareas:', textareas.length);
+                        }
+                    } catch (error) {
+                        console.error('Error in captureSelection:', error);
+                        alert('An error occurred. Please use the manual selection method below.');
+                    }
+                }
+                
+                // Restore last selection on load
+                window.addEventListener('load', () => {
+                    try {
+                        const stored = localStorage.getItem('canvas_selection');
+                        if (stored) {
+                            const data = JSON.parse(stored);
+                            if (data.text) {
+                                const display = document.getElementById('selection-display');
+                                display.style.display = 'block';
+                                display.innerHTML = '<strong>Last selection:</strong> "' + 
+                                    data.text.substring(0, 50) + 
+                                    (data.text.length > 50 ? '..."' : '"');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error restoring selection:', error);
+                    }
+                });
+                </script>
+            </body>
+            </html>
+            """
             
-            if selection_text and selection_text.strip() in st.session_state.canvas_content:
+            # Render the JavaScript component with explicit height
+            st.components.v1.html(js_html, height=150, scrolling=False)
+        
+        # Alternative native Streamlit button (as fallback)
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.info("💡 **How to select text**: \n1. Highlight text in the canvas above\n2. Click the button above OR copy the text (Ctrl+C/Cmd+C)\n3. Paste the selected text in the box below")
+        with col2:
+            if st.button("📋 Copy Selection Helper", key="copy_helper", help="Click after selecting text in canvas"):
+                st.info("Now paste your selection below!")
+        
+        # Main selection input
+        selection_text = st.text_area(
+            "Paste your selected text here:",
+            height=100,
+            key="canvas_selection_main",
+            placeholder="After selecting text in the canvas and clicking the button above, paste it here..."
+        )
+        
+        # Process the selection
+        if selection_text and selection_text.strip():
+            if selection_text.strip() in st.session_state.canvas_content:
                 # Find the position of the selected text
                 start_pos = st.session_state.canvas_content.find(selection_text.strip())
                 end_pos = start_pos + len(selection_text.strip())
@@ -6310,8 +6391,39 @@ Please provide the improved version of the text. Keep the same general structure
                     "text": selection_text.strip()
                 }
                 st.success("✅ Text selected! Choose an action from the left panel.")
-            elif selection_text and selection_text.strip():
-                st.warning("⚠️ Selected text not found in canvas. Please copy exact text from the canvas above.")
+                
+                # Show a preview of what will be edited
+                with st.expander("Preview selected text", expanded=True):
+                    st.text(selection_text.strip())
+            else:
+                st.warning("⚠️ Selected text not found in canvas. Please make sure you copy the exact text from the canvas above.")
+                
+                # Help user by showing similar text
+                search_text = selection_text.strip()[:20]
+                if search_text in st.session_state.canvas_content:
+                    st.info(f"💡 Did you mean to select text starting with: '{search_text}...'?")
+        
+        # Advanced options
+        with st.expander("🔧 Advanced Selection Options", expanded=False):
+            st.markdown("**Manual Position Selection:**")
+            col1, col2 = st.columns(2)
+            with col1:
+                start_pos = st.number_input("Start position:", min_value=0, value=0, key="manual_start")
+            with col2:
+                end_pos = st.number_input("End position:", min_value=0, value=50, key="manual_end")
+            
+            if st.button("Select by position", key="select_by_pos"):
+                if 0 <= start_pos < end_pos <= len(st.session_state.canvas_content):
+                    selected = st.session_state.canvas_content[start_pos:end_pos]
+                    st.session_state.canvas_selection = {
+                        "start": start_pos,
+                        "end": end_pos,
+                        "text": selected
+                    }
+                    st.success("✅ Text selected by position!")
+                    st.text(f"Selected: {selected}")
+                else:
+                    st.error("Invalid position range!")
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
