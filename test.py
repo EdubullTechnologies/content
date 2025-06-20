@@ -6198,29 +6198,120 @@ Please provide the improved version of the text. Keep the same general structure
         if canvas_content != st.session_state.canvas_content:
             st.session_state.canvas_content = canvas_content
         
-        # Selection simulation (since Streamlit doesn't support text selection in text_area)
+        # Enhanced text selection with JavaScript
         st.markdown("---")
-        st.markdown("**✂️ Text Selection:**")
-        selection_text = st.text_area(
-            "Paste the text you want to edit:",
-            height=100,
-            key="canvas_selection_input",
-            placeholder="Copy and paste a portion of text from the canvas above that you want to edit..."
-        )
         
-        if selection_text and selection_text.strip() in st.session_state.canvas_content:
-            # Find the position of the selected text
-            start_pos = st.session_state.canvas_content.find(selection_text.strip())
-            end_pos = start_pos + len(selection_text.strip())
+        # JavaScript for text selection
+        selection_js = f"""
+        <script>
+        // Function to get selected text and position
+        function getSelectionInfo() {{
+            const textarea = document.querySelector('textarea[aria-label="Canvas Content"]');
+            if (textarea) {{
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                
+                if (selectedText) {{
+                    // Store selection in hidden div for Streamlit to read
+                    const selectionData = {{
+                        start: start,
+                        end: end,
+                        text: selectedText
+                    }};
+                    
+                    // Send to Streamlit via custom component
+                    window.parent.postMessage({{
+                        type: 'canvas_selection',
+                        data: selectionData
+                    }}, '*');
+                }}
+            }}
+        }}
+        
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', function() {{
+            const textarea = document.querySelector('textarea[aria-label="Canvas Content"]');
+            if (textarea) {{
+                // Add selection button
+                const selectionBtn = document.createElement('button');
+                selectionBtn.textContent = '✂️ Use Selected Text';
+                selectionBtn.style.cssText = 'margin: 10px 0; padding: 8px 16px; background: #0068C9; color: white; border: none; border-radius: 4px; cursor: pointer;';
+                selectionBtn.onclick = getSelectionInfo;
+                
+                // Insert button after textarea
+                textarea.parentNode.insertBefore(selectionBtn, textarea.nextSibling);
+                
+                // Also trigger on mouseup and keyup for automatic selection
+                textarea.addEventListener('mouseup', getSelectionInfo);
+                textarea.addEventListener('keyup', function(e) {{
+                    if (e.shiftKey) getSelectionInfo();
+                }});
+            }}
+        }});
+        
+        // Listen for messages from iframe
+        window.addEventListener('message', function(e) {{
+            if (e.data.type === 'canvas_selection') {{
+                // Store in localStorage for persistence
+                localStorage.setItem('canvas_selection', JSON.stringify(e.data.data));
+            }}
+        }});
+        </script>
+        """
+        
+        # Display the JavaScript
+        st.components.v1.html(selection_js, height=0)
+        
+        # Alternative selection method (fallback)
+        st.markdown("**✂️ Text Selection:**")
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.info("💡 **Tip**: Select text in the canvas above and click 'Use Selected Text' or use the fallback method below")
+        with col2:
+            if st.button("🔄 Refresh Selection", key="refresh_selection"):
+                # Try to get selection from localStorage
+                try:
+                    selection_js_get = """
+                    <script>
+                    const selection = localStorage.getItem('canvas_selection');
+                    if (selection) {
+                        const data = JSON.parse(selection);
+                        // Create a temporary element to pass data to Streamlit
+                        const elem = document.createElement('div');
+                        elem.id = 'selection-data';
+                        elem.textContent = selection;
+                        elem.style.display = 'none';
+                        document.body.appendChild(elem);
+                    }
+                    </script>
+                    """
+                    st.components.v1.html(selection_js_get, height=0)
+                except:
+                    pass
+        
+        # Fallback manual selection
+        with st.expander("📝 Manual Selection (Fallback)", expanded=False):
+            selection_text = st.text_area(
+                "If automatic selection doesn't work, paste the text you want to edit here:",
+                height=100,
+                key="canvas_selection_input",
+                placeholder="Copy and paste a portion of text from the canvas above that you want to edit..."
+            )
             
-            st.session_state.canvas_selection = {
-                "start": start_pos,
-                "end": end_pos,
-                "text": selection_text.strip()
-            }
-            st.success("✅ Text selected! Choose an action from the left panel.")
-        elif selection_text and selection_text.strip():
-            st.warning("⚠️ Selected text not found in canvas. Please copy exact text from the canvas above.")
+            if selection_text and selection_text.strip() in st.session_state.canvas_content:
+                # Find the position of the selected text
+                start_pos = st.session_state.canvas_content.find(selection_text.strip())
+                end_pos = start_pos + len(selection_text.strip())
+                
+                st.session_state.canvas_selection = {
+                    "start": start_pos,
+                    "end": end_pos,
+                    "text": selection_text.strip()
+                }
+                st.success("✅ Text selected! Choose an action from the left panel.")
+            elif selection_text and selection_text.strip():
+                st.warning("⚠️ Selected text not found in canvas. Please copy exact text from the canvas above.")
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
