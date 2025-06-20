@@ -6258,14 +6258,47 @@ Please provide the improved version of the text. Keep the same general structure
                 <script>
                 function captureSelection() {
                     try {
-                        // Get selection from the browser
-                        const selection = window.getSelection();
-                        let selectedText = selection.toString();
+                        // First try to find the canvas textarea in the parent document
+                        const parentDoc = window.parent.document;
+                        const textareas = parentDoc.querySelectorAll('textarea');
+                        let canvasTextarea = null;
+                        let selectedText = '';
                         
+                        // Find the canvas textarea
+                        for (let ta of textareas) {
+                            // Check by placeholder
+                            if (ta.placeholder && ta.placeholder.includes('Paste or import content')) {
+                                canvasTextarea = ta;
+                                break;
+                            }
+                            // Check by size (canvas is 600px height)
+                            const computedStyle = window.getComputedStyle(ta);
+                            const height = parseInt(computedStyle.height);
+                            if (height > 500 && height < 700) {
+                                canvasTextarea = ta;
+                                break;
+                            }
+                        }
+                        
+                        if (canvasTextarea) {
+                            // Get the selected text from the textarea
+                            const start = canvasTextarea.selectionStart;
+                            const end = canvasTextarea.selectionEnd;
+                            
+                            if (start !== end) {
+                                selectedText = canvasTextarea.value.substring(start, end);
+                            }
+                        }
+                        
+                        // If no text selected in textarea, try window selection as fallback
                         if (!selectedText) {
-                            // Try to get selection from parent window
-                            const parentSelection = window.parent.getSelection();
-                            selectedText = parentSelection.toString();
+                            const selection = window.getSelection();
+                            selectedText = selection.toString();
+                            
+                            if (!selectedText) {
+                                const parentSelection = window.parent.getSelection();
+                                selectedText = parentSelection.toString();
+                            }
                         }
                         
                         if (selectedText && selectedText.trim()) {
@@ -6300,11 +6333,11 @@ Please provide the improved version of the text. Keep the same general structure
                                 document.body.removeChild(tempTextArea);
                             });
                         } else {
-                            alert('Please select some text in the canvas first by highlighting it!');
+                            alert('Please select some text in the canvas textarea first by highlighting it!');
                         }
                     } catch (error) {
                         console.error('Error in captureSelection:', error);
-                        alert('Please select text in the canvas by highlighting it, then click this button again.');
+                        alert('Error capturing selection. Please copy the text manually (Ctrl+C/Cmd+C) and paste below.');
                     }
                 }
                 
