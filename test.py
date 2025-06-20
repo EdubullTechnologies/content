@@ -2613,23 +2613,63 @@ def create_english_chapter_prompt(grade_level, word_limits=None):
 
 **MANDATORY CHAPTER STRUCTURE** (Transform PDF content to fit this EXACT structure):
 
-## 1. Warm-Up Activity - Let's Begin! (Target: {word_limits.get('warm_up', 200)} words)
-Create an interactive warm-up activity with Indian cultural elements, visual descriptions, and clear instructions.
+## 1. Chapter Introduction with EeeBee (Target: {word_limits.get('warm_up', 200)} words)
+- Chapter number and colorful title
+- EeeBee's friendly greeting and welcome message
+- Learning Outcomes (3-4 simple, clear objectives)
+- Visual chapter overview with illustrations
 
-## 2. Vocabulary Building - New Words, New Worlds (Target: {word_limits.get('vocabulary', 300)} words)
-Introduce 8-12 new words with pronunciations, definitions, and Indian contexts.
+## 2. Lead In - Let's Begin! (Target: {word_limits.get('warm_up', 200)} words)
+- Picture-based warm-up activity
+- Interactive observation exercises
+- Simple questions to activate prior knowledge
+- Fun, engaging entry point to the lesson
 
-## 3. Grammar Introduction - Language Rules Made Easy (Target: {word_limits.get('grammar_intro', 250)} words)
-Simple grammar concepts with clear explanations and visual aids.
+## 3. Vocabulary Building - New Words, New Worlds (Target: {word_limits.get('vocabulary', 300)} words)
+- 8-12 new words with:
+  * Clear pronunciations
+  * Simple definitions
+  * Picture associations
+  * Usage in simple sentences
+- Indian context examples (mango, rickshaw, diwali, etc.)
+- Word games and activities
 
-## 4. Practice Activities - Let's Try Together (Target: {word_limits.get('practice', 400)} words)
-Multiple activity types with progressive difficulty and Indian contexts.
+## 4. Grammar Introduction - Language Rules Made Easy (Target: {word_limits.get('grammar_intro', 250)} words)
+- One core grammar concept per chapter
+- Visual representation of rules
+- "Grammar Byte" boxes with key points
+- Color-coded examples
+- Step-by-step explanation with pictures
 
-## 5. Communication Skills - Let's Talk and Share (Target: {word_limits.get('communication', 300)} words)
-Speaking and listening activities using Cambridge communicative approach.
+## 5. Practice Activities - Let's Try Together (Target: {word_limits.get('practice', 400)} words)
+- Exercise A: Basic identification/matching with pictures
+- Exercise B: Fill in the blanks with visual clues
+- Exercise C: Circle/underline activities
+- Progressive difficulty from guided to independent
+- All exercises with Indian cultural context
 
-## 6. Assessment & Review - How Well Did I Learn? (Target: {word_limits.get('exercises', 600)} words)
-Comprehensive assessment with various question types and self-evaluation.
+## 6. Communication Skills - Let's Talk and Share (Target: {word_limits.get('communication', 300)} words)
+- Speaking activities with picture prompts
+- Simple listening exercises
+- Show and tell opportunities
+- Pair work and group activities
+- "My Activity Corner" for creative expression
+
+## 7. Assessment & Review - How Well Did I Learn? (Target: {word_limits.get('exercises', 600)} words)
+- "Points to Remember" summary box
+- Self-assessment checklist with smiley faces
+- Fun review activities (puzzles, matching, coloring)
+- "EeeBee Interactive Activities" section
+- QR codes for digital practice
+- Skills tracking (Listening, Speaking, Reading, Writing)
+
+**CONTENT REQUIREMENTS**:
+- **Simple, Clear Language**: Age-appropriate vocabulary
+- **Visual Learning**: Heavy emphasis on pictures and colors
+- **Indian Integration**: Names like Raj, Priya, Amit; places like Delhi, Mumbai
+- **Progressive Learning**: Build from known to unknown
+- **Interactive Elements**: Games, songs, activities
+- **Positive Reinforcement**: Encouraging tone throughout
 
 Transform the PDF content following Oxford precision, Cambridge engagement, and Wren & Martin clarity.
 
@@ -2637,21 +2677,94 @@ Provide ONLY the comprehensive English chapter content in Markdown format.
 """
     
     elif class_num <= 5:
-        return f"""You are an Expert English Language Educator for Classes 4-5, following Oxford, Cambridge, and Wren & Martin best practices.
+        return f"""You are an Expert English Language Educator for Classes 4-5, following Oxford, Cambridge, and Wren & Martin excellence standards.
 
 **Target Audience**: {grade_level} (Elementary English Learners - Ages 9-11)
 
+**Educational Philosophy**:
+- **Oxford Approach**: Structured grammar progression with clear explanations
+- **Cambridge Method**: Integrated skills development with communicative focus
+- **Wren & Martin Tradition**: Systematic grammar rules with practical application
+- **CEFR Alignment**: A2 level competencies
+
 **MANDATORY CHAPTER STRUCTURE**:
 
-## 1. Chapter Introduction (Target: {word_limits.get('introduction', 250)} words)
-## 2. Reading & Comprehension (Target: {word_limits.get('reading', 600)} words)
-## 3. Grammar Focus (Target: {word_limits.get('grammar', 500)} words)
-## 4. Vocabulary Expansion (Target: {word_limits.get('vocabulary', 350)} words)
-## 5. Writing Skills (Target: {word_limits.get('writing', 450)} words)
-## 6. Speaking & Listening (Target: {word_limits.get('speaking', 350)} words)
-## 7. Practice & Assessment (Target: {word_limits.get('exercises', 700)} words)
+## 1. Chapter Introduction & Learning Outcomes (Target: {word_limits.get('introduction', 250)} words)
+- Clear chapter number and engaging title
+- EeeBee's introduction (mature but friendly tone)
+- 3-4 specific, measurable learning outcomes
+- Chapter roadmap showing skill integration
+- Connection to previous learning
 
-Follow Oxford systematic development, Cambridge integrated skills, and Wren & Martin practical application.
+## 2. Lead In Activity - Discover & Explore (Target: {word_limits.get('reading', 600)} words)
+- Thought-provoking opening (puzzles, jumbled text, incomplete ideas)
+- Critical thinking questions ("Why doesn't this make sense?")
+- Discovery-based learning approach
+- Picture-supported but not picture-dependent activities
+- Introduction of key concepts through exploration
+
+## 3. Grammar Focus - Understanding Language (Target: {word_limits.get('grammar', 500)} words)
+- Clear concept definitions with examples
+- Step-by-step rule explanation
+- "Grammar Byte" boxes highlighting key rules
+- Progressive examples (simple → complex)
+- Common errors and corrections
+- Comparison with mother tongue where relevant
+- I.Q. Test sections for advanced learners
+
+## 4. Vocabulary Expansion - Words in Context (Target: {word_limits.get('vocabulary', 350)} words)
+- 15-20 new words with:
+  * Pronunciation guides
+  * Contextual meanings
+  * Word families and derivatives
+  * Synonyms and antonyms
+- Usage in varied sentence structures
+- Indian and global contexts balanced
+- Word formation exercises
+
+## 5. Integrated Skills Practice (Target: {word_limits.get('writing', 450)} words)
+**Reading Comprehension**:
+- Age-appropriate passages (150-200 words)
+- Mix of fiction and non-fiction
+- Comprehension questions at different levels
+
+**Writing Skills**:
+- Guided writing (sentence → paragraph)
+- Creative writing prompts
+- Functional writing (letters, messages)
+- Process writing approach
+
+## 6. Speaking & Listening Activities (Target: {word_limits.get('speaking', 350)} words)
+- Structured oral presentations ("Tell about yourself")
+- Listening comprehension exercises
+- Role-play and dialogues
+- Group discussion topics
+- Pronunciation practice
+- "My Activity Corner" for interactive tasks
+
+## 7. Comprehensive Assessment (Target: {word_limits.get('exercises', 700)} words)
+- Varied exercise types:
+  * Tick/cross for correct sentences
+  * Error identification and correction
+  * Sentence transformation
+  * Gap filling with grammar focus
+  * Matching and categorization
+- "Points to Remember" comprehensive summary
+- Self-assessment opportunities
+- EeeBee Interactive Activities with QR codes
+- LSRW skills integration chart
+- Progressive difficulty levels
+
+**CONTENT SPECIFICATIONS**:
+- **Skill Level Indicators**: Mark exercises as A2/B1 level
+- **Balanced Approach**: Equal emphasis on all four skills
+- **Cultural Sensitivity**: Indian contexts with global awareness
+- **Digital Integration**: References to Communication Lab
+- **Critical Thinking**: "Why" questions and analytical tasks
+- **Age-Appropriate Complexity**: Challenging but achievable
+- **Grammar Depth**: Sentence structure, tenses, parts of speech
+
+Transform the PDF content maintaining academic rigor while ensuring engagement.
 
 Provide ONLY the comprehensive English chapter content in Markdown format.
 """
@@ -2661,19 +2774,131 @@ Provide ONLY the comprehensive English chapter content in Markdown format.
 
 **Target Audience**: {grade_level} (Middle School English Learners - Ages 11-14)
 
+**Educational Philosophy**:
+- **Oxford Excellence**: Academic rigor with systematic progression
+- **Cambridge Innovation**: Critical thinking and real-world application
+- **Wren & Martin Mastery**: Comprehensive grammar with advanced usage
+- **CEFR Alignment**: B1-B2 level competencies
+
 **MANDATORY CHAPTER STRUCTURE**:
 
-## 1. Chapter Introduction & Context (Target: {word_limits.get('introduction', 300)} words)
-## 2. Reading & Critical Analysis (Target: {word_limits.get('reading', 800)} words)
-## 3. Grammar & Language Usage (Target: {word_limits.get('grammar', 600)} words)
-## 4. Vocabulary & Etymology (Target: {word_limits.get('vocabulary', 400)} words)
-## 5. Composition & Creative Writing (Target: {word_limits.get('writing', 600)} words)
-## 6. Speaking & Presentation Skills (Target: {word_limits.get('speaking', 400)} words)
-## 7. Literature Appreciation (Target: {word_limits.get('literature', 500)} words)
-## 8. Comprehensive Assessment (Target: {word_limits.get('exercises', 900)} words)
-## 9. Language Projects (Target: {word_limits.get('projects', 300)} words)
+## 1. Chapter Introduction & Context Setting (Target: {word_limits.get('introduction', 300)} words)
+- Sophisticated chapter title with thematic focus
+- Learning objectives aligned with board examinations
+- Chapter overview with interdisciplinary connections
+- EeeBee as a study companion (minimal, mature presence)
+- Pre-reading questions to activate critical thinking
+- Skills to be developed clearly outlined
 
-Follow Oxford academic rigor, Cambridge critical thinking, and Wren & Martin comprehensive mastery.
+## 2. Reading & Critical Analysis (Target: {word_limits.get('reading', 800)} words)
+**Main Reading Text**:
+- Complex passages (400-500 words)
+- Literary and non-literary texts
+- Multiple text types (narrative, expository, argumentative)
+- Global themes with Indian perspectives
+
+**Comprehension & Analysis**:
+- Literal, inferential, and critical questions
+- Text analysis and interpretation
+- Author's purpose and tone identification
+- Literary device recognition
+
+## 3. Advanced Grammar & Language Usage (Target: {word_limits.get('grammar', 600)} words)
+- Complex grammar concepts:
+  * Advanced tenses and aspects
+  * Clauses and sentence types
+  * Voice and narration
+  * Reported speech
+  * Modals and conditionals
+- "Grammar in Context" showing real usage
+- Error analysis and correction
+- Grammar for effective communication
+- Comparison with other languages
+- Advanced punctuation rules
+
+## 4. Vocabulary & Etymology (Target: {word_limits.get('vocabulary', 400)} words)
+- 20-30 advanced vocabulary items
+- Word etymology and roots (Greek/Latin origins)
+- Academic word list integration
+- Collocations and phrasal verbs
+- Idioms and expressions
+- Register and appropriacy
+- Vocabulary for specific purposes
+- Word transformation exercises
+
+## 5. Advanced Writing Skills (Target: {word_limits.get('writing', 600)} words)
+**Composition Types**:
+- Essay writing (descriptive, narrative, argumentative)
+- Report writing and data interpretation
+- Creative writing with literary techniques
+- Email and formal letter writing
+- Note-making and summarization
+
+**Writing Process**:
+- Planning and outlining
+- Drafting and revising
+- Peer review integration
+- Style and tone adaptation
+
+## 6. Speaking & Presentation Excellence (Target: {word_limits.get('speaking', 400)} words)
+- Formal presentation skills
+- Debate and argumentation
+- Group discussion strategies
+- Interview techniques
+- Multimedia presentation integration
+- Public speaking confidence
+- Accent and intonation practice
+- Extempore speaking
+
+## 7. Literature Appreciation & Analysis (Target: {word_limits.get('literature', 500)} words)
+- Poetry analysis and appreciation
+- Prose interpretation
+- Drama elements and performance
+- Literary movements introduction
+- Indian English literature
+- Comparative literature concepts
+- Creative response to literature
+- Critical reviews and analysis
+
+## 8. Comprehensive Assessment & Evaluation (Target: {word_limits.get('exercises', 900)} words)
+**Question Types**:
+- Multiple choice with justification
+- Short answer (2-3 sentences)
+- Long answer (150-200 words)
+- Reference to context questions
+- Grammar transformation exercises
+- Integrated grammar and vocabulary
+- Error correction passages
+- Cloze tests and gap filling
+
+**Additional Components**:
+- Board exam pattern questions
+- Previous years' question analysis
+- Self-evaluation rubrics
+- Peer assessment guidelines
+- Digital assessment integration
+
+## 9. Extended Learning & Projects (Target: {word_limits.get('projects', 300)} words)
+- Research-based projects
+- Collaborative assignments
+- Technology integration tasks
+- Real-world application projects
+- Cross-curricular connections
+- Portfolio development
+- Presentation projects
+- Community engagement tasks
+
+**ADVANCED SPECIFICATIONS**:
+- **Academic Language**: Formal register with subject-specific terminology
+- **Exam Preparation**: Alignment with board examination patterns
+- **21st Century Skills**: Critical thinking, collaboration, creativity
+- **Digital Literacy**: Online research, digital presentations
+- **Global Competence**: International perspectives with Indian roots
+- **Differentiation**: Challenge activities for gifted learners
+- **Study Skills**: Note-taking, summarizing, mind-mapping
+- **Assessment Focus**: Continuous and comprehensive evaluation
+
+Transform the PDF content to meet the rigorous academic standards expected at the middle school level.
 
 Provide ONLY the comprehensive English chapter content in Markdown format.
 """
@@ -2685,40 +2910,147 @@ def create_english_exercises_prompt(grade_level, word_limits=None):
     if word_limits is None:
         word_limits = {'exercises': 800 if class_num <= 5 else 1000}
     
-    return f"""You are an Expert English Language Assessment Specialist for {grade_level}, following Oxford, Cambridge, and Wren & Martin assessment standards.
+    if class_num <= 3:
+        return f"""You are an Expert English Language Assessment Specialist for {grade_level}, following Oxford, Cambridge, and Wren & Martin assessment standards for primary learners.
 
 **Target Word Count**: {word_limits.get('exercises', 800)} words
 
 Create COMPREHENSIVE ENGLISH EXERCISES based on the chapter content in the PDF.
 
-**EXERCISE STRUCTURE** (adjust complexity for {grade_level}):
+**PRIMARY LEVEL EXERCISE STRUCTURE** (Classes 1-3):
 
-## A. Vocabulary Exercises
+## A. Picture-Based Vocabulary (25% of content)
+- Match words to pictures with Indian contexts
+- Circle the correct word for given pictures
+- Fill in missing letters with visual clues
+- Word-picture association games
+
+## B. Simple Grammar Practice (25% of content)
+- Fill in the blanks with picture support
+- Circle/underline correct options
+- Match sentence parts with visual aids
+- Grammar games and activities
+
+## C. Reading & Comprehension (25% of content)
+- Simple passages (50-75 words) with pictures
+- Tick/cross questions about the story
+- Choose the right answer from pictures
+- Complete sentences based on reading
+
+## D. Fun Writing Activities (25% of content)
+- Complete sentences with given words
+- Write 2-3 sentences about pictures
+- Simple creative writing with prompts
+- Copy and complete activities
+
+**Special Features**:
+- EeeBee Interactive sections
+- Smiley face self-assessment
+- Coloring and drawing activities
+- Indian cultural contexts (festivals, food, places)
+
+Provide ONLY the comprehensive English exercises in Markdown format.
+"""
+    
+    elif class_num <= 5:
+        return f"""You are an Expert English Language Assessment Specialist for {grade_level}, following Oxford, Cambridge, and Wren & Martin assessment standards for elementary learners.
+
+**Target Word Count**: {word_limits.get('exercises', 800)} words
+
+Create COMPREHENSIVE ENGLISH EXERCISES based on the chapter content in the PDF.
+
+**ELEMENTARY LEVEL EXERCISE STRUCTURE** (Classes 4-5):
+
+## A. Advanced Vocabulary (20% of content)
 - Word meanings, synonyms, antonyms
-- Usage in sentences with Indian contexts
-- Word formation and families
+- Word families and derivatives
+- Usage in varied sentence structures
+- Contextual vocabulary with Indian examples
 
-## B. Grammar Practice  
-- Fill in the blanks, error correction
-- Sentence transformation
+## B. Grammar Mastery (25% of content)
+- Error identification and correction
+- Sentence transformation exercises
 - Grammar rules application
+- Progressive difficulty levels
 
-## C. Reading Comprehension
-- Passage with Indian cultural context
+## C. Reading Comprehension (25% of content)
+- Passages (150-200 words) with mixed themes
 - Multiple choice and short answer questions
-- Inference and analysis questions
+- Inference and critical thinking questions
+- Text analysis and interpretation
 
-## D. Writing Skills
-- Creative and functional writing prompts
-- Letter writing, paragraph writing
-- Essay writing (for higher classes)
+## D. Integrated Writing Skills (20% of content)
+- Guided paragraph writing
+- Creative writing prompts
+- Functional writing (letters, messages)
+- Process writing activities
 
-## E. Communication Assessment
+## E. Communication Assessment (10% of content)
 - Speaking activities and presentation topics
 - Listening comprehension exercises
-- Group discussion and debate topics
+- Role-play and dialogue practice
+- Group discussion topics
 
-Use age-appropriate complexity, Indian cultural contexts, and international standards.
+**Assessment Features**:
+- A2/B1 level indicators
+- Self-evaluation opportunities
+- EeeBee Interactive Activities
+- LSRW skills integration
+
+Provide ONLY the comprehensive English exercises in Markdown format.
+"""
+    
+    else:  # Classes 6-8
+        return f"""You are an Expert English Language Assessment Specialist for {grade_level}, following Oxford, Cambridge, and Wren & Martin assessment standards for middle school learners.
+
+**Target Word Count**: {word_limits.get('exercises', 1000)} words
+
+Create COMPREHENSIVE ENGLISH EXERCISES based on the chapter content in the PDF.
+
+**MIDDLE SCHOOL EXERCISE STRUCTURE** (Classes 6-8):
+
+## A. Advanced Vocabulary & Etymology (15% of content)
+- Word roots, prefixes, suffixes analysis
+- Academic vocabulary and collocations
+- Phrasal verbs and idiomatic expressions
+- Register and appropriacy exercises
+
+## B. Complex Grammar & Usage (20% of content)
+- Advanced grammar transformation
+- Error analysis and correction
+- Sentence structure and syntax
+- Grammar in context applications
+
+## C. Critical Reading & Analysis (25% of content)
+- Complex passages (400-500 words)
+- Literary and non-literary text analysis
+- Critical thinking and inference questions
+- Author's purpose and tone identification
+
+## D. Advanced Writing Skills (20% of content)
+- Essay writing (descriptive, narrative, argumentative)
+- Report writing and data interpretation
+- Creative writing with literary techniques
+- Formal and informal writing styles
+
+## E. Literature Appreciation (10% of content)
+- Poetry analysis and interpretation
+- Prose comprehension and criticism
+- Literary device identification
+- Creative response to literature
+
+## F. Communication Excellence (10% of content)
+- Formal presentation and debate skills
+- Interview and group discussion techniques
+- Public speaking and confidence building
+- Multimedia presentation integration
+
+**Advanced Assessment Features**:
+- Board exam pattern alignment
+- B1-B2 level competencies
+- Self and peer evaluation rubrics
+- Digital assessment integration
+- Previous years' question analysis
 
 Provide ONLY the comprehensive English exercises in Markdown format.
 """
@@ -2730,35 +3062,150 @@ def create_english_skills_prompt(grade_level, word_limits=None):
     if word_limits is None:
         word_limits = {'skills': 600 if class_num <= 5 else 800}
     
-    return f"""You are an Expert English Language Skills Developer for {grade_level}, specializing in the four core language skills.
+    if class_num <= 3:
+        return f"""You are an Expert English Language Skills Developer for {grade_level}, specializing in foundational language skills for primary learners.
 
 **Target Word Count**: {word_limits.get('skills', 600)} words
 
 Create COMPREHENSIVE ENGLISH SKILLS ACTIVITIES based on the chapter content.
 
-**FOUR CORE SKILLS DEVELOPMENT**:
+**PRIMARY SKILLS DEVELOPMENT** (Classes 1-3):
 
-## 1. Listening Skills (25% of content)
-- Audio descriptions and listening activities
-- Progressive difficulty levels
-- Indian accents and contexts
+## 1. Listening Skills - Hear and Learn (25% of content)
+- Simple audio descriptions with picture support
+- Listen and circle/match activities
+- Sound recognition and phonics practice
+- Indian songs, rhymes, and stories
+- EeeBee's audio adventures
 
-## 2. Speaking Skills (25% of content)
-- Structured conversation practice
-- Presentation and pronunciation activities
-- Confidence-building strategies
+## 2. Speaking Skills - Talk and Share (25% of content)
+- Show and tell with picture prompts
+- Simple role-play and dialogues
+- Pronunciation practice with visual cues
+- Confidence-building through games
+- "My Activity Corner" speaking tasks
 
-## 3. Reading Skills (25% of content)
-- Reading strategies and text analysis
+## 3. Reading Skills - Read and Discover (25% of content)
+- Picture reading and story sequencing
+- Simple text with visual support
+- Reading aloud with expression
+- Comprehension through pictures
+- Indian cultural context stories
+
+## 4. Writing Skills - Write and Create (25% of content)
+- Tracing and copying activities
+- Complete sentences with pictures
+- Simple creative writing prompts
+- Drawing and writing combinations
+- Pattern writing and letter formation
+
+**Special Features**:
+- Visual learning emphasis
+- Indian cultural integration
+- Interactive games and activities
+- Self-assessment with smiley faces
+- EeeBee skill-building sections
+
+Provide ONLY the comprehensive English skills activities in Markdown format.
+"""
+    
+    elif class_num <= 5:
+        return f"""You are an Expert English Language Skills Developer for {grade_level}, specializing in integrated language skills for elementary learners.
+
+**Target Word Count**: {word_limits.get('skills', 600)} words
+
+Create COMPREHENSIVE ENGLISH SKILLS ACTIVITIES based on the chapter content.
+
+**ELEMENTARY SKILLS DEVELOPMENT** (Classes 4-5):
+
+## 1. Listening Skills - Active Listening (25% of content)
+- Structured listening comprehension
+- Audio passages with questions
+- Listening for specific information
+- Indian accents and global contexts
+- Communication Lab integration
+
+## 2. Speaking Skills - Confident Communication (25% of content)
+- Structured presentations ("Tell about yourself")
+- Role-play and interactive dialogues
+- Pronunciation and intonation practice
+- Group discussion participation
+- Interview and conversation skills
+
+## 3. Reading Skills - Critical Reading (25% of content)
+- Reading strategies and techniques
 - Multiple text types and genres
-- Critical reading development
+- Comprehension at different levels
+- Text analysis and interpretation
+- Reading for pleasure and information
 
-## 4. Writing Skills (25% of content)
+## 4. Writing Skills - Process Writing (25% of content)
+- Guided writing from sentence to paragraph
 - Creative and functional writing
-- Process writing approach
-- Editing and revision skills
+- Planning, drafting, and revising
+- Different writing purposes and audiences
+- Grammar integration in writing
 
-Include self-assessment opportunities and teacher guidance.
+**Assessment Integration**:
+- A2/B1 level skill indicators
+- Self and peer evaluation
+- LSRW skills tracking chart
+- Digital skill development
+- Portfolio-based assessment
+
+Provide ONLY the comprehensive English skills activities in Markdown format.
+"""
+    
+    else:  # Classes 6-8
+        return f"""You are an Expert English Language Skills Developer for {grade_level}, specializing in advanced language skills for middle school learners.
+
+**Target Word Count**: {word_limits.get('skills', 800)} words
+
+Create COMPREHENSIVE ENGLISH SKILLS ACTIVITIES based on the chapter content.
+
+**ADVANCED SKILLS DEVELOPMENT** (Classes 6-8):
+
+## 1. Advanced Listening Skills (25% of content)
+- Complex audio passages and lectures
+- Note-taking during listening
+- Listening for implied meaning and tone
+- Academic listening strategies
+- Multimedia listening integration
+
+## 2. Presentation & Speaking Excellence (25% of content)
+- Formal presentation skills development
+- Debate and argumentation techniques
+- Interview and group discussion mastery
+- Public speaking confidence building
+- Accent, intonation, and fluency practice
+
+## 3. Critical Reading & Analysis (25% of content)
+- Advanced reading strategies
+- Literary and academic text analysis
+- Critical thinking and evaluation skills
+- Research and information literacy
+- Comparative reading and synthesis
+
+## 4. Advanced Writing Mastery (25% of content)
+- Essay writing (descriptive, narrative, argumentative)
+- Academic writing and research skills
+- Creative writing with literary techniques
+- Digital writing and presentation
+- Peer review and collaborative writing
+
+**21st Century Skills Integration**:
+- Digital literacy and online research
+- Collaborative learning projects
+- Critical thinking and problem-solving
+- Cross-curricular connections
+- Global competence development
+
+**Assessment Excellence**:
+- B1-B2 level competency markers
+- Board exam preparation alignment
+- Self-directed learning strategies
+- Portfolio and project assessment
+- Technology-enhanced evaluation
 
 Provide ONLY the comprehensive English skills activities in Markdown format.
 """
@@ -2770,35 +3217,145 @@ def create_english_projects_prompt(grade_level, word_limits=None):
     if word_limits is None:
         word_limits = {'projects': 400 if class_num <= 5 else 600}
     
-    return f"""You are an Expert English Language Project Designer for {grade_level}, creating innovative language projects.
+    if class_num <= 3:
+        return f"""You are an Expert English Language Project Designer for {grade_level}, creating fun and engaging language projects for primary learners.
 
 **Target Word Count**: {word_limits.get('projects', 400)} words
 
 Create INNOVATIVE ENGLISH LANGUAGE PROJECTS based on the chapter content.
 
-**PROJECT CATEGORIES**:
+**PRIMARY PROJECT CATEGORIES** (Classes 1-3):
+
+## 1. Creative Art & Language Project (35% of content)
+- Picture story creation with simple sentences
+- Drawing and coloring with English labels
+- Craft activities with English instructions
+- Indian festival celebration projects
+- EeeBee adventure story creation
+
+## 2. Fun Communication Project (35% of content)
+- Show and tell with family photos
+- Simple puppet shows and role-play
+- Singing English songs and rhymes
+- Family interview with basic questions
+- Classroom presentation with pictures
+
+## 3. Hands-On Learning Project (30% of content)
+- Make and label classroom objects
+- Create picture dictionaries
+- Simple cooking with English instructions
+- Garden project with plant names
+- Community helpers identification
+
+**Project Features**:
+- Heavy visual and hands-on components
+- Family involvement opportunities
+- Indian cultural integration
+- Simple language objectives
+- Fun, play-based learning approach
+
+Provide ONLY the comprehensive English language projects in Markdown format.
+"""
+    
+    elif class_num <= 5:
+        return f"""You are an Expert English Language Project Designer for {grade_level}, creating engaging language projects for elementary learners.
+
+**Target Word Count**: {word_limits.get('projects', 400)} words
+
+Create INNOVATIVE ENGLISH LANGUAGE PROJECTS based on the chapter content.
+
+**ELEMENTARY PROJECT CATEGORIES** (Classes 4-5):
 
 ## 1. Creative Expression Project (30% of content)
-- Creative writing, storytelling, or drama
-- Indian cultural integration
-- Original creative work with language objectives
+- Story writing and illustration
+- Drama performance and script writing
+- Poetry creation and recitation
+- Indian folktale adaptation
+- Creative magazine or newsletter
 
-## 2. Communication Project (30% of content)
-- Interview, presentation, or multimedia creation
-- Community engagement and research
-- Real communication with authentic audience
+## 2. Communication & Research Project (30% of content)
+- Interview family members or community
+- Create presentations on Indian culture
+- Pen pal correspondence project
+- School newspaper article writing
+- Survey and data presentation
 
-## 3. Research & Analysis Project (25% of content)
-- Research report or comparative study
-- Academic investigation with Indian context
-- Structured research presentation
+## 3. Digital & Multimedia Project (25% of content)
+- Simple video creation with narration
+- Digital storytelling with images
+- Audio recording of stories/poems
+- Online research with presentation
+- Communication Lab integration
 
 ## 4. Collaborative Learning Project (15% of content)
-- Group presentation or collaborative writing
-- Teamwork and leadership development
-- Shared learning outcomes
+- Group drama or skit performance
+- Collaborative story writing
+- Classroom debate preparation
+- Team presentation on chosen topics
+- Peer teaching and learning
 
-Include clear guidelines, assessment rubrics, and cultural integration.
+**Assessment Integration**:
+- Clear project guidelines and rubrics
+- Self and peer evaluation components
+- LSRW skills development focus
+- Cultural sensitivity and awareness
+- Process and product evaluation
+
+Provide ONLY the comprehensive English language projects in Markdown format.
+"""
+    
+    else:  # Classes 6-8
+        return f"""You are an Expert English Language Project Designer for {grade_level}, creating sophisticated language projects for middle school learners.
+
+**Target Word Count**: {word_limits.get('projects', 600)} words
+
+Create INNOVATIVE ENGLISH LANGUAGE PROJECTS based on the chapter content.
+
+**ADVANCED PROJECT CATEGORIES** (Classes 6-8):
+
+## 1. Literary & Creative Projects (25% of content)
+- Original short story or novella writing
+- Poetry anthology with analysis
+- Drama script writing and performance
+- Literary magazine creation
+- Creative response to literature
+
+## 2. Research & Academic Projects (25% of content)
+- In-depth research report on chosen topics
+- Comparative literature analysis
+- Historical or cultural investigation
+- Academic presentation with citations
+- Data analysis and interpretation
+
+## 3. Digital & Technology Projects (25% of content)
+- Multimedia presentation creation
+- Website or blog development
+- Video documentary production
+- Podcast or audio program creation
+- Digital storytelling with advanced tools
+
+## 4. Community & Global Projects (25% of content)
+- Community service with documentation
+- Cultural exchange programs
+- Social issue awareness campaigns
+- Interview and oral history projects
+- International collaboration initiatives
+
+**Advanced Project Features**:
+- Board exam preparation alignment
+- 21st century skills development
+- Global competence and awareness
+- Technology integration and digital literacy
+- Real-world application and relevance
+- Cross-curricular connections
+- Independent and collaborative options
+
+**Assessment Excellence**:
+- Comprehensive rubrics with criteria
+- Self-reflection and peer evaluation
+- Portfolio development and maintenance
+- Presentation and defense components
+- Process documentation and analysis
 
 Provide ONLY the comprehensive English language projects in Markdown format.
 """
