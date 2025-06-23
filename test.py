@@ -636,7 +636,7 @@ Please provide ONLY the improved version of this specific chunk in Markdown form
                     },
                     model=MODEL_NAME,
                     messages=messages,
-                    max_tokens=32768,
+                    max_tokens=60000,
                     temperature=0.3,
                 )
                 
@@ -3449,7 +3449,7 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
 
 **CRITICAL INSTRUCTIONS**:
 1. Follow the enhanced template structure EXACTLY
-2. Preserve all original IIT code and technical content but fix the code if you see any errors
+2. Preserve all original IIT code and technical content
 3. Analyze kit components to determine AI applications (sensors for data collection, processing for intelligence, etc.)
 4. Connect every concept to real-world AI applications (smart homes, healthcare AI, autonomous systems, etc.)
 5. Handle multiple programming languages (Scratch for beginners, Python for advanced, Arduino for hardware)
@@ -5524,7 +5524,7 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Artificial Intelligence", "Robotics", "English Communication & Grammar (Classes 1-8)"],
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)"],
         help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin.",
         key="subject_selector_tab1"
     )
@@ -6508,7 +6508,7 @@ with tab2:
         # Subject context
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Artificial Intelligence", "Robotics", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
@@ -6613,7 +6613,7 @@ with tab3:
         
         subject_checker = st.selectbox(
             "Select Subject",
-            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science", "Artificial Intelligence", "Robotics"],
+            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science"],
             key="subject_checker"
         )
     
@@ -6624,15 +6624,6 @@ with tab3:
         check_grammar = st.checkbox("Check Grammar", value=True, key="check_grammar")
         check_coherence = st.checkbox("Check Content Coherence", value=True, key="check_coherence")
         check_formatting = st.checkbox("Check Formatting", value=True, key="check_formatting")
-    
-    # PDF Processing Method
-    st.markdown("**Processing Method:**")
-    use_direct_upload = st.checkbox(
-        "Use Direct PDF Upload (Recommended for better formatting analysis)",
-        value=True,
-        help="Direct upload preserves formatting and layout for more accurate checking",
-        key="use_direct_upload_checker"
-    )
     
     # File uploader
     uploaded_pdf_checker = st.file_uploader(
@@ -6645,20 +6636,14 @@ with tab3:
         if st.button("🔍 Check PDF", type="primary", key="check_pdf_button"):
             with st.spinner("Analyzing your PDF..."):
                 try:
-                    if use_direct_upload:
-                        # Use direct PDF upload method
-                        # Reset file position
-                        uploaded_pdf_checker.seek(0)
-                        
-                        # Read the PDF file
-                        pdf_bytes = uploaded_pdf_checker.read()
-                        
-                        # Convert to base64
-                        pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')
-                        
-                        # Create data URL
-                        pdf_data_url = f"data:application/pdf;base64,{pdf_base64}"
-                        
+                    # Extract text from PDF
+                    pdf_text = extract_text_from_pdf(uploaded_pdf_checker)
+                    
+                    if not pdf_text.strip():
+                        st.warning("No text found in PDF. Attempting OCR...")
+                        pdf_text = process_pdf_with_mistral_ocr(uploaded_pdf_checker)
+                    
+                    if pdf_text.strip():
                         # Prepare the checking prompt
                         check_types = []
                         if check_spelling:
@@ -6670,11 +6655,12 @@ with tab3:
                         if check_formatting:
                             check_types.append("formatting consistency")
                         
-                        checking_prompt = f"""You are an expert educational content reviewer. Analyze the attached PDF document for {grade_checker} {subject_checker} content.
+                        checking_prompt = f"""You are an expert educational content reviewer. Analyze the following {grade_checker} {subject_checker} content for {', '.join(check_types)}.
 
-Please check for {', '.join(check_types)}.
+Content to analyze:
+{pdf_text}
 
-Provide a detailed analysis with:
+Please provide a detailed analysis with:
 1. **Overall Assessment**: Brief overview of the document quality
 2. **Issues Found**: List specific issues with page/location references where possible
 3. **Suggestions**: Actionable recommendations for improvement
@@ -6682,7 +6668,7 @@ Provide a detailed analysis with:
 
 Format your response in a clear, structured manner using markdown."""
 
-                        # Call AI with direct PDF upload
+                        # Call AI for analysis
                         headers = {
                             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                             "HTTP-Referer": YOUR_SITE_URL,
@@ -6690,42 +6676,14 @@ Format your response in a clear, structured manner using markdown."""
                             "Content-Type": "application/json"
                         }
                         
-                        # Prepare messages with file-parser plugin
-                        messages = [
-                            {
-                                "role": "user",
-                                "content": [
-                                    {
-                                        "type": "text",
-                                        "text": checking_prompt
-                                    },
-                                    {
-                                        "type": "file",
-                                        "file": {
-                                            "filename": uploaded_pdf_checker.name,
-                                            "file_data": pdf_data_url
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                        
                         response = requests.post(
                             "https://openrouter.ai/api/v1/chat/completions",
                             headers=headers,
                             json={
                                 "model": MODEL_NAME,
-                                "messages": messages,
-                                "max_tokens": 4000,
-                                "temperature": 0.3,
-                                "plugins": [
-                                    {
-                                        "id": "file-parser",
-                                        "pdf": {
-                                            "engine": "pdf-text"
-                                        }
-                                    }
-                                ]
+                                "messages": [{"role": "user", "content": checking_prompt}],
+                                "max_tokens": 60000,
+                                "temperature": 0.3
                             }
                         )
                         
@@ -6754,98 +6712,8 @@ Format your response in a clear, structured manner using markdown."""
                             
                         else:
                             st.error(f"API Error: {response.status_code}")
-                            try:
-                                error_data = response.json()
-                                st.error(f"Error details: {error_data}")
-                            except:
-                                st.error(f"Error response: {response.text}")
-                            
                     else:
-                        # Use text extraction method
-                        uploaded_pdf_checker.seek(0)
-                        pdf_bytes = uploaded_pdf_checker.read()
-                        pdf_text = extract_text_from_pdf(pdf_bytes)
-                        
-                        if not pdf_text.strip():
-                            st.warning("No text found in PDF. Attempting OCR...")
-                            pdf_text, _ = process_pdf_with_mistral_ocr(pdf_bytes, uploaded_pdf_checker.name)
-                        
-                        if pdf_text.strip():
-                            # Prepare the checking prompt
-                            check_types = []
-                            if check_spelling:
-                                check_types.append("spelling errors")
-                            if check_grammar:
-                                check_types.append("grammar issues")
-                            if check_coherence:
-                                check_types.append("content coherence and logical flow")
-                            if check_formatting:
-                                check_types.append("formatting consistency")
-                            
-                            checking_prompt = f"""You are an expert educational content reviewer. Analyze the following {grade_checker} {subject_checker} content for {', '.join(check_types)}.
-
-Content to analyze:
-{pdf_text}
-
-Please provide a detailed analysis with:
-1. **Overall Assessment**: Brief overview of the document quality
-2. **Issues Found**: List specific issues with page/location references where possible
-3. **Suggestions**: Actionable recommendations for improvement
-4. **Summary**: Key points and priority fixes
-
-Format your response in a clear, structured manner using markdown."""
-
-                            # Call AI for analysis
-                            headers = {
-                                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                                "HTTP-Referer": YOUR_SITE_URL,
-                                "X-Title": YOUR_SITE_NAME,
-                                "Content-Type": "application/json"
-                            }
-                            
-                            response = requests.post(
-                                "https://openrouter.ai/api/v1/chat/completions",
-                                headers=headers,
-                                json={
-                                    "model": MODEL_NAME,
-                                    "messages": [{"role": "user", "content": checking_prompt}],
-                                    "max_tokens": 4000,
-                                    "temperature": 0.3
-                                }
-                            )
-                            
-                            if response.status_code == 200:
-                                result = response.json()
-                                analysis = result['choices'][0]['message']['content']
-                                
-                                # Display results
-                                st.success("✅ PDF Analysis Complete!")
-                                
-                                # Save results
-                                save_content_safely("pdf_analysis", analysis, grade_checker)
-                                
-                                # Create expandable sections for results
-                                with st.expander("📊 Full Analysis Report", expanded=True):
-                                    st.markdown(analysis)
-                                
-                                # Download button for analysis
-                                st.download_button(
-                                    label="📥 Download Analysis Report",
-                                    data=analysis,
-                                    file_name=f"pdf_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-                                    mime="text/plain",
-                                    key="download_pdf_analysis_text"
-                                )
-                                
-                            else:
-                                st.error(f"API Error: {response.status_code}")
-                                try:
-                                    error_data = response.json()
-                                    st.error(f"Error details: {error_data}")
-                                except:
-                                    st.error(f"Error response: {response.text}")
-                        else:
-                            st.error("Could not extract text from PDF")
+                        st.error("Could not extract text from PDF")
                         
                 except Exception as e:
                     st.error(f"Error analyzing PDF: {str(e)}")
@@ -6873,7 +6741,7 @@ with tab4:
         if grade_num <= 2:
             subjects = ["Mathematics"]
         else:
-            subjects = ["Science", "Mathematics", "Artificial Intelligence", "Robotics"]
+            subjects = ["Science", "Mathematics"]
             
         subject_remedial = st.selectbox(
             "Select Subject",
@@ -6891,16 +6759,16 @@ with tab4:
     # Content type selection based on grade and subject
     st.markdown("### Select Content Types to Generate:")
     
-    if subject_remedial in ["Science", "Artificial Intelligence", "Robotics"]:
-        # Science and AI/Robotics content options
+    if subject_remedial == "Science":
+        # Science content options
         col1, col2 = st.columns(2)
         with col1:
-            gen_video_script = st.checkbox("Video Script with Narration", value=True, key=f"gen_video_{subject_remedial.lower().replace(' ', '_')}")
-            gen_notes = st.checkbox("Detailed Notes", value=True, key=f"gen_notes_{subject_remedial.lower().replace(' ', '_')}")
-            gen_worksheet = st.checkbox("Worksheet", value=True, key=f"gen_worksheet_{subject_remedial.lower().replace(' ', '_')}")
+            gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_science")
+            gen_notes = st.checkbox("Detailed Notes", value=True, key="gen_notes_science")
+            gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_science")
         with col2:
-            gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key=f"gen_mcq_{subject_remedial.lower().replace(' ', '_')}")
-            gen_summary = st.checkbox("Summary Points", value=True, key=f"gen_summary_{subject_remedial.lower().replace(' ', '_')}")
+            gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_science")
+            gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_science")
             
     else:  # Mathematics
         if grade_num <= 2:
@@ -6931,17 +6799,16 @@ with tab4:
                 # Prepare content types to generate
                 content_to_generate = []
                 
-                if subject_remedial in ["Science", "Artificial Intelligence", "Robotics"]:
-                    subject_key = subject_remedial.lower().replace(' ', '_')
-                    if st.session_state.get(f"gen_video_{subject_key}", False):
+                if subject_remedial == "Science":
+                    if st.session_state.get("gen_video_science", False):
                         content_to_generate.append("video_script")
-                    if st.session_state.get(f"gen_notes_{subject_key}", False):
+                    if st.session_state.get("gen_notes_science", False):
                         content_to_generate.append("notes")
-                    if st.session_state.get(f"gen_worksheet_{subject_key}", False):
+                    if st.session_state.get("gen_worksheet_science", False):
                         content_to_generate.append("worksheet")
-                    if st.session_state.get(f"gen_mcq_{subject_key}", False):
+                    if st.session_state.get("gen_mcq_science", False):
                         content_to_generate.append("mcq_bank")
-                    if st.session_state.get(f"gen_summary_{subject_key}", False):
+                    if st.session_state.get("gen_summary_science", False):
                         content_to_generate.append("summary")
                 else:  # Mathematics
                     if grade_num <= 2:
@@ -7086,8 +6953,8 @@ Make it hands-on, interactive, and age-appropriate."""
                             json={
                                 "model": MODEL_NAME,
                                 "messages": messages,
-                                "max_tokens": 3000,
-                                "temperature": 0.7
+                                "max_tokens": 60000,
+                                "temperature": 0.3
                             }
                         )
                         
@@ -7161,4 +7028,3 @@ Make it hands-on, interactive, and age-appropriate."""
 
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
-
