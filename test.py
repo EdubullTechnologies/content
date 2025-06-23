@@ -6693,10 +6693,6 @@ Format your response in a clear, structured manner using markdown."""
                         # Prepare messages with file-parser plugin
                         messages = [
                             {
-                                "role": "system",
-                                "content": "You are an expert educational content reviewer with access to analyze PDF documents directly."
-                            },
-                            {
                                 "role": "user",
                                 "content": [
                                     {
@@ -6704,8 +6700,11 @@ Format your response in a clear, structured manner using markdown."""
                                         "text": checking_prompt
                                     },
                                     {
-                                        "type": "text",
-                                        "text": pdf_data_url
+                                        "type": "file",
+                                        "file": {
+                                            "filename": uploaded_pdf_checker.name,
+                                            "file_data": pdf_data_url
+                                        }
                                     }
                                 ]
                             }
@@ -6719,12 +6718,14 @@ Format your response in a clear, structured manner using markdown."""
                                 "messages": messages,
                                 "max_tokens": 4000,
                                 "temperature": 0.3,
-                                "plugins": {
-                                    "file-parser": {
-                                        "enabled": True,
-                                        "engine": "pdf-text"
+                                "plugins": [
+                                    {
+                                        "id": "file-parser",
+                                        "pdf": {
+                                            "engine": "pdf-text"
+                                        }
                                     }
-                                }
+                                ]
                             }
                         )
                         
@@ -6753,14 +6754,21 @@ Format your response in a clear, structured manner using markdown."""
                             
                         else:
                             st.error(f"API Error: {response.status_code}")
+                            try:
+                                error_data = response.json()
+                                st.error(f"Error details: {error_data}")
+                            except:
+                                st.error(f"Error response: {response.text}")
                             
                     else:
                         # Use text extraction method
-                        pdf_text = extract_text_from_pdf(uploaded_pdf_checker)
+                        uploaded_pdf_checker.seek(0)
+                        pdf_bytes = uploaded_pdf_checker.read()
+                        pdf_text = extract_text_from_pdf(pdf_bytes)
                         
                         if not pdf_text.strip():
                             st.warning("No text found in PDF. Attempting OCR...")
-                            pdf_text = process_pdf_with_mistral_ocr(uploaded_pdf_checker)
+                            pdf_text, _ = process_pdf_with_mistral_ocr(pdf_bytes, uploaded_pdf_checker.name)
                         
                         if pdf_text.strip():
                             # Prepare the checking prompt
@@ -6831,6 +6839,11 @@ Format your response in a clear, structured manner using markdown."""
                                 
                             else:
                                 st.error(f"API Error: {response.status_code}")
+                                try:
+                                    error_data = response.json()
+                                    st.error(f"Error details: {error_data}")
+                                except:
+                                    st.error(f"Error response: {response.text}")
                         else:
                             st.error("Could not extract text from PDF")
                         
