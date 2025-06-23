@@ -218,8 +218,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-pro-preview"  # You can change this to "anthropic/claude-sonnet-4" when available
-
+MODEL_NAME = "google/gemini-2.5-pro-preview"
 # --- Helper Functions ---
 
 def load_model_chapter_progression(file_path="Model Chapter Progression and Elements.txt"):
@@ -838,6 +837,44 @@ For English Communication & Grammar (Classes 1-8), we support:
 - Exercises: Grammar, vocabulary, comprehension, and communication exercises
 - Skills: Speaking, listening, reading, and writing skill activities
 - Projects: Creative language projects and communication activities
+
+Please use the appropriate generation option."""
+    elif subject_type == "Artificial Intelligence":
+        if content_type == "chapter":
+            return create_ai_chapter_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "exercises":
+            return create_ai_exercises_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "skills":
+            return create_ai_skills_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "art":
+            return create_ai_projects_prompt(grade_level, model_progression_text, word_limits)
+        else:
+            return f"""This content type '{content_type}' is not supported for Artificial Intelligence.
+            
+For Artificial Intelligence, we support:
+- Chapter Content: Complete AI chapter with kit integration and domain applications
+- Exercises: AI coding challenges, algorithm exercises, and concept assessments  
+- Skills: AI lab activities, machine learning projects, and data analysis
+- Projects: Creative AI applications and real-world problem solving
+
+Please use the appropriate generation option."""
+    elif subject_type == "Robotics":
+        if content_type == "chapter":
+            return create_robotics_chapter_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "exercises":
+            return create_robotics_exercises_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "skills":
+            return create_robotics_skills_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "art":
+            return create_robotics_projects_prompt(grade_level, model_progression_text, word_limits)
+        else:
+            return f"""This content type '{content_type}' is not supported for Robotics.
+            
+For Robotics, we support:
+- Chapter Content: Complete Robotics chapter with kit integration and domain applications
+- Exercises: Robotics coding challenges, hardware exercises, and concept assessments
+- Skills: Robotics lab activities, automation projects, and sensor integration
+- Projects: Creative robotics applications and engineering solutions
 
 Please use the appropriate generation option."""
     else:
@@ -3360,6 +3397,602 @@ Create INNOVATIVE ENGLISH LANGUAGE PROJECTS based on the chapter content.
 Provide ONLY the comprehensive English language projects in Markdown format.
 """
 
+# Artificial Intelligence specific prompt functions
+def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates an Artificial Intelligence chapter content prompt using the enhanced template"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'mission_briefing': 300,
+            'domain_analysis': 800,
+            'core_concepts': 3000,
+            'hands_on_project': 1500,
+            'assessment': 600
+        }
+    
+    # Read the enhanced AI/Robotics template
+    try:
+        with open('ai_robo.txt', 'r', encoding='utf-8') as f:
+            ai_template = f.read()
+    except FileNotFoundError:
+        ai_template = """Enhanced AI template not found. Using fallback template."""
+    
+    return f"""You are an Expert Artificial Intelligence Education Content Developer specializing in hands-on learning with IIT-developed kits.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE - Focus on intelligent systems, machine learning, data analysis, pattern recognition, decision-making algorithms, and smart automation.
+
+**Target Audience**: {grade_level}
+
+**Enhanced AI Education Template**:
+---
+{ai_template}
+---
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+**Word Count Targets**:
+- Mission Briefing: {word_limits.get('mission_briefing', 300)} words
+- Domain Analysis & Applications: {word_limits.get('domain_analysis', 800)} words
+- Core Concepts (all concepts combined): {word_limits.get('core_concepts', 3000)} words
+- Hands-On Project: {word_limits.get('hands_on_project', 1500)} words
+- Assessment & Debrief: {word_limits.get('assessment', 600)} words
+
+**AI-SPECIFIC FOCUS AREAS**:
+1. **Intelligence & Decision Making**: Focus on how AI systems make smart decisions
+2. **Learning & Adaptation**: Emphasize how AI learns from data and improves over time
+3. **Pattern Recognition**: Highlight AI's ability to find patterns in complex data
+4. **Automation & Optimization**: Show how AI automates and optimizes processes
+5. **Human-AI Interaction**: Explore how AI systems work with humans
+
+**CRITICAL INSTRUCTIONS**:
+1. Follow the enhanced template structure EXACTLY
+2. Preserve all original IIT code and technical content
+3. Analyze kit components to determine AI applications (sensors for data collection, processing for intelligence, etc.)
+4. Connect every concept to real-world AI applications (smart homes, healthcare AI, autonomous systems, etc.)
+5. Handle multiple programming languages (Scratch for beginners, Python for advanced, Arduino for hardware)
+6. Include comprehensive troubleshooting for AI system integration
+7. Provide multi-level extension challenges focusing on AI capabilities
+
+Transform the provided PDF content into a comprehensive Artificial Intelligence chapter following the enhanced template structure.
+
+Provide the complete AI chapter content in Markdown format.
+"""
+
+def create_ai_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Artificial Intelligence specific exercises and assessments"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 1000
+        }
+    
+    return f"""You are an Expert Artificial Intelligence Education Assessment Developer.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+Create comprehensive AI exercises based on the chapter content.
+**Target Total Word Count**: {word_limits.get('exercises', 1000)} words
+
+**AI Exercise Categories**:
+
+## 1. AI Conceptual Understanding (30%)
+- Multiple Choice Questions on AI principles, machine learning, pattern recognition (8 questions)
+- True/False with AI reasoning justification (10 statements)
+- Fill in the blanks with AI terminology (decision trees, neural networks, algorithms, etc.) (10 questions)
+- Match AI components to their functions (data, algorithms, models, predictions) (2 sets of 5 matches)
+
+## 2. Algorithm Analysis & Implementation (25%)
+- AI algorithm analysis and prediction (5 exercises)
+- Debug AI code challenges (3 code blocks with logic errors)
+- Complete AI algorithm implementations (5 exercises)
+- AI decision-making problems (3 challenges)
+
+## 3. Data & Pattern Recognition (20%)
+- Data analysis and interpretation (3 exercises)
+- Pattern identification challenges (3 scenarios)
+- AI training data evaluation (3 exercises)
+- Model accuracy assessment (2 exercises)
+
+## 4. Real-World AI Applications (15%)
+- AI application scenarios (3 case studies in healthcare, transportation, smart homes)
+- AI career pathway connections (2 detailed scenarios)
+- AI ethics and societal impact (3 discussion questions)
+- Industry AI problem-solving (2 challenges)
+
+## 5. Creative AI Problem Solving (10%)
+- AI system design challenges (2 open-ended problems)
+- Innovation with AI proposals (2 creative extensions)
+- Cross-domain AI applications (2 scenarios)
+
+**Exercise Requirements**:
+- Include detailed solutions with AI reasoning
+- Connect to specific kit sensors and data collection when applicable
+- Reference real-world AI applications and case studies
+- Provide multiple difficulty levels within each category
+- Include data visualization and interpretation exercises
+- Emphasize ethical AI considerations and responsible development
+
+Ensure all exercises relate directly to the chapter content and demonstrate practical AI concepts.
+
+Provide comprehensive Artificial Intelligence exercises in Markdown format.
+"""
+
+def create_ai_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Artificial Intelligence hands-on lab activities and skill development exercises"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activity': 600,
+            'lab_project': 600
+        }
+    
+    return f"""You are an Expert Artificial Intelligence Lab Instructor and Skills Developer.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## AI Skill-Based Activities (Target: {word_limits.get('skill_activity', 600)} words)
+
+Create at least 4 comprehensive hands-on activities that develop practical AI skills:
+
+**Activity Structure for Each**:
+1. **AI Skill Development Objective** (what specific AI capability)
+2. **Kit Components Required** (sensors for data collection, processing units, etc.)
+3. **Data Collection Setup** (how to gather training/test data)
+4. **Step-by-Step AI Implementation** (algorithm development and testing)
+5. **Model Training & Validation** (how to train and test AI models)
+6. **Real-World AI Connection** (how this skill applies in AI industry)
+7. **Performance Evaluation** (metrics for measuring AI system success)
+8. **AI Skill Validation** (how to verify learning objectives met)
+
+**Types of AI Skills Activities**:
+- **Data Collection & Processing**: Learn to gather, clean, and prepare data for AI systems
+- **Pattern Recognition Implementation**: Build systems that identify patterns in sensor data
+- **Decision-Making Algorithms**: Create AI that makes intelligent choices based on inputs
+- **Learning System Development**: Implement basic machine learning with kit components
+- **AI Model Testing & Validation**: Learn to evaluate and improve AI system performance
+
+## AI Lab Projects (Target: {word_limits.get('lab_project', 600)} words)
+
+Create at least 3 comprehensive lab projects that integrate multiple AI concepts:
+
+**Project Structure for Each**:
+1. **AI Learning Objectives** (comprehensive intelligence goals)
+2. **Domain Application Focus** (Smart Home AI, Healthcare AI, Educational AI, etc.)
+3. **Data Collection Strategy** (using kit sensors for real-world data)
+4. **AI Algorithm Development** (incremental intelligence building)
+5. **Training & Testing Protocol** (systematic AI model development)
+6. **Intelligence Optimization** (improving AI performance and accuracy)
+7. **AI Documentation Standards** (technical AI reporting requirements)
+8. **Advanced AI Extensions** (sophisticated AI modifications)
+
+**AI Project Categories**:
+- **Intelligent Sensing System**: Implement AI that learns from environmental data
+- **Predictive Analytics Project**: Build AI that predicts future states from current data
+- **Adaptive Behavior System**: Create AI that adjusts behavior based on learning
+- **Human-AI Collaboration Interface**: Develop AI assistant that works with users
+
+**AI Lab Safety & Ethics**:
+- Data privacy and security protocols
+- Responsible AI development practices
+- Bias detection and mitigation
+- Ethical decision-making in AI systems
+
+**AI Assessment Criteria**:
+- Algorithm implementation quality
+- Data handling and processing skills
+- AI model accuracy and reliability
+- Ethical considerations in AI development
+- Innovation in AI applications
+
+Each activity should build progressively toward the lab projects, with clear connections to real-world AI applications and career paths.
+
+Provide comprehensive Artificial Intelligence skills activities in Markdown format.
+"""
+
+def create_ai_projects_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Artificial Intelligence creative projects and applications"""
+    if word_limits is None:
+        word_limits = {
+            'creative_projects': 800
+        }
+    
+    return f"""You are an Expert Artificial Intelligence Innovation Mentor and Project Designer.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## AI Creative Innovation Projects (Target: {word_limits.get('creative_projects', 800)} words)
+
+Create at least 4 innovative projects that combine AI with creative applications:
+
+**Project Structure for Each**:
+1. **AI Innovation Objective** (intelligent + creative goals)
+2. **Cross-Domain AI Integration** (how AI enhances other fields)
+3. **Kit Components & AI Extensions** (sensors, processors, AI algorithms)
+4. **AI Design Thinking Process** (data-driven empathy, intelligent definition, AI ideation, smart prototyping, intelligent testing)
+5. **AI Technical Implementation Plan** (algorithms + data + hardware integration)
+6. **Intelligent User Experience Design** (AI-powered interface and interaction)
+7. **AI Social Impact Assessment** (how AI project benefits society)
+8. **AI Portfolio & Demonstration** (showcasing AI capabilities)
+
+**Creative AI Project Categories**:
+
+### 🎨 AI Art & Creative Intelligence
+- **Generative AI Art**: AI systems that create visual art based on learned patterns
+- **AI Music Composition**: Machine learning for music generation and performance
+- **Intelligent Storytelling**: AI-powered narrative systems that adapt to user preferences
+- **Creative AI Collaboration**: Human-AI partnership in creative expression
+
+### 🏠 Smart Living AI Solutions
+- **Adaptive Home Intelligence**: AI systems that learn family patterns and optimize living
+- **Personal AI Health Assistant**: Intelligent health monitoring and recommendation systems
+- **Sustainable AI Living**: AI for energy optimization and environmental management
+- **Accessibility AI Enhancement**: Intelligent tools for inclusive design and assistance
+
+### 🌍 AI for Social Good
+- **Community Intelligence Projects**: Apply AI to solve local problems with data-driven solutions
+- **Educational AI Tutors**: Personalized learning systems that adapt to individual needs
+- **Environmental AI Monitoring**: Intelligent systems for ecological data analysis
+- **Cultural AI Preservation**: Using AI to document, analyze, and share cultural heritage
+
+### 🔬 AI Research & Discovery Tools
+- **Scientific AI Assistants**: Intelligent systems for research data analysis and hypothesis generation
+- **AI Exploration Systems**: Smart systems for investigating and mapping complex environments
+- **Pattern Discovery AI**: Intelligent tools for finding hidden patterns in large datasets
+- **Collaborative AI Research**: Multi-user intelligent platforms for team-based discovery
+
+**AI Innovation Methodologies**:
+- Data-driven design thinking workshops
+- AI prototyping with rapid iteration
+- Human-centered AI development principles
+- Ethical AI development frameworks
+- Open source AI collaboration methods
+
+**AI Portfolio Development**:
+- AI technical documentation standards
+- AI demonstration and explanation techniques
+- Presentation skills for AI audiences
+- AI peer review and feedback protocols
+- AI industry mentorship connections
+
+**AI Impact Metrics**:
+- Problem-solving intelligence effectiveness
+- AI system adoption and usability
+- Scalability of AI solutions
+- Social benefit of AI applications
+- Technical innovation in AI implementation
+
+**AI Extension Opportunities**:
+- AI competition participation (machine learning contests, AI challenges)
+- Community AI demonstration events
+- AI industry collaboration projects
+- Academic AI research partnerships
+- AI entrepreneurship development paths
+
+Each project should demonstrate how AI can be applied creatively to solve real problems while building technical AI expertise and fostering innovation mindsets.
+
+Provide comprehensive Artificial Intelligence creative projects in Markdown format.
+"""
+
+# Robotics specific prompt functions
+def create_robotics_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates a Robotics chapter content prompt using the enhanced template"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'mission_briefing': 300,
+            'domain_analysis': 800,
+            'core_concepts': 3000,
+            'hands_on_project': 1500,
+            'assessment': 600
+        }
+    
+    # Read the enhanced AI/Robotics template
+    try:
+        with open('ai_robo.txt', 'r', encoding='utf-8') as f:
+            robotics_template = f.read()
+    except FileNotFoundError:
+        robotics_template = """Enhanced Robotics template not found. Using fallback template."""
+    
+    return f"""You are an Expert Robotics Education Content Developer specializing in hands-on learning with IIT-developed kits.
+
+**Subject Focus**: ROBOTICS - Focus on automation, sensors, actuators, mechanical systems, control systems, human-robot interaction, and physical world manipulation.
+
+**Target Audience**: {grade_level}
+
+**Enhanced Robotics Education Template**:
+---
+{robotics_template}
+---
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+**Word Count Targets**:
+- Mission Briefing: {word_limits.get('mission_briefing', 300)} words
+- Domain Analysis & Applications: {word_limits.get('domain_analysis', 800)} words
+- Core Concepts (all concepts combined): {word_limits.get('core_concepts', 3000)} words
+- Hands-On Project: {word_limits.get('hands_on_project', 1500)} words
+- Assessment & Debrief: {word_limits.get('assessment', 600)} words
+
+**ROBOTICS-SPECIFIC FOCUS AREAS**:
+1. **Sensors & Perception**: How robots sense and understand their environment
+2. **Actuators & Movement**: How robots move and manipulate objects in the physical world
+3. **Control Systems**: How robots are programmed and controlled to perform tasks
+4. **Automation & Efficiency**: How robots automate repetitive tasks and improve efficiency
+5. **Human-Robot Interaction**: How robots work safely and effectively with humans
+
+**CRITICAL INSTRUCTIONS**:
+1. Follow the enhanced template structure EXACTLY
+2. Preserve all original IIT code and technical content
+3. Analyze kit components to determine robotics applications (motors for movement, sensors for feedback, controllers for automation)
+4. Connect every concept to real-world robotics applications (manufacturing robots, service robots, exploration robots, etc.)
+5. Handle multiple programming languages (Scratch for beginners, Python for advanced, Arduino for hardware control)
+6. Include comprehensive troubleshooting for robotics system integration
+7. Provide multi-level extension challenges focusing on robotics capabilities
+
+Transform the provided PDF content into a comprehensive Robotics chapter following the enhanced template structure.
+
+Provide the complete Robotics chapter content in Markdown format.
+"""
+
+def create_robotics_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Robotics specific exercises and assessments"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 1000
+        }
+    
+    return f"""You are an Expert Robotics Education Assessment Developer.
+
+**Subject Focus**: ROBOTICS
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+Create comprehensive Robotics exercises based on the chapter content.
+**Target Total Word Count**: {word_limits.get('exercises', 1000)} words
+
+**Robotics Exercise Categories**:
+
+## 1. Robotics Conceptual Understanding (30%)
+- Multiple Choice Questions on robotics principles, automation, sensors, actuators (8 questions)
+- True/False with robotics engineering justification (10 statements)
+- Fill in the blanks with robotics terminology (servo motors, sensors, controllers, feedback loops) (10 questions)
+- Match robotics components to their functions (sensors to perception, motors to movement, etc.) (2 sets of 5 matches)
+
+## 2. Control Systems & Programming (25%)
+- Robotics control algorithm analysis (5 exercises)
+- Debug robotics code challenges (3 code blocks with control errors)
+- Complete robotics control implementations (5 exercises)
+- Robotics automation problems (3 challenges)
+
+## 3. Hardware Integration & Troubleshooting (20%)
+- Circuit analysis and wiring problems (3 exercises)
+- Sensor calibration and testing (3 scenarios)
+- Motor control and feedback systems (3 exercises)
+- System integration troubleshooting (2 exercises)
+
+## 4. Real-World Robotics Applications (15%)
+- Robotics application scenarios (3 case studies in manufacturing, healthcare, exploration)
+- Robotics career pathway connections (2 detailed scenarios)
+- Robotics safety and ethics (3 discussion questions)
+- Industrial robotics problem-solving (2 challenges)
+
+## 5. Creative Robotics Design (10%)
+- Robotics system design challenges (2 open-ended problems)
+- Innovation in robotics proposals (2 creative extensions)
+- Cross-domain robotics applications (2 scenarios)
+
+**Exercise Requirements**:
+- Include detailed solutions with engineering reasoning
+- Connect to specific kit motors, sensors, and controllers
+- Reference real-world robotics applications and case studies
+- Provide multiple difficulty levels within each category
+- Include mechanical design and motion planning exercises
+- Emphasize safety protocols and responsible robotics development
+
+Ensure all exercises relate directly to the chapter content and demonstrate practical robotics engineering concepts.
+
+Provide comprehensive Robotics exercises in Markdown format.
+"""
+
+def create_robotics_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Robotics hands-on lab activities and skill development exercises"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activity': 600,
+            'lab_project': 600
+        }
+    
+    return f"""You are an Expert Robotics Lab Instructor and Skills Developer.
+
+**Subject Focus**: ROBOTICS
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## Robotics Skill-Based Activities (Target: {word_limits.get('skill_activity', 600)} words)
+
+Create at least 4 comprehensive hands-on activities that develop practical robotics skills:
+
+**Activity Structure for Each**:
+1. **Robotics Skill Development Objective** (what specific robotics capability)
+2. **Kit Components Required** (motors, sensors, controllers, mechanical parts)
+3. **Mechanical Assembly Setup** (physical construction and connections)
+4. **Step-by-Step Control Implementation** (programming robot behavior)
+5. **Testing & Calibration Protocol** (ensuring accurate robot performance)
+6. **Real-World Robotics Connection** (how this skill applies in robotics industry)
+7. **Performance Optimization** (improving robot efficiency and accuracy)
+8. **Robotics Skill Validation** (how to verify engineering objectives met)
+
+**Types of Robotics Skills Activities**:
+- **Sensor Integration & Feedback**: Learn to connect sensors and use feedback for control
+- **Motor Control & Precision Movement**: Master precise robot movement and positioning
+- **Automation Sequence Programming**: Create robots that perform complex task sequences
+- **Human-Robot Interface Development**: Build systems for safe human-robot interaction
+- **Robotic System Integration**: Combine multiple subsystems into working robots
+
+## Robotics Lab Projects (Target: {word_limits.get('lab_project', 600)} words)
+
+Create at least 3 comprehensive lab projects that integrate multiple robotics concepts:
+
+**Project Structure for Each**:
+1. **Robotics Engineering Objectives** (comprehensive automation goals)
+2. **Domain Application Focus** (Manufacturing Robotics, Service Robotics, Exploration Robotics, etc.)
+3. **Mechanical Design Strategy** (using kit components for robot construction)
+4. **Control System Development** (incremental robot behavior programming)
+5. **Testing & Validation Protocol** (systematic robot performance evaluation)
+6. **System Optimization** (improving robot speed, accuracy, and reliability)
+7. **Robotics Documentation Standards** (technical engineering reporting requirements)
+8. **Advanced Robotics Extensions** (sophisticated robot modifications)
+
+**Robotics Project Categories**:
+- **Autonomous Navigation Robot**: Implement robot that navigates and avoids obstacles
+- **Automated Task Execution System**: Build robot that performs specific work tasks
+- **Adaptive Robotics Behavior**: Create robot that adjusts to changing conditions
+- **Collaborative Robotics Interface**: Develop robot that works safely with humans
+
+**Robotics Lab Safety & Ethics**:
+- Mechanical safety and proper tool use
+- Electrical safety with motors and controllers
+- Human-robot interaction safety protocols
+- Responsible robotics development practices
+
+**Robotics Assessment Criteria**:
+- Mechanical design and construction quality
+- Control system implementation effectiveness
+- Robot performance accuracy and reliability
+- Safety compliance and risk management
+- Innovation in robotics applications
+
+Each activity should build progressively toward the lab projects, with clear connections to real-world robotics applications and engineering careers.
+
+Provide comprehensive Robotics skills activities in Markdown format.
+"""
+
+def create_robotics_projects_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates Robotics creative projects and engineering applications"""
+    if word_limits is None:
+        word_limits = {
+            'creative_projects': 800
+        }
+    
+    return f"""You are an Expert Robotics Innovation Mentor and Project Designer.
+
+**Subject Focus**: ROBOTICS
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## Robotics Creative Innovation Projects (Target: {word_limits.get('creative_projects', 800)} words)
+
+Create at least 4 innovative projects that combine robotics with creative engineering applications:
+
+**Project Structure for Each**:
+1. **Robotics Innovation Objective** (engineering + creative goals)
+2. **Cross-Domain Robotics Integration** (how robotics enhances other fields)
+3. **Kit Components & Mechanical Extensions** (motors, sensors, structural elements, custom additions)
+4. **Robotics Design Thinking Process** (empathize with users, define robot requirements, ideate solutions, prototype robots, test performance)
+5. **Robotics Technical Implementation Plan** (mechanical design + control systems + hardware integration)
+6. **Human-Robot Interaction Design** (safe and effective robot-human collaboration)
+7. **Robotics Social Impact Assessment** (how robot project benefits society)
+8. **Robotics Portfolio & Demonstration** (showcasing robot capabilities and engineering)
+
+**Creative Robotics Project Categories**:
+
+### 🎨 Artistic & Creative Robotics
+- **Robotic Art Creation**: Robots that create physical art through programmed movements
+- **Performance Robotics**: Robots designed for entertainment and artistic expression
+- **Interactive Robotic Installations**: Robots that respond to human presence and create experiences
+- **Collaborative Art Robotics**: Human-robot teams working together on creative projects
+
+### 🏠 Service & Assistance Robotics
+- **Home Assistant Robots**: Automated systems that help with household tasks
+- **Personal Care Robotics**: Robots designed to assist with daily living activities
+- **Accessibility Robotics**: Robots that help people with disabilities navigate and interact
+- **Educational Robotics Tutors**: Robots that assist with learning and skill development
+
+### 🌍 Social Impact Robotics
+- **Community Service Robots**: Automated systems that address local community needs
+- **Environmental Monitoring Robots**: Robots that collect environmental data and maintain ecosystems
+- **Emergency Response Robotics**: Robots designed for search, rescue, and disaster response
+- **Agricultural Robotics**: Automated systems for sustainable farming and food production
+
+### 🔬 Exploration & Research Robotics
+- **Scientific Research Robots**: Automated systems for data collection and experimentation
+- **Exploration Robotics**: Robots designed to investigate hard-to-reach or dangerous environments
+- **Surveillance & Monitoring Robotics**: Automated systems for security and observation
+- **Collaborative Research Platforms**: Multi-robot systems for team-based investigation
+
+**Robotics Innovation Methodologies**:
+- Human-centered robotics design workshops
+- Rapid robotics prototyping with iterative testing
+- User-centered robotics development principles
+- Ethical robotics development frameworks
+- Open source robotics collaboration methods
+
+**Robotics Portfolio Development**:
+- Robotics technical documentation standards
+- Robot demonstration and operation techniques
+- Presentation skills for engineering audiences
+- Robotics peer review and feedback protocols
+- Robotics industry mentorship connections
+
+**Robotics Impact Metrics**:
+- Task automation effectiveness
+- Robot system reliability and safety
+- Scalability of robotics solutions
+- Social benefit of robotics applications
+- Technical innovation in robotics engineering
+
+**Robotics Extension Opportunities**:
+- Robotics competition participation (robotics contests, engineering challenges)
+- Community robotics demonstration events
+- Robotics industry collaboration projects
+- Academic robotics research partnerships
+- Robotics entrepreneurship development paths
+
+Each project should demonstrate how robotics can be applied creatively to solve real problems while building technical engineering expertise and fostering innovation mindsets.
+
+Provide comprehensive Robotics creative projects in Markdown format.
+"""
+
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
     """Generates specific content based on content type"""
     if not use_chunked:
@@ -4865,7 +5498,7 @@ Choose between improving existing chapters or chatting with EeeBee for content a
 """)
 
 # Create tabs for different functionalities
-tab1, tab2 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee"])
+tab1, tab2, tab3, tab4 = st.tabs(["📚 Chapter Improver", "💬 Content Chat with EeeBee", "🔍 PDF Checker", "🩹 Remedial Content"])
 
 with tab1:
     st.header("📚 Book Chapter Improver Tool")
@@ -5960,5 +6593,439 @@ with tab2:
                     response_placeholder.markdown(error_message)
                     st.session_state.chat_messages.append({"role": "assistant", "content": error_message})
 
+with tab3:
+    st.header("🔍 PDF Checker")
+    st.markdown("""
+    Check your PDF documents for spelling errors, grammar issues, content coherence, and formatting.
+    This tool provides comprehensive analysis to ensure your educational content is polished and professional.
+    """)
+    
+    # PDF Checker section
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        # Grade and Subject Selection
+        grade_checker = st.selectbox(
+            "Select Grade Level",
+            options=[f"Grade {i}" for i in range(1, 13)],
+            key="grade_checker"
+        )
+        
+        subject_checker = st.selectbox(
+            "Select Subject",
+            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science"],
+            key="subject_checker"
+        )
+    
+    with col2:
+        # Check options
+        st.markdown("**Check Options:**")
+        check_spelling = st.checkbox("Check Spelling", value=True, key="check_spelling")
+        check_grammar = st.checkbox("Check Grammar", value=True, key="check_grammar")
+        check_coherence = st.checkbox("Check Content Coherence", value=True, key="check_coherence")
+        check_formatting = st.checkbox("Check Formatting", value=True, key="check_formatting")
+    
+    # File uploader
+    uploaded_pdf_checker = st.file_uploader(
+        "Upload PDF for checking",
+        type=['pdf'],
+        key="pdf_checker_upload"
+    )
+    
+    if uploaded_pdf_checker is not None:
+        if st.button("🔍 Check PDF", type="primary", key="check_pdf_button"):
+            with st.spinner("Analyzing your PDF..."):
+                try:
+                    # Extract text from PDF
+                    pdf_text = extract_text_from_pdf(uploaded_pdf_checker)
+                    
+                    if not pdf_text.strip():
+                        st.warning("No text found in PDF. Attempting OCR...")
+                        pdf_text = process_pdf_with_mistral_ocr(uploaded_pdf_checker)
+                    
+                    if pdf_text.strip():
+                        # Prepare the checking prompt
+                        check_types = []
+                        if check_spelling:
+                            check_types.append("spelling errors")
+                        if check_grammar:
+                            check_types.append("grammar issues")
+                        if check_coherence:
+                            check_types.append("content coherence and logical flow")
+                        if check_formatting:
+                            check_types.append("formatting consistency")
+                        
+                        checking_prompt = f"""You are an expert educational content reviewer. Analyze the following {grade_checker} {subject_checker} content for {', '.join(check_types)}.
+
+Content to analyze:
+{pdf_text}
+
+Please provide a detailed analysis with:
+1. **Overall Assessment**: Brief overview of the document quality
+2. **Issues Found**: List specific issues with page/location references where possible
+3. **Suggestions**: Actionable recommendations for improvement
+4. **Summary**: Key points and priority fixes
+
+Format your response in a clear, structured manner using markdown."""
+
+                        # Call AI for analysis
+                        headers = {
+                            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                            "HTTP-Referer": YOUR_SITE_URL,
+                            "X-Title": YOUR_SITE_NAME,
+                            "Content-Type": "application/json"
+                        }
+                        
+                        response = requests.post(
+                            "https://openrouter.ai/api/v1/chat/completions",
+                            headers=headers,
+                            json={
+                                "model": MODEL_NAME,
+                                "messages": [{"role": "user", "content": checking_prompt}],
+                                "max_tokens": 4000,
+                                "temperature": 0.3
+                            }
+                        )
+                        
+                        if response.status_code == 200:
+                            result = response.json()
+                            analysis = result['choices'][0]['message']['content']
+                            
+                            # Display results
+                            st.success("✅ PDF Analysis Complete!")
+                            
+                            # Save results
+                            save_content_safely("pdf_analysis", analysis, grade_checker)
+                            
+                            # Create expandable sections for results
+                            with st.expander("📊 Full Analysis Report", expanded=True):
+                                st.markdown(analysis)
+                            
+                            # Download button for analysis
+                            st.download_button(
+                                label="📥 Download Analysis Report",
+                                data=analysis,
+                                file_name=f"pdf_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                                mime="text/plain",
+                                key="download_pdf_analysis"
+                            )
+                            
+                        else:
+                            st.error(f"API Error: {response.status_code}")
+                    else:
+                        st.error("Could not extract text from PDF")
+                        
+                except Exception as e:
+                    st.error(f"Error analyzing PDF: {str(e)}")
+# Tab 4: Remedial Content Generator
+with tab4:
+    st.header("🩹 Remedial Content Generator")
+    st.markdown("""
+    Generate comprehensive remedial content for Science and Mathematics based on specific concepts.
+    Choose your grade level, subject, and concept to create targeted educational materials.
+    """)
+    
+    # Grade and Subject Selection
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        grade_remedial = st.selectbox(
+            "Select Grade Level",
+            options=[f"Grade {i}" for i in range(1, 13)],
+            key="grade_remedial"
+        )
+        
+    with col2:
+        # Determine available subjects based on grade
+        grade_num = int(grade_remedial.split()[-1])
+        if grade_num <= 2:
+            subjects = ["Mathematics"]
+        else:
+            subjects = ["Science", "Mathematics"]
+            
+        subject_remedial = st.selectbox(
+            "Select Subject",
+            options=subjects,
+            key="subject_remedial"
+        )
+    
+    # Concept input
+    concept_name = st.text_input(
+        "Enter the concept name",
+        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'Fractions'}",
+        key="concept_input"
+    )
+    
+    # Content type selection based on grade and subject
+    st.markdown("### Select Content Types to Generate:")
+    
+    if subject_remedial == "Science":
+        # Science content options
+        col1, col2 = st.columns(2)
+        with col1:
+            gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_science")
+            gen_notes = st.checkbox("Detailed Notes", value=True, key="gen_notes_science")
+            gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_science")
+        with col2:
+            gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_science")
+            gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_science")
+            
+    else:  # Mathematics
+        if grade_num <= 2:
+            # Class 1-2 Mathematics options
+            col1, col2 = st.columns(2)
+            with col1:
+                gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_math12")
+                gen_notes = st.checkbox("Notes with Examples", value=True, key="gen_notes_math12")
+                gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_math12")
+            with col2:
+                gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_math12")
+                gen_fun_activity = st.checkbox("Fun Activity", value=True, key="gen_fun_math12")
+        else:
+            # Class 3-8 Mathematics options
+            col1, col2 = st.columns(2)
+            with col1:
+                gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_math38")
+                gen_notes = st.checkbox("Notes with Examples", value=True, key="gen_notes_math38")
+                gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_math38")
+            with col2:
+                gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_math38")
+                gen_fun_activity = st.checkbox("Fun Activity", value=True, key="gen_fun_math38")
+    
+    # Generate button
+    if concept_name and st.button("🚀 Generate Remedial Content", type="primary", key="generate_remedial"):
+        with st.spinner("Generating remedial content..."):
+            try:
+                # Prepare content types to generate
+                content_to_generate = []
+                
+                if subject_remedial == "Science":
+                    if st.session_state.get("gen_video_science", False):
+                        content_to_generate.append("video_script")
+                    if st.session_state.get("gen_notes_science", False):
+                        content_to_generate.append("notes")
+                    if st.session_state.get("gen_worksheet_science", False):
+                        content_to_generate.append("worksheet")
+                    if st.session_state.get("gen_mcq_science", False):
+                        content_to_generate.append("mcq_bank")
+                    if st.session_state.get("gen_summary_science", False):
+                        content_to_generate.append("summary")
+                else:  # Mathematics
+                    if grade_num <= 2:
+                        if st.session_state.get("gen_video_math12", False):
+                            content_to_generate.append("video_script")
+                        if st.session_state.get("gen_notes_math12", False):
+                            content_to_generate.append("notes")
+                        if st.session_state.get("gen_worksheet_math12", False):
+                            content_to_generate.append("worksheet")
+                        if st.session_state.get("gen_mcq_math12", False):
+                            content_to_generate.append("mcq_bank")
+                        if st.session_state.get("gen_fun_math12", False):
+                            content_to_generate.append("fun_activity")
+                    else:
+                        if st.session_state.get("gen_video_math38", False):
+                            content_to_generate.append("video_script")
+                        if st.session_state.get("gen_notes_math38", False):
+                            content_to_generate.append("notes")
+                        if st.session_state.get("gen_worksheet_math38", False):
+                            content_to_generate.append("worksheet")
+                        if st.session_state.get("gen_mcq_math38", False):
+                            content_to_generate.append("mcq_bank")
+                        if st.session_state.get("gen_fun_math38", False):
+                            content_to_generate.append("fun_activity")
+                
+                if not content_to_generate:
+                    st.warning("Please select at least one content type to generate.")
+                else:
+                    # Generate remedial content
+                    generated_content = {}
+                    
+                    for content_type in content_to_generate:
+                        st.info(f"Generating {content_type.replace('_', ' ')}...")
+                        
+                        # Prepare the prompt based on content type
+                        if content_type == "video_script":
+                            prompt = f"""Create a detailed video script with narration for teaching the concept '{concept_name}' for {grade_remedial} {subject_remedial}.
+
+The script should include:
+1. Opening hook to grab attention
+2. Clear explanation of the concept with visual descriptions
+3. Step-by-step breakdown for complex topics
+4. Engaging examples and analogies
+5. Interactive elements or questions
+6. Summary and closing
+
+Format the script with:
+- Scene descriptions in [brackets]
+- Narration in regular text
+- Timing estimates for each section
+
+Make it engaging and age-appropriate for {grade_remedial} students."""
+                        
+                        elif content_type == "notes":
+                            prompt = f"""Create comprehensive notes for the concept '{concept_name}' for {grade_remedial} {subject_remedial}.
+
+Include:
+1. Clear definition and explanation
+2. Key points and important terms
+3. Detailed examples with solutions
+4. Common misconceptions and clarifications
+5. Visual aids descriptions (diagrams, charts)
+6. Practice problems with step-by-step solutions
+7. Summary of main concepts
+
+Format with clear headings, bullet points, and organized sections."""
+                        
+                        elif content_type == "worksheet":
+                            prompt = f"""Create a comprehensive worksheet for practicing '{concept_name}' for {grade_remedial} {subject_remedial}.
+
+Include:
+1. Warm-up questions (5 easy questions)
+2. Practice problems (10 medium difficulty)
+3. Challenge questions (5 difficult)
+4. Word problems or application questions (5)
+5. Fill in the blanks (5)
+6. True/False with corrections (5)
+7. Matching exercises if applicable
+
+Provide answer key at the end with detailed solutions."""
+                        
+                        elif content_type == "mcq_bank":
+                            prompt = f"""Create a bank of 40 Multiple Choice Questions (MCQs) on '{concept_name}' for {grade_remedial} {subject_remedial}.
+
+For each question include:
+- Clear question stem
+- 4 options (A, B, C, D)
+- Correct answer marked
+- Brief explanation of why the answer is correct
+- Difficulty level (Easy/Medium/Hard)
+
+Distribute questions as:
+- 15 Easy questions (basic understanding)
+- 20 Medium questions (application)
+- 5 Hard questions (analysis/problem-solving)
+
+Vary question types: factual, conceptual, application-based."""
+                        
+                        elif content_type == "summary":
+                            prompt = f"""Create a concise summary of key points for '{concept_name}' for {grade_remedial} {subject_remedial}.
+
+Include:
+1. Main concept in 2-3 sentences
+2. 5-7 key points to remember
+3. Important formulas or definitions
+4. Quick tips for solving problems
+5. Common mistakes to avoid
+6. Real-world applications
+
+Format as bullet points for easy revision."""
+                        
+                        elif content_type == "fun_activity":
+                            prompt = f"""Create an engaging fun activity for teaching '{concept_name}' for {grade_remedial} Mathematics.
+
+Include:
+1. Activity name and objective
+2. Materials needed (simple, easily available)
+3. Step-by-step instructions
+4. Learning outcomes
+5. Variations for different skill levels
+6. Extension activities
+7. Assessment ideas
+
+Make it hands-on, interactive, and age-appropriate."""
+                        
+                        # Call API to generate content
+                        messages = [{
+                            "role": "user",
+                            "content": prompt
+                        }]
+                        
+                        headers = {
+                            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                            "HTTP-Referer": YOUR_SITE_URL,
+                            "X-Title": YOUR_SITE_NAME,
+                            "Content-Type": "application/json"
+                        }
+                        
+                        response = requests.post(
+                            "https://openrouter.ai/api/v1/chat/completions",
+                            headers=headers,
+                            json={
+                                "model": MODEL_NAME,
+                                "messages": messages,
+                                "max_tokens": 3000,
+                                "temperature": 0.7
+                            }
+                        )
+                        
+                        if response.status_code == 200:
+                            result = response.json()
+                            content = result['choices'][0]['message']['content']
+                            generated_content[content_type] = content
+                        else:
+                            st.error(f"Error generating {content_type}: {response.status_code}")
+                    
+                    # Display generated content
+                    if generated_content:
+                        st.success("✅ Remedial content generated successfully!")
+                        
+                        # Create tabs for different content types
+                        tab_names = []
+                        for ct in generated_content.keys():
+                            readable_name = ct.replace('_', ' ').title()
+                            tab_names.append(readable_name)
+                        
+                        tabs = st.tabs(tab_names)
+                        
+                        for idx, (content_type, content) in enumerate(generated_content.items()):
+                            with tabs[idx]:
+                                st.markdown(content)
+                                
+                                # Download button for each content type
+                                st.download_button(
+                                    label=f"📥 Download {content_type.replace('_', ' ').title()}",
+                                    data=content,
+                                    file_name=f"{concept_name}_{content_type}_{grade_remedial}.txt",
+                                    mime="text/plain",
+                                    key=f"download_{content_type}"
+                                )
+                        
+                        # Combined download button
+                        st.markdown("---")
+                        combined_content = f"# Remedial Content for {concept_name}\n{grade_remedial} {subject_remedial}\n\n"
+                        
+                        for content_type, content in generated_content.items():
+                            readable_name = content_type.replace('_', ' ').title()
+                            combined_content += f"\n\n## {readable_name}\n\n{content}\n\n"
+                            combined_content += "="*50 + "\n"
+                        
+                        # Create Word document
+                        doc = create_word_document(combined_content)
+                        doc_io = io.BytesIO()
+                        doc.save(doc_io)
+                        doc_io.seek(0)
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.download_button(
+                                label="📥 Download All Content (Text)",
+                                data=combined_content,
+                                file_name=f"{concept_name}_remedial_content_{grade_remedial}.txt",
+                                mime="text/plain",
+                                key="download_all_text"
+                            )
+                        with col2:
+                            st.download_button(
+                                label="📥 Download All Content (Word)",
+                                data=doc_io,
+                                file_name=f"{concept_name}_remedial_content_{grade_remedial}.docx",
+                                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                                key="download_all_word"
+                            )
+                            
+            except Exception as e:
+                st.error(f"Error generating content: {str(e)}")
+
 st.sidebar.markdown("---")
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
+
