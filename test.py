@@ -5517,17 +5517,33 @@ with tab1:
     💾 **Content Status**: Check the sidebar to monitor your content safety and recovery options.
     """)
 
-    # Grade Level Selector
-    grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
-    selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8, key="grade_selector_tab1") # Default to Grade 9
-
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)"],
-        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)", "Artificial Intelligence", "Robotics"],
+        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin. AI and Robotics options are designed for hands-on learning with IIT kits.",
         key="subject_selector_tab1"
     )
+
+    # Grade/Level Selector - Show levels only for AI/Robotics
+    if subject_type in ["Artificial Intelligence", "Robotics"]:
+        # Level Selector for AI/Robotics
+        level_options = [
+            "JL1 (Classes 1-3)",
+            "JL2 (Classes 4-5)", 
+            "SL1 (Classes 6-7)",
+            "SL2 (Classes 8-10)",
+            "SL3 (Class 11)"
+        ]
+        selected_level = st.selectbox("Select Target Level:", level_options, index=2, key="level_selector_tab1") # Default to SL1
+        
+        # For AI/Robotics, use the level as grade_level for prompts
+        selected_grade = selected_level
+    else:
+        # Regular Grade Selector for other subjects
+        grade_options = [f"Grade {i}" for i in range(1, 13)] # Grades 1-12
+        selected_grade = st.selectbox("Select Target Grade Level (CBSE):", grade_options, index=8, key="grade_selector_tab1") # Default to Grade 9
+        selected_level = None  # No level for other subjects
 
     # Word Limit Controls
     st.subheader("📝 Content Length Settings")
@@ -5686,6 +5702,54 @@ with tab1:
                     'exercises': exercises_words,
                     'projects': projects_words
                 }
+        elif subject_type == "Artificial Intelligence":
+            # Special word limits for AI
+            st.markdown("**Artificial Intelligence Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                mission_briefing_words = st.number_input("Mission Briefing (words)", min_value=200, value=300, step=25, key="ai_mission_words")
+                domain_analysis_words = st.number_input("Domain Analysis & Applications (words)", min_value=600, value=800, step=50, key="ai_domain_words")
+                core_concepts_words = st.number_input("Core Concepts (words)", min_value=2000, value=3000, step=100, key="ai_concepts_words")
+            
+            with col2:
+                hands_on_project_words = st.number_input("Hands-On Project (words)", min_value=1000, value=1500, step=100, key="ai_project_words")
+                assessment_words = st.number_input("Assessment & Debrief (words)", min_value=400, value=600, step=50, key="ai_assessment_words")
+                exercises_words = st.number_input("Exercises (words)", min_value=800, value=1000, step=50, key="ai_exercises_words")
+            
+            # Store word limits for AI
+            st.session_state.word_limits = {
+                'mission_briefing': mission_briefing_words,
+                'domain_analysis': domain_analysis_words,
+                'core_concepts': core_concepts_words,
+                'hands_on_project': hands_on_project_words,
+                'assessment': assessment_words,
+                'exercises': exercises_words
+            }
+        elif subject_type == "Robotics":
+            # Special word limits for Robotics
+            st.markdown("**Robotics Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                mission_briefing_words = st.number_input("Mission Briefing (words)", min_value=200, value=300, step=25, key="robotics_mission_words")
+                domain_analysis_words = st.number_input("Domain Analysis & Applications (words)", min_value=600, value=800, step=50, key="robotics_domain_words")
+                core_concepts_words = st.number_input("Core Concepts (words)", min_value=2000, value=3000, step=100, key="robotics_concepts_words")
+            
+            with col2:
+                hands_on_project_words = st.number_input("Hands-On Project (words)", min_value=1000, value=1500, step=100, key="robotics_project_words")
+                assessment_words = st.number_input("Assessment & Debrief (words)", min_value=400, value=600, step=50, key="robotics_assessment_words")
+                exercises_words = st.number_input("Exercises (words)", min_value=800, value=1000, step=50, key="robotics_exercises_words")
+            
+            # Store word limits for Robotics
+            st.session_state.word_limits = {
+                'mission_briefing': mission_briefing_words,
+                'domain_analysis': domain_analysis_words,
+                'core_concepts': core_concepts_words,
+                'hands_on_project': hands_on_project_words,
+                'assessment': assessment_words,
+                'exercises': exercises_words
+            }
         else:
             # Standard word limits for other subjects
             col1, col2, col3 = st.columns(3)
@@ -6496,21 +6560,33 @@ with tab2:
     col1, col2, col3 = st.columns([1, 1, 1])
     
     with col1:
-        # Grade level for chat context
-        chat_grade = st.selectbox(
-            "Grade Level Context:", 
-            [f"Grade {i}" for i in range(1, 13)], 
-            index=8, 
-            key="chat_grade"
+        # Subject context first to determine grade/level options
+        chat_subject = st.selectbox(
+            "Subject Context:",
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Artificial Intelligence", "Robotics", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            key="chat_subject"
         )
     
     with col2:
-        # Subject context
-        chat_subject = st.selectbox(
-            "Subject Context:",
-            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Social Studies", "English", "Hindi", "General Education", "Other"],
-            key="chat_subject"
-        )
+        # Conditional Grade/Level Selection based on subject
+        if chat_subject in ["Artificial Intelligence", "Robotics"]:
+            # Level Selector for AI/Robotics
+            level_options = [
+                "JL1 (Classes 1-3)",
+                "JL2 (Classes 4-5)", 
+                "SL1 (Classes 6-7)",
+                "SL2 (Classes 8-10)",
+                "SL3 (Class 11)"
+            ]
+            chat_grade = st.selectbox("Level Context:", level_options, index=2, key="chat_level")
+        else:
+            # Regular Grade Selector for other subjects
+            chat_grade = st.selectbox(
+                "Grade Level Context:", 
+                [f"Grade {i}" for i in range(1, 13)], 
+                index=8, 
+                key="chat_grade"
+            )
     
     with col3:
         # Clear chat button
@@ -6604,18 +6680,32 @@ with tab3:
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        # Grade and Subject Selection
-        grade_checker = st.selectbox(
-            "Select Grade Level",
-            options=[f"Grade {i}" for i in range(1, 13)],
-            key="grade_checker"
-        )
-        
+        # Subject Selection first to determine grade/level options
         subject_checker = st.selectbox(
             "Select Subject",
-            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science"],
+            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science", "Artificial Intelligence", "Robotics"],
             key="subject_checker"
         )
+        
+        # Conditional Grade/Level Selection
+        if subject_checker in ["Artificial Intelligence", "Robotics"]:
+            # Level Selector for AI/Robotics
+            level_options = [
+                "JL1 (Classes 1-3)",
+                "JL2 (Classes 4-5)", 
+                "SL1 (Classes 6-7)",
+                "SL2 (Classes 8-10)",
+                "SL3 (Class 11)"
+            ]
+            selected_level_checker = st.selectbox("Select Target Level:", level_options, index=2, key="level_selector_checker")
+            grade_checker = selected_level_checker  # Use level as grade for AI/Robotics
+        else:
+            # Regular Grade Selector for other subjects
+            grade_checker = st.selectbox(
+                "Select Grade Level",
+                options=[f"Grade {i}" for i in range(1, 13)],
+                key="grade_checker"
+            )
     
     with col2:
         # Check options
