@@ -636,7 +636,7 @@ Please provide ONLY the improved version of this specific chunk in Markdown form
                     },
                     model=MODEL_NAME,
                     messages=messages,
-                    max_tokens=32768,
+                    max_tokens=60000,
                     temperature=0.3,
                 )
                 
@@ -6682,7 +6682,7 @@ Format your response in a clear, structured manner using markdown."""
                             json={
                                 "model": MODEL_NAME,
                                 "messages": [{"role": "user", "content": checking_prompt}],
-                                "max_tokens": 4000,
+                                "max_tokens": 60000,
                                 "temperature": 0.3
                             }
                         )
@@ -6953,8 +6953,8 @@ Make it hands-on, interactive, and age-appropriate."""
                             json={
                                 "model": MODEL_NAME,
                                 "messages": messages,
-                                "max_tokens": 3000,
-                                "temperature": 0.7
+                                "max_tokens": 60000,
+                                "temperature": 0.3
                             }
                         )
                         
