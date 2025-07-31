@@ -1341,30 +1341,30 @@ Provide the comprehensive Science & E.V.S. exercises in Markdown format.
 
 # Mathematics-specific prompt functions
 def create_math_chapter_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates a mathematics-specific chapter content prompt"""
+    """Creates a mathematics-specific chapter content prompt following Haese and Harris structure"""
     # Default word limits if none provided
     if word_limits is None:
         word_limits = {
-            'hook': 70,
-            'learning_outcome': 70,
-            'real_world': 50,
-            'previous_class': 100,
-            'history': 100,
-            'current_concepts': 4000,
-            'summary': 700,
-            'link_learn': 250,
-            'image_based': 250
+            'opening': 100,
+            'objectives': 80,
+            'section_intro': 150,
+            'theory': 800,
+            'worked_examples': 600,
+            'investigation': 300,
+            'exercise': 400,
+            'review': 500,
+            'technology': 200
         }
     
-    return f"""You are an expert in mathematical education content development, specifically for CBSE curriculum.
+    return f"""You are an expert in mathematical education content development, following the Haese and Harris textbook methodology.
 This is the user's OWN CONTENT being used for EDUCATIONAL PURPOSES ONLY.
 
 IMPORTANT: This is the user's own copyright material, and they have explicitly authorized its analysis and transformation for educational purposes.
 
 You are analyzing a mathematics book chapter intended for **{grade_level} (CBSE)**.
-The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Mathematics education.
+The content should follow Haese and Harris structure while aligning with NCERT, NCF, and NEP 2020 guidelines.
 
-**CRITICAL INSTRUCTION**: The PDF may contain MULTIPLE MAJOR SECTIONS (e.g., Section 1, Section 2, Section 3, etc.). You MUST include ALL sections present in the PDF. Do NOT stop after completing just one or two sections. Generate comprehensive content for EVERY section found in the document.
+**CRITICAL INSTRUCTION**: The PDF may contain MULTIPLE MAJOR SECTIONS. You MUST include ALL sections present in the PDF following the Haese and Harris systematic approach.
 
 **Model Chapter Progression and Elements (Base Structure):**
 ---
@@ -1373,205 +1373,213 @@ The book is intended to align with NCERT, NCF, and NEP 2020 guidelines for Mathe
 
 **Target Audience:** {grade_level} (CBSE Mathematics Syllabus)
 
-Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the Model Chapter Progression structure enhanced with mathematics-specific elements.
+Your task is to generate COMPREHENSIVE MATHEMATICS CHAPTER CONTENT following the **Haese and Harris methodology**.
 
-**IMPORTANT**: If the PDF contains multiple sections (e.g., "Section 2: Place Value", "Section 3: Operations and Estimation with Large Numbers"), you MUST generate complete content for EACH section. The structure below should be applied to EACH major section in the PDF.
+## HAESE AND HARRIS CHAPTER STRUCTURE
 
-**REQUIRED SECTIONS (Generate ALL with substantial content for EACH major section in the PDF):**
+### CHAPTER OPENER
 
-## I. Chapter Opener
+**Chapter [Number]: [Chapter Title]**
 
-1. **Chapter Title** - Engaging and mathematically focused
+1. **Opening Scenario/Problem** (Target: {word_limits.get('opening', 100)} words)
+   - Present a real-world mathematical scenario that motivates the entire chapter
+   - Use engaging, practical situations that students can relate to
+   - Provide a challenging question that will be answered by the end of the chapter
+   - Include a detailed image prompt for the opening scenario
 
-2. **Hook (with Image Prompt)** (Target: {word_limits.get('hook', 80)} words)
-   - Create an engaging mathematical opening that captures student interest
-   - Use real-life mathematical scenarios, surprising mathematical facts, or thought-provoking mathematical questions
-   - Connect to students' daily mathematical experiences
-   - Include a detailed image prompt for a compelling mathematical visual
+2. **Learning Objectives** (Target: {word_limits.get('objectives', 80)} words)
+   - Clear, specific learning outcomes using mathematical language
+   - Organized as bullet points with action verbs
+   - Aligned with curriculum standards
+   - Example format: "By the end of this chapter, you should be able to:"
 
-3. **Real-World Connection** (Target: {word_limits.get('real_world', 100)} words)
-   - Provide multiple real-world applications of the mathematical concepts
-   - Show how math is used in everyday life situations
-   - Include examples from technology, engineering, finance, science, etc.
-   - Connect to mathematical careers and future studies
+3. **Chapter Overview** (Target: 50 words)
+   - Brief roadmap of sections and key concepts
+   - Show logical progression of mathematical ideas
 
-4. **Learning Outcomes** (Target: {word_limits.get('learning_outcome', 125)} words)
-   - List specific, measurable mathematical learning objectives
-   - Use action verbs (define, explain, calculate, apply, analyze, solve, prove, etc.)
-   - Align with Bloom's Taxonomy levels for mathematics
-   - Connect to CBSE mathematics curriculum standards
+### MAIN CONTENT SECTIONS
 
-5. **Previous Class Link** (Target: {word_limits.get('previous_class', 100)} words)
-   - Link to prior mathematical knowledge from previous classes
-   - Explain how previous concepts connect to current learning
-   - Provide a brief review of essential prerequisites
+**For EACH major section in the PDF, create the following structure:**
 
-6. **Chapter Map/Overview** (Target: {word_limits.get('summary', 100)} words)
-   - Visual layout of mathematical concepts (mind map or flowchart description)
-   - Show mathematical progressions and connections
+## Section [X.Y]: [Section Title]
 
-7. **Meet the Character (EeeBee)** (Target: 50-100 words)
-   - Introduce EeeBee as a mathematical guide/helper throughout the chapter
+### A. SECTION OPENING (Target: {word_limits.get('section_intro', 150)} words)
+- **Opening Investigation/Question**
+  - Pose a specific mathematical question or scenario
+  - Connect to real-world applications
+  - Motivate the need for the mathematical concepts in this section
 
-## II. Core Content Sections (REPEAT FOR EACH MAJOR SECTION IN THE PDF)
+### B. THEORY AND DEVELOPMENT (Target: {word_limits.get('theory', 800)} words per section)
 
-**NOTE: If the PDF has Section 1, Section 2, Section 3, etc., create complete content for EACH section following this structure:**
+**[Concept Name]**
 
-8. **Introduction of Section** (Target: 100 words)
-   - Give a related section introduction that sets the mathematical context
-   - Explain the importance of the mathematical concepts to be learned
-   - Connect to the broader mathematical curriculum
+1. **Mathematical Development**
+   - Systematic introduction of concepts
+   - Clear definitions in highlighted boxes
+   - Step-by-step mathematical reasoning
+   - Logical progression from simple to complex
 
-9. **History of the chapter** (Target: 150 words)
-   - Provide comprehensive historical background of the chapter
-   - Include key mathematicians, their contributions, and discoveries
-   - Explain the timeline of mathematical developments
-   - Explain the history of the chapter
+2. **Key Concepts and Formulas**
+   - Important mathematical results in clearly marked boxes
+   - Theorems and properties with brief explanations
+   - Formula derivations where appropriate
 
-10. **Warm-up Questions** (Target: {word_limits.get('previous_class', 100)} words)
-    - Create 5-7 engaging warm-up questions that connect to prior mathematical knowledge
-    - Include a mix of question types (mental math, real-world problems, pattern recognition)
+3. **Mathematical Notation**
+   - Introduce and explain new mathematical symbols
+   - Consistent use of notation throughout
 
-11. **Current Concepts** (Target: {word_limits.get('current_concepts', 4000)} words per section)
-    
-    For each major concept in EACH section, include ALL of the following:
-    
-    **A. Concept Introduction** (Target: 120 words per concept)
-    - Clear introduction to each mathematical concept
-    - Simple, clear mathematical language
-    - Use analogies and mathematical examples
-    - Identify all subconcepts that will be covered under this main concept
-    
-    **B. Subconcepts (As per NCERT Books)** (Target: 200 words per concept)
-    - **IMPORTANT**: Identify and include ALL subconcepts present in NCERT books for this topic
-    - Each main concept typically has 2-5 subconcepts in NCERT mathematics books
-    - Subconcepts should be clearly labeled and integrated within the main concept
-    - Examples of subconcepts:
-      * For "Fractions": Types of fractions, Equivalent fractions, Comparing fractions, etc.
-      * For "Triangles": Types of triangles, Properties of triangles, Congruence, etc.
-      * For "Integers": Positive and negative integers, Operations on integers, Properties, etc.
-    - Each subconcept should include:
-      * Definition and explanation 
-      * Examples and illustrations
-      * Key points to remember
-      * Common errors to avoid
-    
-    **C. Mathematical Explanation** (Target: 450 words per concept)
-    - Detailed theoretical understanding of the mathematical concept and its subconcepts
-    - Include step-by-step mathematical reasoning and derivations
-    - Show different mathematical approaches where applicable
-    - Ensure each subconcept is thoroughly explained with connections to the main concept
-    
-    **D. Solved Examples** (Target: 550 words per concept)
-    - Provide 4-5 different worked examples for each concept
-    - Include examples that cover different subconcepts
-    - Include step-by-step solutions with clear explanations
-    - Use varied difficulty levels and question formats
-    - Ensure examples demonstrate application of all subconcepts
-    
-    **E. Concept-Based Exercise Questions** (Target: 450 words per concept)
-    Create the following specific mathematical question types for each concept:
-    
-    1. **Fill in the Blanks** - 3-4 questions
-       - Mathematical formulas, definitions, and key concept completion
-    
-    2. **Conversion-Based Questions** - 2 questions
-       - Unit conversions, mathematical transformations
-    
-    3. **Word Problems (Real-life Context)** - 5 questions
-       - Real-world mathematical scenarios applying the concept
-       - Varied difficulty levels from basic to complex applications
-    
-    4. **Match the Columns** - 1 question (5 matches)
-       - Mathematical concepts with definitions, formulas with applications
-    
-    5. **Estimation Questions (Real-life Estimation)** - 5 questions
-       - Practical mathematical estimation scenarios
-       - Real-world mathematical approximation problems
-    
-    6. **Miscellaneous Questions** - 3 questions
-       - Mixed question types testing various aspects of the concept
-       - Include higher-order thinking and application problems
-    
-    **F. Visuals** (Throughout each concept)
-    - Include detailed image prompts for mathematical diagrams, graphs, and illustrations
-    
-    **G. Mathematical Activities/Experiments** (Target: 220 words per concept)
-    - Step-by-step mathematical experiments or investigations
-    - Inquiry-based mathematical activities
-    
-    **H. Check Your Understanding** (Target: 170 words per concept)
-    - Quick check questions (2-3 simple questions) to test immediate understanding
-    - Brief conceptual questions or simple calculations
-    
-    **I. Key Mathematical Terms** (Target: 120 words per concept)
-    - Highlighted mathematical terminology in text
-    - Clear mathematical definitions
-    
-    **J. Mathematical Applications** (Target: 220 words per concept)
-    - Show relevance to daily life, mathematical careers, technology
-    
-    **K. Fun Mathematical Facts** (Target: 120 words per concept)
-    - Include interesting mathematical facts related to the concept
-    
-    **L. Think About It! (Mathematical Exploration)** (Target: 120 words per concept)
-    - Present thought-provoking mathematical questions or scenarios
-    
-    **M. Mental Mathematics** (Target: 170 words per concept)
-    - Provide mental mathematics strategies and techniques
+4. **Connections and Links**
+   - Connect to previously learned mathematics
+   - Show relationships between concepts
+   - Cross-references to other sections/chapters
 
-## III. Special Features (Apply to the ENTIRE chapter, not just one section)
+### C. WORKED EXAMPLES (Target: {word_limits.get('worked_examples', 600)} words per section)
 
-12. **Common Mathematical Misconceptions** (Target: 250 words)
-    - 2-3 misconceptions per mathematical concept
-    - Correct early mathematical misunderstandings
+**Example [Number]: [Descriptive Title]**
 
-13. **21st Century Skills Focus** (Target: {word_limits.get('skill_activity', 350)} words)
-    - Mathematical Design Challenge
-    - Mathematical Debate
-    - Collaborate & Create
+For each worked example, include:
+- **Given/Find/Solution** format
+- Clear step-by-step working
+- Explanatory notes alongside calculations
+- Alternative methods where applicable
+- Checking/verification of answers
+- Common errors to avoid
 
-14. **Differentiation** (Target: {word_limits.get('exercises', 250)} words)
-    - Challenge sections for advanced mathematical learners
-    - Support sections for mathematical revision
+Provide 3-4 worked examples per section covering:
+- Basic application of concepts
+- More complex problems
+- Real-world applications
+- Technology-enhanced solutions
 
-15. **Technology Integration** (Target: {word_limits.get('stem_activity', 180)} words)
-    - Mathematical software and tools
-    - Digital mathematical simulations
+### D. INVESTIGATION/DISCOVERY ACTIVITY (Target: {word_limits.get('investigation', 300)} words per section)
 
-16. **Character Integration** (Throughout)
-    - EeeBee appears throughout to ask mathematical questions
+**Investigation [Number]: [Title]**
 
-## IV. Chapter Wrap-Up (For the ENTIRE chapter)
+- **Aim**: Clear statement of what students will discover
+- **Method**: Step-by-step instructions
+- **Materials**: List of required materials/technology
+- **Questions**: Guided questions leading to discovery
+- **Conclusion**: Summary of mathematical findings
+- **Extension**: Further exploration opportunities
 
-17. **Self-Assessment Checklist** (Target: {word_limits.get('exercises', 220)} words)
-    - Create a comprehensive self-assessment checklist
+### E. TECHNOLOGY INTEGRATION (Target: {word_limits.get('technology', 200)} words per section)
 
-18. **Chapter-wise Miscellaneous Exercise** (Target: {word_limits.get('exercises', 550)} words)
-    - MCQs (5 questions)
-    - Short/Long Answer (3 short, 2 long)
-    - Open-ended Mathematical Problems (2 questions)
-    - Assertion & Reason (3 statements)
-    - Mathematical Concept Mapping (1 map)
-    - True/False with Justification (5 statements)
-    - Mathematical Case Studies (1 scenario)
-    - Mathematical Puzzle (1 puzzle)
-    - Thinking Based Activities
+**Using Technology: [Tool Name]**
 
-19. **Apply Your Mathematical Knowledge** (Target: {word_limits.get('skill_activity', 280)} words)
-    - Real-world mathematical application tasks
-    - Project-based mathematical problems
+- Specific instructions for using calculators/software
+- Screenshots or detailed descriptions of inputs
+- Interpretation of technological outputs
+- Comparison with manual calculations
+- When to use technology vs. manual methods
 
-**CONTENT REQUIREMENTS:**
-* **CRITICAL**: Include ALL major sections from the PDF (e.g., if there are Sections 1, 2, and 3, generate complete content for ALL three)
-* **Mathematical Accuracy**: Ensure all mathematical content is accurate
-* **Clear Mathematical Language**: Use precise mathematical terminology
-* **Step-by-step Solutions**: Provide detailed mathematical working
-* **Visual Integration**: Include detailed image prompts
-* **Progressive Difficulty**: Structure content from basic to advanced
-* DO NOT use the same mathematical figures (numbers) from the pdf
+### F. EXERCISE SETS (Target: {word_limits.get('exercise', 400)} words per section)
 
-Provide ONLY the comprehensive mathematics chapter content in Markdown format. Remember to include EVERY section found in the PDF document.
+**Exercise [Section Number]**
+
+Organize questions in progressive difficulty:
+
+1. **Skills Practice** (Questions 1-8)
+   - Basic application of formulas and concepts
+   - Drill exercises for fluency
+   - Simple substitution problems
+
+2. **Problem Solving** (Questions 9-15)
+   - Multi-step problems
+   - Application to real-world contexts
+   - Synthesis of multiple concepts
+
+3. **Mathematical Reasoning** (Questions 16-20)
+   - Proof and justification problems
+   - Analysis and evaluation tasks
+   - Open-ended investigations
+
+4. **Extension/Challenge** (Questions 21-25)
+   - Higher-order thinking problems
+   - Competition-style questions
+   - Cross-curricular applications
+
+**Question Types to Include:**
+- Multiple choice (with detailed explanations)
+- Short answer calculations
+- Extended response problems
+- Graphical/visual problems
+- Real-world modeling tasks
+- Proof and reasoning questions
+
+### CHAPTER REVIEW AND ASSESSMENT
+
+## Chapter [Number] Review
+
+### A. CHAPTER SUMMARY (Target: {word_limits.get('review', 200)} words)
+- **Key Concepts**: Bullet-point summary of main ideas
+- **Important Formulas**: Comprehensive formula list
+- **Key Skills**: Summary of mathematical skills developed
+
+### B. REVIEW EXERCISES (Target: {word_limits.get('review', 500)} words)
+
+**Mixed Practice**
+- 20-25 questions covering all chapter concepts
+- Progressive difficulty levels
+- Integration of multiple concepts
+- Real-world application problems
+
+**Question Categories:**
+1. **Concept Review** (Questions 1-8)
+2. **Skills Application** (Questions 9-16)  
+3. **Problem Solving** (Questions 17-22)
+4. **Challenge Problems** (Questions 23-25)
+
+### C. CHAPTER TEST (Target: 300 words)
+- Formal assessment covering all learning objectives
+- Time allocation guidelines
+- Mark allocation clearly shown
+- Balanced coverage of all sections
+
+### SPECIAL HAESE AND HARRIS FEATURES
+
+### Mathematical Modeling Projects
+- Extended real-world applications
+- Cross-curricular connections
+- Use of mathematical software/calculators
+- Presentation and communication components
+
+### Historical Context Boxes
+- Brief historical notes about mathematical development
+- Famous mathematicians and their contributions
+- Evolution of mathematical concepts
+
+### Career Connections
+- Real-world applications in various careers
+- Mathematical professions and pathways
+- Industry applications of chapter concepts
+
+### Common Errors and Misconceptions
+- Typical student mistakes highlighted
+- Correct mathematical reasoning emphasized
+- Prevention strategies provided
+
+**FORMATTING REQUIREMENTS:**
+- Use clear section numbering (X.Y format)
+- Include mathematical formatting with LaTeX notation
+- Provide detailed image prompts for diagrams and graphs
+- Use consistent mathematical terminology
+- Include cross-references between sections
+- Maintain logical flow and progression
+
+**MATHEMATICAL STANDARDS:**
+- Ensure mathematical accuracy and rigor
+- Use appropriate mathematical language
+- Include proper mathematical notation
+- Provide complete solutions and working
+- Connect to curriculum standards
+
+**IMPORTANT**: For each major section in the PDF (e.g., Section 1, Section 2, etc.), apply the complete Haese and Harris structure above. DO NOT stop after one section - generate comprehensive content for ALL sections found in the document.
+
+IMPORTANT: Keep the total word count to approximately {word_limits.get('total', 8000)} words per major section. Adjust the detail level accordingly.
+
+For mathematical examples, ALWAYS show each step on a new line with proper spacing, use LaTeX notation ($...$) for all mathematical expressions, and show the work clearly with explanation first, then mathematical expression on the next line.
+
+Generate ONLY the comprehensive mathematics chapter content in Markdown format following the Haese and Harris methodology. Include EVERY section found in the PDF document with complete structure for each.
 """
 
 def create_math_exercises_prompt(grade_level, model_progression_text, word_limits=None):
