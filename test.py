@@ -218,7 +218,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-pro-preview"
+MODEL_NAME = "google/gemini-2.5-pro"
 # --- Helper Functions ---
 
 def load_model_chapter_progression(file_path="Model Chapter Progression and Elements.txt"):
