@@ -4232,6 +4232,41 @@ Provide comprehensive Robotics creative projects in Markdown format.
 
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
     """Generates specific content based on content type"""
+    
+    # Special handling for AI subject without PDF
+    if subject_type == "Artificial Intelligence" and pdf_bytes is None:
+        # Direct generation without PDF for AI textbook creation
+        try:
+            prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
+            
+            # Show detailed info for AI chapter generation
+            if 'ai_chapter_selected' in st.session_state:
+                chapter_info = st.session_state['ai_chapter_selected']
+                st.info(f"📚 Generating {content_type} content for {grade_level}\n\n📖 Chapter: {chapter_info}")
+            else:
+                st.info(f"Generating {content_type} content for {grade_level}...")
+            
+            # Direct API call without PDF content
+            messages = [{"role": "user", "content": prompt}]
+            
+            completion = client.chat.completions.create(
+                extra_headers={
+                    "HTTP-Referer": YOUR_SITE_URL,
+                    "X-Title": YOUR_SITE_NAME,
+                },
+                model=MODEL_NAME,
+                messages=messages,
+                max_tokens=70000,  # Increased for comprehensive AI textbook chapters
+                temperature=0.4,
+            )
+            
+            content = completion.choices[0].message.content
+            return content, "Success"
+            
+        except Exception as e:
+            return None, f"Error generating AI content: {str(e)}"
+    
+    # Regular flow for other subjects with PDF
     if not use_chunked:
         # Standard approach
         try:
@@ -4992,6 +5027,30 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     else:
         prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
+    # Special handling for AI subject without PDF
+    if subject_type == "Artificial Intelligence" and pdf_bytes is None:
+        # Direct streaming without PDF for AI textbook creation
+        messages = [{"role": "user", "content": prompt}]
+        
+        # Stream the response
+        stream = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": YOUR_SITE_URL,
+                "X-Title": YOUR_SITE_NAME,
+            },
+            model=MODEL_NAME,
+            messages=messages,
+            max_tokens=70000,  # Increased for comprehensive AI textbook chapters
+            temperature=0.4,
+            stream=True
+        )
+        
+        for chunk in stream:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
+        return
+    
+    # Regular flow with PDF
     if use_openrouter_method:
         # Create messages with direct PDF upload
         messages = create_messages_with_pdf_openrouter(prompt, pdf_bytes, pdf_filename)
@@ -5016,8 +5075,13 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
         messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
         plugins = None
     
-    # Determine max tokens based on content type (reduced for streaming reliability)
-    max_tokens = 32768 if (subject_type == "Mathematics" and content_type == "chapter") else 16384
+    # Determine max tokens based on content type and subject
+    if subject_type == "Artificial Intelligence":
+        max_tokens = 70000  # Maximum tokens for comprehensive AI textbook chapters
+    elif subject_type == "Mathematics" and content_type == "chapter":
+        max_tokens = 32768
+    else:
+        max_tokens = 16384
     
     # Create cancel event (can be controlled from UI)
     cancel_event = st.session_state.get('cancel_event', Event())
@@ -6367,17 +6431,37 @@ with tab1:
                 st.session_state.show_art_expander = False
                 st.rerun()
 
-        uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
-
-        if uploaded_file_st is not None:
-            st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade}...")
+        # Check if AI subject is selected - no PDF needed for AI
+        if subject_type == "Artificial Intelligence":
+            st.success("🎯 AI Textbook Generation Mode - No PDF Required!")
+            st.markdown("""
+            ### 📚 Generate Original AI Content
+            You're creating a fresh AI textbook chapter from scratch based on CBSE curriculum.
+            Select the content type below to generate:
+            """)
             
-            # Get PDF bytes for processing
-            pdf_bytes = uploaded_file_st.getvalue()
-
+            # Skip PDF upload and go directly to generation buttons
+            uploaded_file_st = None  # No file needed
+            pdf_bytes = None  # No PDF bytes needed
+            
             # Create columns for the buttons
             col1, col2 = st.columns(2)
             col3, col4 = st.columns(2)
+        else:
+            # Regular PDF upload for other subjects
+            uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
+
+            if uploaded_file_st is not None:
+                st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade}...")
+                
+                # Get PDF bytes for processing
+                pdf_bytes = uploaded_file_st.getvalue()
+
+                # Create columns for the buttons
+                col1, col2 = st.columns(2)
+                col3, col4 = st.columns(2)
+            else:
+                pdf_bytes = None
 
             st.divider()
             
@@ -6556,10 +6640,13 @@ with tab1:
                                     )
                     else:
                         # Use non-streaming approach
+                        # For AI subject without PDF, pass None for pdf_bytes and a placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Chapter_Generation"
+                        
                         content, message = generate_specific_content(
                             "chapter", 
                             pdf_bytes, 
-                            uploaded_file_st.name, 
+                            pdf_filename, 
                             selected_grade, 
                             model_progression, 
                             subject_type, 
@@ -6641,10 +6728,13 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Exercises: {message}")
                     else:
+                        # For AI subject without PDF, pass None for pdf_bytes and a placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Exercises_Generation"
+                        
                         content, message = generate_specific_content(
                             "exercises", 
                             pdf_bytes, 
-                            uploaded_file_st.name, 
+                            pdf_filename, 
                             selected_grade, 
                             model_progression, 
                             subject_type, 
@@ -6726,10 +6816,13 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Skill Activities: {message}")
                     else:
+                        # For AI subject without PDF, pass None for pdf_bytes and a placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Skills_Generation"
+                        
                         content, message = generate_specific_content(
                             "skills", 
                             pdf_bytes, 
-                            uploaded_file_st.name, 
+                            pdf_filename, 
                             selected_grade, 
                             model_progression, 
                             subject_type, 
@@ -6811,10 +6904,13 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Art-Integrated Learning: {message}")
                     else:
+                        # For AI subject without PDF, pass None for pdf_bytes and a placeholder name  
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Projects_Generation"
+                        
                         content, message = generate_specific_content(
                             "art", 
                             pdf_bytes, 
-                            uploaded_file_st.name, 
+                            pdf_filename, 
                             selected_grade, 
                             model_progression, 
                             subject_type, 
