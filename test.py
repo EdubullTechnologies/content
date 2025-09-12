@@ -6219,26 +6219,32 @@ with tab1:
                 'art_learning': art_learning_words
             }
 
-    # Analysis Method Selector
-    analysis_method = st.radio(
-        "Choose Analysis Method:",
-        ["Standard (Full Document)", "Chunked (For Complex Documents)"],
-        help="Use 'Chunked' method for very large documents or if you encounter errors with the standard method.",
-        key="analysis_method_tab1"
-    )
+    # Only show analysis and PDF processing options for non-AI subjects
+    if subject_type != "Artificial Intelligence":
+        # Analysis Method Selector
+        analysis_method = st.radio(
+            "Choose Analysis Method:",
+            ["Standard (Full Document)", "Chunked (For Complex Documents)"],
+            help="Use 'Chunked' method for very large documents or if you encounter errors with the standard method.",
+            key="analysis_method_tab1"
+        )
 
-    # PDF Processing Method Selector
-    pdf_method = st.radio(
-        "Choose PDF Processing Method:",
-        ["Text Extraction (Original)", "Mistral OCR (Advanced)", "Direct PDF Upload (OpenRouter Recommended)"],
-        help="Original: Basic text extraction | Mistral OCR: Advanced OCR with structure preservation | Direct Upload: Sends PDF to OpenRouter",
-        key="pdf_method_tab1"
-    )
-    
-    # Show info for Mistral OCR
-    if pdf_method == "Mistral OCR (Advanced)":
-        st.info("🔬 **Mistral OCR Features:** Preserves document structure, handles complex layouts, extracts text from images, maintains tables and formulas in markdown format")
-        st.info("📋 **Requirements:** Mistral API key (add MISTRAL_API_KEY to Streamlit secrets)")
+        # PDF Processing Method Selector
+        pdf_method = st.radio(
+            "Choose PDF Processing Method:",
+            ["Text Extraction (Original)", "Mistral OCR (Advanced)", "Direct PDF Upload (OpenRouter Recommended)"],
+            help="Original: Basic text extraction | Mistral OCR: Advanced OCR with structure preservation | Direct Upload: Sends PDF to OpenRouter",
+            key="pdf_method_tab1"
+        )
+        
+        # Show info for Mistral OCR
+        if pdf_method == "Mistral OCR (Advanced)":
+            st.info("🔬 **Mistral OCR Features:** Preserves document structure, handles complex layouts, extracts text from images, maintains tables and formulas in markdown format")
+            st.info("📋 **Requirements:** Mistral API key (add MISTRAL_API_KEY to Streamlit secrets)")
+    else:
+        # Set defaults for AI subject
+        analysis_method = "Standard (Full Document)"
+        pdf_method = "Text Extraction (Original)"
 
     # Streaming Mode Toggle
     use_streaming = st.checkbox(
@@ -6443,10 +6449,6 @@ with tab1:
             # Skip PDF upload and go directly to generation buttons
             uploaded_file_st = None  # No file needed
             pdf_bytes = None  # No PDF bytes needed
-            
-            # Create columns for the buttons
-            col1, col2 = st.columns(2)
-            col3, col4 = st.columns(2)
         else:
             # Regular PDF upload for other subjects
             uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
@@ -6456,18 +6458,32 @@ with tab1:
                 
                 # Get PDF bytes for processing
                 pdf_bytes = uploaded_file_st.getvalue()
-
-                # Create columns for the buttons
-                col1, col2 = st.columns(2)
-                col3, col4 = st.columns(2)
             else:
                 pdf_bytes = None
 
-            st.divider()
-            
-            st.subheader("🚀 Generate New Content")
+        st.divider()
+        
+        st.subheader("🚀 Generate New Content")
 
-            if subject_type == "Mathematics Primary (Classes 1-5)":
+        # Show buttons for all subjects including AI
+        if subject_type == "Artificial Intelligence":
+            # AI-specific buttons
+            col1, col2 = st.columns(2)
+            col3, col4 = st.columns(2)
+            
+            # Generate Chapter Content Button
+            generate_chapter = col1.button("📚 Generate AI Chapter", key="gen_ai_chapter")
+            
+            # Generate Exercises Button
+            generate_exercises = col2.button("📝 Generate AI Exercises", key="gen_ai_exercises")
+            
+            # Generate Skill Activities Button
+            generate_skills = col3.button("🤖 Generate AI Labs", key="gen_ai_skills")
+            
+            # Generate Art Learning Button
+            generate_art = col4.button("🎨 Generate AI Projects", key="gen_ai_art")
+            
+        elif subject_type == "Mathematics Primary (Classes 1-5)":
                 # For primary mathematics, show chapter and exercises generation
                 st.info("📘 **Mathematics Primary Mode**: For Classes 1-5, we provide specialized content generation designed for young learners.")
                 
@@ -6513,21 +6529,31 @@ with tab1:
                 generate_skills = False  
                 generate_art = False
             else:
-                # Standard buttons for other subjects
-                # Generate Chapter Content Button
-                generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
-                
-                # Generate Exercises Button
-                generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
-                
-                # Generate Skill Activities Button
-                generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
-                
-                # Generate Art Learning Button
-                generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
+                # Standard buttons for other subjects - only show if PDF is uploaded
+                if uploaded_file_st is not None:
+                    col1, col2 = st.columns(2)
+                    col3, col4 = st.columns(2)
+                    
+                    # Generate Chapter Content Button
+                    generate_chapter = col1.button("🔍 Generate Chapter Content", key="gen_chapter")
+                    
+                    # Generate Exercises Button
+                    generate_exercises = col2.button("📝 Generate Exercises", key="gen_exercises")
+                    
+                    # Generate Skill Activities Button
+                    generate_skills = col3.button("🛠️ Generate Skill Activities", key="gen_skills")
+                    
+                    # Generate Art Learning Button
+                    generate_art = col4.button("🎨 Generate Art-Integrated Learning", key="gen_art")
+                else:
+                    st.info("📤 Please upload a PDF file to generate content.")
+                    generate_chapter = False
+                    generate_exercises = False
+                    generate_skills = False
+                    generate_art = False
             
-            # Download All Button (outside columns)
-            download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
+        # Download All Button (outside columns)
+        download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
             
             # Handle button clicks and content generation
             if generate_chapter:
