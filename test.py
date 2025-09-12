@@ -6981,10 +6981,11 @@ with tab1:
                                     doc_io = io.BytesIO()
                                     doc.save(doc_io)
                                     doc_io.seek(0)
+                                    download_filename = f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"chapter_content_{selected_grade.replace(' ', '_')}.docx"
                                     st.download_button(
                                         label="📥 Download Chapter Content as Word (.docx)",
                                         data=doc_io,
-                                        file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                        file_name=download_filename,
                                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                         key="download_chapter_streaming"
                                     )
@@ -7010,10 +7011,11 @@ with tab1:
                                     doc_io = io.BytesIO()
                                     doc.save(doc_io)
                                     doc_io.seek(0)
+                                    download_filename = f"partial_chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"partial_chapter_content_{selected_grade.replace(' ', '_')}.docx"
                                     st.download_button(
                                         label="📥 Download Partial Chapter Content as Word (.docx)",
                                         data=doc_io,
-                                        file_name=f"partial_chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                        file_name=download_filename,
                                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                         key="download_chapter_partial"
                                     )
@@ -7052,10 +7054,11 @@ with tab1:
                                 doc_io = io.BytesIO()
                                 doc.save(doc_io)
                                 doc_io.seek(0)
+                                download_filename = f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"chapter_content_{selected_grade.replace(' ', '_')}.docx"
                                 st.download_button(
                                     label="📥 Download Chapter Content as Word (.docx)",
                                     data=doc_io,
-                                    file_name=f"chapter_content_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    file_name=download_filename,
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key="download_chapter_standard"
                                 )
@@ -7148,10 +7151,11 @@ with tab1:
                                 doc_io = io.BytesIO()
                                 doc.save(doc_io)
                                 doc_io.seek(0)
+                                download_filename = f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"exercises_{selected_grade.replace(' ', '_')}.docx"
                                 st.download_button(
                                     label="📥 Download Exercises as Word (.docx)",
                                     data=doc_io,
-                                    file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    file_name=download_filename,
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key="download_exercises_standard"
                                 )
@@ -7244,10 +7248,11 @@ with tab1:
                                 doc_io = io.BytesIO()
                                 doc.save(doc_io)
                                 doc_io.seek(0)
+                                download_filename = f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"skill_activities_{selected_grade.replace(' ', '_')}.docx"
                                 st.download_button(
                                     label="📥 Download Skill Activities as Word (.docx)",
                                     data=doc_io,
-                                    file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    file_name=download_filename,
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key="download_skills_standard"
                                 )
@@ -7340,10 +7345,11 @@ with tab1:
                                 doc_io = io.BytesIO()
                                 doc.save(doc_io)
                                 doc_io.seek(0)
+                                download_filename = f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"art_learning_{selected_grade.replace(' ', '_')}.docx"
                                 st.download_button(
                                     label="📥 Download Art-Integrated Learning as Word (.docx)",
                                     data=doc_io,
-                                    file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                    file_name=download_filename,
                                     mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                     key="download_art_standard"
                                 )
@@ -7399,10 +7405,11 @@ with tab1:
                     doc.save(doc_io)
                     doc_io.seek(0)
                     
+                    download_filename = f"complete_chapter_{uploaded_file_st.name.replace('.pdf', '.docx')}" if uploaded_file_st else f"complete_chapter_{selected_grade.replace(' ', '_')}.docx"
                     st.download_button(
                         label="📥 Download Complete Chapter with All Elements as Word (.docx)",
                         data=doc_io,
-                        file_name=f"complete_chapter_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                        file_name=download_filename,
                         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     )
                 else:
