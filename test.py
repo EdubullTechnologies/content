@@ -6580,10 +6580,13 @@ with tab1:
                             
                             try:
                                 # Stream the content
+                                # For AI subject without PDF, pass None for pdf_bytes and a placeholder name
+                                pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Chapter_Generation"
+                                
                                 for chunk in generate_specific_content_streaming(
                                     "chapter",
-                                    pdf_bytes, 
-                                    uploaded_file_st.name, 
+                                    pdf_bytes,  # Will be None for AI
+                                    pdf_filename, 
                                     selected_grade,
                                     model_progression, 
                                     subject_type,
@@ -6731,8 +6734,10 @@ with tab1:
                 
                 with st.spinner(f"🧠 Generating Exercises for {selected_grade}..."):
                     if use_streaming:
+                        # For AI subject without PDF, pass placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Exercises_Generation"
                         content, message = handle_streaming_generation(
-                            "exercises", pdf_bytes, uploaded_file_st.name, selected_grade, 
+                            "exercises", pdf_bytes, pdf_filename, selected_grade, 
                             model_progression, subject_type, word_limits, "exercises", pdf_method
                         )
                         if content:
@@ -6744,10 +6749,16 @@ with tab1:
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
                             doc_io.seek(0)
+                            # Generate filename based on whether PDF was uploaded
+                            if uploaded_file_st:
+                                download_filename = f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}"
+                            else:
+                                download_filename = f"exercises_{selected_grade.replace(' ', '_')}.docx"
+                            
                             st.download_button(
                                 label="📥 Download Exercises as Word (.docx)",
                                 data=doc_io,
-                                file_name=f"exercises_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                file_name=download_filename,
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                 key="download_exercises_streaming"
                             )
@@ -6819,8 +6830,10 @@ with tab1:
                 
                 with st.spinner(f"🧠 Generating Skill Activities for {selected_grade}..."):
                     if use_streaming:
+                        # For AI subject without PDF, pass placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Skills_Generation"
                         content, message = handle_streaming_generation(
-                            "skills", pdf_bytes, uploaded_file_st.name, selected_grade, 
+                            "skills", pdf_bytes, pdf_filename, selected_grade, 
                             model_progression, subject_type, word_limits, "skills", pdf_method
                         )
                         if content:
@@ -6832,10 +6845,16 @@ with tab1:
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
                             doc_io.seek(0)
+                            # Generate filename based on whether PDF was uploaded
+                            if uploaded_file_st:
+                                download_filename = f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}"
+                            else:
+                                download_filename = f"skill_activities_{selected_grade.replace(' ', '_')}.docx"
+                            
                             st.download_button(
                                 label="📥 Download Skill Activities as Word (.docx)",
                                 data=doc_io,
-                                file_name=f"skill_activities_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                file_name=download_filename,
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                 key="download_skills_streaming"
                             )
@@ -6907,8 +6926,10 @@ with tab1:
                 
                 with st.spinner(f"🧠 Generating Art-Integrated Learning for {selected_grade}..."):
                     if use_streaming:
+                        # For AI subject without PDF, pass placeholder name
+                        pdf_filename = uploaded_file_st.name if uploaded_file_st else "AI_Projects_Generation"
                         content, message = handle_streaming_generation(
-                            "art", pdf_bytes, uploaded_file_st.name, selected_grade, 
+                            "art", pdf_bytes, pdf_filename, selected_grade, 
                             model_progression, subject_type, word_limits, "art", pdf_method
                         )
                         if content:
@@ -6920,10 +6941,16 @@ with tab1:
                             doc_io = io.BytesIO()
                             doc.save(doc_io)
                             doc_io.seek(0)
+                            # Generate filename based on whether PDF was uploaded
+                            if uploaded_file_st:
+                                download_filename = f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}"
+                            else:
+                                download_filename = f"art_learning_{selected_grade.replace(' ', '_')}.docx"
+                            
                             st.download_button(
                                 label="📥 Download Art-Integrated Learning as Word (.docx)",
                                 data=doc_io,
-                                file_name=f"art_learning_{uploaded_file_st.name.replace('.pdf', '.docx')}",
+                                file_name=download_filename,
                                 mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                                 key="download_art_streaming"
                             )
