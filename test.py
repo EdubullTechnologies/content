@@ -3406,6 +3406,268 @@ Provide ONLY the comprehensive English language projects in Markdown format.
 """
 
 # Artificial Intelligence specific prompt functions
+# CBSE Class 10 AI Curriculum Structure with Sub-units
+CBSE_AI_CLASS_10_CURRICULUM = {
+    "Unit 1: Introduction to Artificial Intelligence": {
+        "sub_units": [
+            {
+                "name": "Foundational concepts of AI",
+                "learning_outcomes": "Understand the concept of human intelligence and its various components such as reasoning, problem-solving, and creativity",
+                "activities": [
+                    "Session: What is Intelligence?",
+                    "Session: Decision Making - How do you make decisions?",
+                    "Session: What is Artificial Intelligence and what is not?"
+                ]
+            },
+            {
+                "name": "Basics of AI: Let's Get Started",
+                "learning_outcomes": "Understand the concept of Artificial Intelligence (AI) and its domains",
+                "activities": [
+                    "Introduction to AI, ML & DL",
+                    "Introduction to AI Domains (Data Sciences, CV & NLP)",
+                    "Data Sciences- Impact Filter: https://artsexperiments.withgoogle.com/impactfilter/",
+                    "CV- Autodraw: https://www.autodraw.com/",
+                    "NLP- Wordtune: https://www.wordtune.com/"
+                ]
+            },
+            {
+                "name": "AI in Real Life",
+                "learning_outcomes": "Explore the use of AI in real Life",
+                "activities": ["Session: Applications of AI – A look at Real-life AI implementations"]
+            },
+            {
+                "name": "AI Ethics",
+                "learning_outcomes": "Learn about the ethical concerns involved in AI development, such as AI bias, data privacy and how they can be addressed",
+                "activities": [
+                    "Session: AI Ethics",
+                    "Moral Machine Activity: http://moralmachine.mit.edu/"
+                ]
+            }
+        ]
+    },
+    "Unit 2: AI Project Cycle": {
+        "sub_units": [
+            {
+                "name": "Introduction",
+                "learning_outcomes": "Understand the stages involved in the AI project cycle, such as problem scoping, data collection, data exploration, modeling, evaluation",
+                "activities": ["Session: Introduction to AI Project Cycle"]
+            },
+            {
+                "name": "Problem Scoping",
+                "learning_outcomes": "Learn about the importance of project planning in AI development and how to define project goals and objectives",
+                "activities": ["Session: Understanding Problem Scoping & Sustainable Development Goals"]
+            },
+            {
+                "name": "Data Acquisition",
+                "learning_outcomes": "Develop an understanding of the importance of data collection in AI and how to choose the right data sources",
+                "activities": ["Session: Simplifying Data Acquisition"]
+            },
+            {
+                "name": "Data Exploration",
+                "learning_outcomes": "Know various data exploration techniques and its importance",
+                "activities": ["Session: Visualising Data"]
+            },
+            {
+                "name": "Modelling",
+                "learning_outcomes": "Know about the different machine learning algorithms used to train AI models",
+                "activities": [
+                    "Introduction to Rule Based & Learning Based AI Approaches",
+                    "Activity: Teachable machine (Supervised Learning): https://teachablemachine.withgoogle.com/",
+                    "Activity: Infinite Drum Machine (Unsupervised learning): https://experiments.withgoogle.com/ai/drum-machine/view/",
+                    "Introduction to Supervised, Unsupervised & Reinforcement Learning Models",
+                    "Neural Networks"
+                ]
+            },
+            {
+                "name": "Evaluation",
+                "learning_outcomes": "Know the importance of evaluation and various metrics available for evaluation",
+                "activities": ["Session: Evaluating the idea!"]
+            }
+        ]
+    },
+    "Unit 3: Advance Python": {
+        "sub_units": [
+            {
+                "name": "Recap",
+                "learning_outcomes": "Understand to work with Jupyter Notebook, creating virtual environment, installing Python Packages",
+                "activities": [
+                    "Session: Jupyter Notebook",
+                    "Session: Introduction to Python",
+                    "Session: Python Basics"
+                ]
+            }
+        ],
+        "note": "To be assessed through Practicals only"
+    },
+    "Unit 4: Data Sciences": {
+        "theory_sub_units": [
+            {
+                "name": "Introduction",
+                "learning_outcomes": "Define the concept of Data Science and understand its applications in various fields",
+                "activities": [
+                    "Session: Introduction to Data Science",
+                    "Session: Applications of Data Science"
+                ]
+            },
+            {
+                "name": "Getting Started",
+                "learning_outcomes": "Understand the basic concepts of data acquisition, visualization, and exploration",
+                "activities": [
+                    "Session: Revisiting AI Project Cycle, Data Collection, Data Access",
+                    "Game: Rock, Paper & Scissors: https://next.rockpaperscissors.ai/"
+                ]
+            }
+        ],
+        "practical_sub_units": [
+            {
+                "name": "Python Packages",
+                "learning_outcomes": "Use Python libraries such as NumPy, Pandas, and Matplotlib for data analysis and visualization",
+                "activities": [
+                    "Session: Python for Data Sciences - Numpy, Pandas, Matplotlib"
+                ]
+            },
+            {
+                "name": "Concepts of Data Sciences",
+                "learning_outcomes": "Understand the basic concepts of statistics, such as mean, median, mode, and standard deviation",
+                "activities": ["Session: Statistical Learning & Data Visualisation"]
+            },
+            {
+                "name": "K-nearest neighbour model (Optional)",
+                "learning_outcomes": "Understand the basic concepts of the KNN algorithm and its applications in supervised learning",
+                "activities": [
+                    "Activity: Personality Prediction (Optional)",
+                    "Session: Understanding K-nearest neighbour model (Optional)"
+                ]
+            }
+        ]
+    },
+    "Unit 5: Computer Vision": {
+        "theory_sub_units": [
+            {
+                "name": "Introduction",
+                "learning_outcomes": "Define the concept of Computer Vision and understand its applications in various fields",
+                "activities": [
+                    "Session: Introduction to Computer Vision",
+                    "Session: Applications of CV"
+                ]
+            },
+            {
+                "name": "Concepts of Computer Vision",
+                "learning_outcomes": "Understand the basic concepts of image representation, feature extraction, object detection, and segmentation",
+                "activities": [
+                    "Session: Understanding CV Concepts",
+                    "Computer Vision Tasks",
+                    "Basics of Images-Pixel, Resolution, Pixel value",
+                    "Grayscale and RGB images",
+                    "Game- Emoji Scavenger Hunt: https://emojiscavengerhunt.withgoogle.com/",
+                    "RGB Calculator: https://www.w3schools.com/colors/colors_rgb.asp",
+                    "Create your own pixel art: www.piskelapp.com",
+                    "Create your own convolutions: http://setosa.io/ev/image-kernels/"
+                ]
+            }
+        ],
+        "practical_sub_units": [
+            {
+                "name": "OpenCV",
+                "learning_outcomes": "Use Python libraries such as OpenCV for basic image processing and computer vision tasks",
+                "activities": [
+                    "Session: Introduction to OpenCV",
+                    "Hands-on: Image Processing"
+                ]
+            },
+            {
+                "name": "Convolution Operator (Optional)",
+                "learning_outcomes": "Apply the convolution operator to process images and extract useful features",
+                "activities": [
+                    "Session: Understanding Convolution operator (Optional)",
+                    "Activity: Convolution Operator (Optional)"
+                ]
+            },
+            {
+                "name": "Convolution Neural Network (Optional)",
+                "learning_outcomes": "Understand the basic architecture of a CNN and its applications in computer vision and image recognition",
+                "activities": [
+                    "Session: Introduction to CNN (Optional)",
+                    "Session: Understanding CNN - Kernel, Layers of CNN (Optional)",
+                    "Activity: Testing CNN (Optional)"
+                ]
+            }
+        ]
+    },
+    "Unit 6: Natural Language Processing": {
+        "sub_units": [
+            {
+                "name": "Introduction",
+                "learning_outcomes": "Understand the concept of Natural Language Processing (NLP) and its importance in the field of AI",
+                "activities": [
+                    "Session: Introduction to Natural Language Processing",
+                    "Activity: Use of Google Translate for same spelling words",
+                    "Session: NLP Applications",
+                    "Session: Revisiting AI Project Cycle"
+                ]
+            },
+            {
+                "name": "Chatbots",
+                "learning_outcomes": "Explore the various applications of NLP in everyday life, such as chatbots, sentiment analysis, and automatic summarization",
+                "activities": ["Activity: Introduction to Chatbots"]
+            },
+            {
+                "name": "Language Differences",
+                "learning_outcomes": "Gain an understanding of the challenges involved in understanding human language by machine",
+                "activities": ["Session: Human Language VS Computer Language"]
+            },
+            {
+                "name": "Concepts of Natural Language Processing",
+                "learning_outcomes": "Learn about the Text Normalization technique used in NLP and popular NLP model - Bag-of-Words",
+                "activities": [
+                    "Session: Data Processing - Text Normalisation, Bag of Words",
+                    "Hands-on: Text processing - Data Processing, Bag of Words",
+                    "TFIDF (Optional)",
+                    "NLTK (Optional)"
+                ]
+            }
+        ]
+    },
+    "Unit 7: Evaluation": {
+        "sub_units": [
+            {
+                "name": "Introduction",
+                "learning_outcomes": "Understand the role of evaluation in the development and implementation of AI systems",
+                "activities": [
+                    "Session: Introduction to Model Evaluation",
+                    "What is Evaluation?",
+                    "Different types of Evaluation techniques - Underfit, Perfect Fit, OverFit"
+                ]
+            },
+            {
+                "name": "Model Evaluation Terminology",
+                "learning_outcomes": "Learn various Model Evaluation Terminologies",
+                "activities": [
+                    "Session: Model Evaluation Terminologies",
+                    "The Scenario - Prediction, Reality, True Positive, True Negative, False Positive, False Negative",
+                    "Confusion Matrix",
+                    "Activity: Make a confusion matrix for Containment Zone Prediction Model"
+                ]
+            },
+            {
+                "name": "Confusion Matrix",
+                "learning_outcomes": "Learn to make a confusion matrix for given Scenario",
+                "activities": ["Session & Activity: Confusion Matrix"]
+            },
+            {
+                "name": "Evaluation Methods",
+                "learning_outcomes": "Learn about the different types of evaluation techniques in AI, such as Accuracy, Precision, Recall and F1 Score, and their significance",
+                "activities": [
+                    "Session: Evaluation Methods - Accuracy, Precision, Recall",
+                    "Which Metric is Important? - Precision or Recall",
+                    "F1 Score",
+                    "Activity: Practice Evaluation"
+                ]
+            }
+        ]
+    }
+}
+
 def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=None):
     """Creates an Artificial Intelligence chapter content prompt aligned with CBSE curriculum and publisher best practices"""
     
@@ -3421,14 +3683,29 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
 - AI Project Cycle methodology
 - Basic domains: Data Science, Computer Vision, NLP
 - AI Ethics and responsible development
-- Practical applications in daily life"""
+- Practical applications in daily life
+
+**Include for each topic**:
+- SUB-UNITS with specific learning outcomes
+- Hands-on ACTIVITIES and gamified tools
+- PRACTICAL sessions with real tools
+- Links to online resources when relevant"""
     elif class_num == 10:
         curriculum_focus = """**CBSE Class 10 AI (Code 417) Curriculum Focus**:
-- Advanced AI concepts and applications
-- Industry applications of AI
-- Natural Language Processing applications
-- Computer Vision real-world uses
-- Complete project implementation"""
+- Unit 1: Introduction to AI (Foundational concepts, AI domains)
+- Unit 2: AI Project Cycle (Problem scoping, Data acquisition, Modeling, Evaluation)
+- Unit 3: Advanced Python (Jupyter, Python basics, Libraries)
+- Unit 4: Data Science (Statistics, Visualization, Python packages)
+- Unit 5: Computer Vision (Image processing, OpenCV, CNN basics)
+- Unit 6: Natural Language Processing (Chatbots, Text processing, Bag of Words)
+- Unit 7: Evaluation (Confusion Matrix, Accuracy, Precision, Recall, F1 Score)
+
+**Include for each topic**:
+- SUB-UNITS with specific LEARNING OUTCOMES
+- SESSION plans and step-by-step ACTIVITIES
+- PRACTICAL exercises with Python code
+- Gamified tools and online resources (Teachable Machine, AutoDraw, etc.)
+- Real-world applications and case studies"""
     elif class_num == 11:
         curriculum_focus = """**CBSE Class 11 AI (Code 843) Curriculum Focus**:
 - Python programming for AI development
@@ -3469,11 +3746,71 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
     import streamlit as st
     selected_chapter = ""
     chapter_directive = ""
+    curriculum_details = ""
+    
     if 'ai_chapter_selected' in st.session_state:
         selected_chapter = st.session_state['ai_chapter_selected']
         # Extract just the chapter topic without the number
         chapter_topic = selected_chapter.split(': ', 1)[1] if ': ' in selected_chapter else selected_chapter
         chapter_num = selected_chapter.split(':')[0] if ':' in selected_chapter else "Chapter"
+        
+        # Map chapter to curriculum unit and get detailed structure
+        if class_num == 10:
+            # Map chapters to units based on topic
+            chapter_to_unit_map = {
+                "Introduction to AI": "Unit 1: Introduction to Artificial Intelligence",
+                "AI Basics": "Unit 1: Introduction to Artificial Intelligence",
+                "AI Project Cycle": "Unit 2: AI Project Cycle",
+                "Data Acquisition": "Unit 2: AI Project Cycle",
+                "AI Modeling": "Unit 2: AI Project Cycle",
+                "Advanced Python": "Unit 3: Advance Python",
+                "Data Science": "Unit 4: Data Sciences",
+                "Computer Vision": "Unit 5: Computer Vision",
+                "Natural Language Processing": "Unit 6: Natural Language Processing",
+                "Model Evaluation": "Unit 7: Evaluation",
+                "AI Ethics": "Unit 1: Introduction to Artificial Intelligence"
+            }
+            
+            # Find matching unit
+            unit_key = None
+            for key_phrase, unit in chapter_to_unit_map.items():
+                if key_phrase.lower() in chapter_topic.lower():
+                    unit_key = unit
+                    break
+            
+            if unit_key and unit_key in CBSE_AI_CLASS_10_CURRICULUM:
+                unit_data = CBSE_AI_CLASS_10_CURRICULUM[unit_key]
+                sub_units_text = "\n\n**CBSE CURRICULUM SUB-UNITS TO COVER:**\n\n"
+                
+                # Process regular sub_units
+                if "sub_units" in unit_data:
+                    for sub_unit in unit_data["sub_units"]:
+                        sub_units_text += f"\n**{sub_unit['name']}**\n"
+                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
+                        sub_units_text += "- Activities:\n"
+                        for activity in sub_unit['activities']:
+                            sub_units_text += f"  • {activity}\n"
+                
+                # Process theory and practical sub_units separately if they exist
+                if "theory_sub_units" in unit_data:
+                    sub_units_text += "\n**THEORY COMPONENTS:**\n"
+                    for sub_unit in unit_data["theory_sub_units"]:
+                        sub_units_text += f"\n**{sub_unit['name']}**\n"
+                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
+                        sub_units_text += "- Activities:\n"
+                        for activity in sub_unit['activities']:
+                            sub_units_text += f"  • {activity}\n"
+                
+                if "practical_sub_units" in unit_data:
+                    sub_units_text += "\n**PRACTICAL COMPONENTS:**\n"
+                    for sub_unit in unit_data["practical_sub_units"]:
+                        sub_units_text += f"\n**{sub_unit['name']}**\n"
+                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
+                        sub_units_text += "- Activities:\n"
+                        for activity in sub_unit['activities']:
+                            sub_units_text += f"  • {activity}\n"
+                
+                curriculum_details = sub_units_text
         
         chapter_directive = f"""
 
@@ -3484,7 +3821,20 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
 - Focus ONLY on this specific chapter topic: {chapter_topic}
 - This is a standalone chapter - do not reference other chapters
 - All content must be directly relevant to {chapter_topic}
-- Provide comprehensive, in-depth coverage of this single topic"""
+- Provide comprehensive, in-depth coverage of this single topic
+{curriculum_details}
+
+**INSTRUCTIONS**:
+1. Cover ALL the sub-units and learning outcomes listed above
+2. Include ALL the activities and sessions mentioned
+3. Add clickable links for online tools where provided
+4. THEN go BEYOND the curriculum by adding:
+   - Additional real-world examples
+   - Extra hands-on projects
+   - Industry case studies
+   - Advanced optional topics
+   - Career connections
+   - Latest AI trends related to the topic"""
     else:
         # If no chapter selected, provide a default
         chapter_directive = """
@@ -5867,16 +6217,16 @@ with tab1:
                     "Chapter 10: AI Ethics and Bias"
                 ],
                 "Class 10 (CBSE Code 417)": [
-                    "Chapter 1: AI Review and Advanced Concepts",
-                    "Chapter 2: Advanced Data Processing",
-                    "Chapter 3: Introduction to Machine Learning",
-                    "Chapter 4: Supervised Learning Techniques",
-                    "Chapter 5: Neural Networks Introduction",
-                    "Chapter 6: Computer Vision Applications",
-                    "Chapter 7: NLP Applications",
-                    "Chapter 8: AI in Healthcare",
-                    "Chapter 9: AI in Business and Finance",
-                    "Chapter 10: AI Project Implementation"
+                    "Chapter 1: Introduction to AI - Foundational Concepts, Intelligence & Decision Making",
+                    "Chapter 2: AI Basics - AI vs ML vs DL, AI Domains & Applications",
+                    "Chapter 3: AI Project Cycle - Problem Scoping & SDGs",
+                    "Chapter 4: Data Acquisition & Data Exploration - Visualizing Data",
+                    "Chapter 5: AI Modeling - Rule-Based vs Learning-Based, Supervised & Unsupervised Learning",
+                    "Chapter 6: Advanced Python & Data Science - NumPy, Pandas, Matplotlib",
+                    "Chapter 7: Computer Vision - Image Basics, Pixels, RGB, OpenCV Introduction",
+                    "Chapter 8: Natural Language Processing - Chatbots, Text Processing, Bag of Words",
+                    "Chapter 9: Model Evaluation - Confusion Matrix, Accuracy, Precision, Recall, F1 Score",
+                    "Chapter 10: AI Ethics, Bias & Real-World Applications"
                 ],
                 "Class 11 (CBSE Code 843)": [
                     "Chapter 1: Python Programming for AI",
