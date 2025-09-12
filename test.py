@@ -6484,51 +6484,51 @@ with tab1:
             generate_art = col4.button("🎨 Generate AI Projects", key="gen_ai_art")
             
         elif subject_type == "Mathematics Primary (Classes 1-5)":
-                # For primary mathematics, show chapter and exercises generation
-                st.info("📘 **Mathematics Primary Mode**: For Classes 1-5, we provide specialized content generation designed for young learners.")
-                
-                # Show chapter and exercises buttons for primary mathematics
-                prim_col1, prim_col2 = st.columns(2)
-                
-                with prim_col1:
-                    generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
-                
-                with prim_col2:
-                    generate_exercises = st.button("📝 Generate Mathematics Exercises", key="gen_primary_exercises")
-                
-                generate_skills = False  
-                generate_art = False
-            elif subject_type == "Science & E.V.S. (Classes 1-2)":
-                # For Science EVS Classes 1-2, show chapter and activities generation
-                st.info("🌱 **Science & E.V.S. Classes 1-2**: Play-based learning approach for foundational stage. Activities are integrated within the chapter.")
-                
-                # Show chapter and activities buttons for Science EVS Classes 1-2
-                evs12_col1, evs12_col2 = st.columns(2)
-                
-                with evs12_col1:
-                    generate_chapter = st.button("🔍 Generate Play-Based Chapter", key="gen_evs12_chapter")
-                
-                with evs12_col2:
-                    generate_exercises = st.button("🎮 Generate Play Activities", key="gen_evs12_activities")
-                
-                generate_skills = False  
-                generate_art = False
-            elif subject_type == "Science & E.V.S. (Classes 3-5)":
-                # For Science EVS Classes 3-5, show chapter and exercises generation
-                st.info("🔬 **Science & E.V.S. Classes 3-5**: Inquiry-based learning approach for preparatory stage. Skills and art activities are integrated within the chapter.")
-                
-                # Show chapter and exercises buttons for Science EVS Classes 3-5
-                evs35_col1, evs35_col2 = st.columns(2)
-                
-                with evs35_col1:
-                    generate_chapter = st.button("🔍 Generate Inquiry-Based Chapter", key="gen_evs35_chapter")
-                
-                with evs35_col2:
-                    generate_exercises = st.button("📝 Generate Assessment Exercises", key="gen_evs35_exercises")
-                
-                generate_skills = False  
-                generate_art = False
-            else:
+            # For primary mathematics, show chapter and exercises generation
+            st.info("📘 **Mathematics Primary Mode**: For Classes 1-5, we provide specialized content generation designed for young learners.")
+            
+            # Show chapter and exercises buttons for primary mathematics
+            prim_col1, prim_col2 = st.columns(2)
+            
+            with prim_col1:
+                generate_chapter = st.button("🔍 Generate Complete Mathematics Chapter", key="gen_primary_chapter")
+            
+            with prim_col2:
+                generate_exercises = st.button("📝 Generate Mathematics Exercises", key="gen_primary_exercises")
+            
+            generate_skills = False  
+            generate_art = False
+        elif subject_type == "Science & E.V.S. (Classes 1-2)":
+            # For Science EVS Classes 1-2, show chapter and activities generation
+            st.info("🌱 **Science & E.V.S. Classes 1-2**: Play-based learning approach for foundational stage. Activities are integrated within the chapter.")
+            
+            # Show chapter and activities buttons for Science EVS Classes 1-2
+            evs12_col1, evs12_col2 = st.columns(2)
+            
+            with evs12_col1:
+                generate_chapter = st.button("🔍 Generate Play-Based Chapter", key="gen_evs12_chapter")
+            
+            with evs12_col2:
+                generate_exercises = st.button("🎮 Generate Play Activities", key="gen_evs12_activities")
+            
+            generate_skills = False  
+            generate_art = False
+        elif subject_type == "Science & E.V.S. (Classes 3-5)":
+            # For Science EVS Classes 3-5, show chapter and exercises generation
+            st.info("🔬 **Science & E.V.S. Classes 3-5**: Inquiry-based learning approach for preparatory stage. Skills and art activities are integrated within the chapter.")
+            
+            # Show chapter and exercises buttons for Science EVS Classes 3-5
+            evs35_col1, evs35_col2 = st.columns(2)
+            
+            with evs35_col1:
+                generate_chapter = st.button("🔍 Generate Inquiry-Based Chapter", key="gen_evs35_chapter")
+            
+            with evs35_col2:
+                generate_exercises = st.button("📝 Generate Assessment Exercises", key="gen_evs35_exercises")
+            
+            generate_skills = False  
+            generate_art = False
+        else:
                 # Standard buttons for other subjects - only show if PDF is uploaded
                 if uploaded_file_st is not None:
                     col1, col2 = st.columns(2)
