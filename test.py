@@ -3407,64 +3407,293 @@ Provide ONLY the comprehensive English language projects in Markdown format.
 
 # Artificial Intelligence specific prompt functions
 def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates an Artificial Intelligence chapter content prompt using the enhanced template"""
-    # Default word limits if none provided
+    """Creates an Artificial Intelligence chapter content prompt aligned with CBSE curriculum and publisher best practices"""
+    
+    # Extract class number from grade level
+    import re
+    match = re.search(r'(\d+)', grade_level)
+    class_num = int(match.group(1)) if match else 9
+    
+    # Get CBSE curriculum focus for the class
+    if class_num == 9:
+        curriculum_focus = """**CBSE Class 9 AI (Code 417) Curriculum Focus**:
+- Introduction to AI and foundational concepts
+- AI Project Cycle methodology
+- Basic domains: Data Science, Computer Vision, NLP
+- AI Ethics and responsible development
+- Practical applications in daily life"""
+    elif class_num == 10:
+        curriculum_focus = """**CBSE Class 10 AI (Code 417) Curriculum Focus**:
+- Advanced AI concepts and applications
+- Industry applications of AI
+- Natural Language Processing applications
+- Computer Vision real-world uses
+- Complete project implementation"""
+    elif class_num == 11:
+        curriculum_focus = """**CBSE Class 11 AI (Code 843) Curriculum Focus**:
+- Python programming for AI development
+- Statistics and probability foundations
+- Data science and visualization techniques
+- Machine Learning algorithms (supervised/unsupervised)
+- Introduction to Neural Networks"""
+    else:  # Class 12
+        curriculum_focus = """**CBSE Class 12 AI (Code 843) Curriculum Focus**:
+- Deep Learning and advanced architectures
+- Convolutional and Recurrent Neural Networks
+- Advanced NLP with transformers
+- Computer Vision with Deep Learning
+- Capstone AI project development"""
+    
+    # Default word limits based on class level
     if word_limits is None:
-        word_limits = {
-            'mission_briefing': 300,
-            'domain_analysis': 800,
-            'core_concepts': 3000,
-            'hands_on_project': 1500,
-            'assessment': 600
-        }
+        if class_num <= 10:
+            word_limits = {
+                'introduction': 400,
+                'concepts': 2500,
+                'hands_on': 1500,
+                'case_studies': 800,
+                'exercises': 1000,
+                'projects': 600
+            }
+        else:
+            word_limits = {
+                'introduction': 500,
+                'concepts': 3500,
+                'hands_on': 2000,
+                'case_studies': 1000,
+                'exercises': 1200,
+                'projects': 800
+            }
     
-    # Read the enhanced AI/Robotics template
-    try:
-        with open('ai_robo.txt', 'r', encoding='utf-8') as f:
-            ai_template = f.read()
-    except FileNotFoundError:
-        ai_template = """Enhanced AI template not found. Using fallback template."""
+    # Get selected chapter from session state if available
+    import streamlit as st
+    selected_chapter = ""
+    chapter_directive = ""
+    if 'ai_chapter_selected' in st.session_state:
+        selected_chapter = st.session_state['ai_chapter_selected']
+        # Extract just the chapter topic without the number
+        chapter_topic = selected_chapter.split(': ', 1)[1] if ': ' in selected_chapter else selected_chapter
+        chapter_num = selected_chapter.split(':')[0] if ':' in selected_chapter else "Chapter"
+        
+        chapter_directive = f"""
+
+**CHAPTER TO GENERATE**: 
+{selected_chapter}
+
+**IMPORTANT**: 
+- Focus ONLY on this specific chapter topic: {chapter_topic}
+- This is a standalone chapter - do not reference other chapters
+- All content must be directly relevant to {chapter_topic}
+- Provide comprehensive, in-depth coverage of this single topic"""
+    else:
+        # If no chapter selected, provide a default
+        chapter_directive = """
+
+**NOTE**: No specific chapter selected. Please generate a foundational AI chapter appropriate for the grade level."""
     
-    return f"""You are an Expert Artificial Intelligence Education Content Developer specializing in hands-on learning with IIT-developed kits.
+    return f"""You are an Expert AI Textbook Author specializing in creating high-quality educational content aligned with CBSE curriculum requirements.
 
-**Subject Focus**: ARTIFICIAL INTELLIGENCE - Focus on intelligent systems, machine learning, data analysis, pattern recognition, decision-making algorithms, and smart automation.
+**Your Mission**: Create a single, comprehensive AI textbook chapter that meets the highest educational standards.
 
-**Target Audience**: {grade_level}
+**Target Audience**: {grade_level} (CBSE AI Curriculum)
 
-**Enhanced AI Education Template**:
----
-{ai_template}
----
+{curriculum_focus}{chapter_directive}
 
-**Model Chapter Progression Context**:
+**Publisher Best Practices to Incorporate**:
+
+1. **O'Reilly Style Elements**:
+   - "In a Nutshell" boxes for key concepts
+   - "Try This" hands-on exercises throughout
+   - Real-world case studies from tech companies
+   - Code examples with detailed annotations
+   - "Common Pitfalls" and "Best Practices" sidebars
+   - Progressive difficulty with clear learning paths
+
+2. **Manning's Hands-On Approach**:
+   - "Think Like an AI Engineer" problem-solving sections
+   - Project-based learning with incremental builds
+   - Interactive coding challenges
+   - Industry-standard tools and frameworks
+
+3. **Packt's Practical Focus**:
+   - Step-by-step tutorials with screenshots
+   - "Quick Start" sections for immediate application
+   - GitHub integration and version control practices
+   - Cloud deployment considerations
+
+**Model Chapter Progression (Enhanced for AI)**:
 ---
 {model_progression_text}
 ---
 
-**Word Count Targets**:
-- Mission Briefing: {word_limits.get('mission_briefing', 300)} words
-- Domain Analysis & Applications: {word_limits.get('domain_analysis', 800)} words
-- Core Concepts (all concepts combined): {word_limits.get('core_concepts', 3000)} words
-- Hands-On Project: {word_limits.get('hands_on_project', 1500)} words
-- Assessment & Debrief: {word_limits.get('assessment', 600)} words
+**COMPREHENSIVE CHAPTER STRUCTURE FOR AI**:
 
-**AI-SPECIFIC FOCUS AREAS**:
-1. **Intelligence & Decision Making**: Focus on how AI systems make smart decisions
-2. **Learning & Adaptation**: Emphasize how AI learns from data and improves over time
-3. **Pattern Recognition**: Highlight AI's ability to find patterns in complex data
-4. **Automation & Optimization**: Show how AI automates and optimizes processes
-5. **Human-AI Interaction**: Explore how AI systems work with humans
+## 1. Chapter Opening - The Big Picture (Target: {word_limits.get('introduction', 400)} words)
 
-**CRITICAL INSTRUCTIONS**:
-1. Follow the enhanced template structure EXACTLY
-2. Preserve all original IIT code and technical content
-3. Analyze kit components to determine AI applications (sensors for data collection, processing for intelligence, etc.)
-4. Connect every concept to real-world AI applications (smart homes, healthcare AI, autonomous systems, etc.)
-5. Handle multiple programming languages (Scratch for beginners, Python for advanced, Arduino for hardware)
-6. Include comprehensive troubleshooting for AI system integration
-7. Provide multi-level extension challenges focusing on AI capabilities
+### A. Chapter Title & Learning Quest
+- Engaging title with tech-appeal (e.g., "Building Your First AI Brain", "Teaching Machines to See")
+- Chapter number and position in curriculum
+- "What You'll Build" showcase box
+- Prerequisites checklist
 
-Transform the provided PDF content into a comprehensive Artificial Intelligence chapter following the enhanced template structure.
+### B. Real-World Hook
+- Start with a current AI breakthrough or application
+- Connect to students' daily tech experiences (smartphones, games, social media)
+- Include data/statistics on AI growth and opportunities
+- Feature spotlight on an AI pioneer or company
+
+### C. Learning Objectives (SMART Goals)
+- 5-6 specific, measurable objectives
+- Mapped to CBSE curriculum competencies
+- Skills badges to be earned
+- Connection to AI career paths
+
+### D. Chapter Roadmap
+- Visual journey map of concepts
+- Estimated time for each section
+- Difficulty indicators (Beginner/Intermediate/Advanced)
+- Optional deep-dive sections marked
+
+## 2. Core AI Concepts - Building Blocks (Target: {word_limits.get('concepts', 2500)} words)
+
+### A. Conceptual Foundation (30% of content)
+- **"AI in a Nutshell"** boxes for each major concept
+- Visual diagrams and infographics (specify detailed descriptions)
+- Analogies to familiar concepts
+- Historical context and evolution
+- Mathematical foundations (age-appropriate)
+
+### B. Technical Deep Dive (40% of content)
+- Detailed explanations with progressive complexity
+- Algorithm walkthroughs with pseudocode
+- Data structures and representations
+- Model architectures and components
+- Performance metrics and evaluation
+
+### C. Code Implementation (30% of content)
+- **Language-appropriate examples**:
+  - Classes 9-10: Scratch blocks, Python basics, visual programming
+  - Classes 11-12: Python (NumPy, Pandas, Scikit-learn, TensorFlow/Keras basics)
+- Code snippets with line-by-line explanations
+- Common debugging scenarios
+- Performance optimization tips
+- Version control best practices
+
+## 3. Hands-On Labs - Learn by Doing (Target: {word_limits.get('hands_on', 1500)} words)
+
+### A. Guided Project Build
+- **Project Title**: Something exciting and relevant
+- **Tools Required**: Specific software, libraries, datasets
+- **Step-by-Step Implementation**:
+  1. Environment setup
+  2. Data preparation
+  3. Model building
+  4. Training and testing
+  5. Evaluation and improvement
+  6. Deployment considerations
+
+### B. Experimentation Sandbox
+- "What happens if..." scenarios
+- Parameter tuning exercises
+- A/B testing concepts
+- Performance comparison activities
+
+### C. Troubleshooting Guide
+- Common errors and solutions
+- Debugging strategies
+- Performance bottlenecks
+- Resource optimization
+
+## 4. Real-World Applications & Case Studies (Target: {word_limits.get('case_studies', 800)} words)
+
+### A. Industry Case Studies
+- 2-3 detailed examples from different sectors:
+  - Healthcare (disease prediction, drug discovery)
+  - Finance (fraud detection, algorithmic trading)
+  - Entertainment (recommendation systems, game AI)
+  - Transportation (autonomous vehicles, route optimization)
+  - Education (personalized learning, automated grading)
+
+### B. Indian Context Applications
+- AI in Indian agriculture (crop prediction, pest detection)
+- Smart cities initiatives
+- Language processing for Indian languages
+- AI in Indian healthcare and telemedicine
+
+### C. Ethical Considerations
+- Bias in AI systems
+- Privacy and data protection
+- Responsible AI development
+- Future implications and careers
+
+## 5. Practice & Assessment (Target: {word_limits.get('exercises', 1000)} words)
+
+### A. Knowledge Check (Quick Review)
+- 10 MCQs with explanations
+- 5 True/False with justification
+- 5 Fill in the blanks (technical terms)
+
+### B. Conceptual Questions
+- 5 short answer questions (2-3 sentences)
+- 3 long answer questions (paragraph length)
+- 2 comparison/contrast questions
+
+### C. Practical Challenges
+- 3 coding challenges (increasing difficulty)
+- 2 debugging exercises
+- 1 optimization problem
+- 1 design challenge
+
+### D. Project Extensions
+- 3 ways to extend the chapter project
+- Cross-curricular connections
+- Competition preparation tips
+
+## 6. Beyond the Chapter (Target: {word_limits.get('projects', 600)} words)
+
+### A. Capstone Project Ideas
+- 3-4 comprehensive project suggestions
+- Resource requirements
+- Expected outcomes
+- Assessment rubrics
+
+### B. Further Learning Resources
+- Recommended books on this topic
+- Online courses and MOOCs
+- Open datasets for practice
+- AI communities and forums
+- Competitions and hackathons
+
+### C. Career Connections
+- AI career paths and roles
+- Required skills and certifications
+- Indian and global opportunities
+- Building a portfolio
+
+### D. Next Chapter Preview
+- What's coming next
+- How current knowledge will be used
+- Preparation suggestions
+
+**QUALITY STANDARDS**:
+
+1. **Technical Accuracy**: All code must be tested and working
+2. **Progressive Difficulty**: Content should build logically
+3. **Engagement**: Use current examples and relatable scenarios
+4. **Inclusivity**: Examples from diverse contexts and applications
+5. **Future-Ready**: Include emerging trends and technologies
+6. **Assessment-Aligned**: Include CBSE board exam pattern questions
+
+**IMPORTANT NOTES**:
+- Do NOT create the entire textbook at once - focus on ONE chapter
+- Specify clear chapter number and title
+- Include "Chapter Summary" and "Key Takeaways" boxes
+- Add "Further Reading" suggestions relevant to the topic
+- Use Indian names and contexts in examples where appropriate
+- Balance theory with practical application (40:60 ratio)
+- Include QR codes placeholders for additional resources
+
+Generate a single, complete AI chapter following this enhanced structure, incorporating best pedagogical practices while meeting CBSE curriculum requirements.
 
 Provide the complete AI chapter content in Markdown format.
 """
@@ -4012,7 +4241,12 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             else:
                 prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
-            st.info(f"Generating {content_type} content for {grade_level}...")
+            # Show detailed info for AI chapter generation
+            if subject_type == "Artificial Intelligence" and 'ai_chapter_selected' in st.session_state:
+                chapter_info = st.session_state['ai_chapter_selected']
+                st.info(f"📚 Generating {content_type} content for {grade_level}\n\n📖 Chapter: {chapter_info}")
+            else:
+                st.info(f"Generating {content_type} content for {grade_level}...")
             
             if use_openrouter_method:
                 # Use OpenRouter's recommended direct PDF upload
@@ -5533,9 +5767,91 @@ with tab1:
         key="subject_selector_tab1"
     )
 
-    # Grade/Level Selector - Show levels only for AI/Robotics
-    if subject_type in ["Artificial Intelligence", "Robotics"]:
-        # Level Selector for AI/Robotics
+    # Grade/Level Selector - Show appropriate options based on subject
+    if subject_type == "Artificial Intelligence":
+        # CBSE Grade Selector for AI (Classes 9-12)
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            grade_options = [
+                "Class 9 (CBSE Code 417)",
+                "Class 10 (CBSE Code 417)",
+                "Class 11 (CBSE Code 843)",
+                "Class 12 (CBSE Code 843)"
+            ]
+            selected_grade = st.selectbox(
+                "Select CBSE Grade:", 
+                grade_options, 
+                index=0,
+                key="ai_grade_selector",
+                help="Select the CBSE grade level for AI content generation"
+            )
+        
+        with col2:
+            # Chapter selection based on grade
+            chapter_options = {
+                "Class 9 (CBSE Code 417)": [
+                    "Chapter 1: Introduction to AI - Foundational Concepts",
+                    "Chapter 2: AI Project Cycle - Problem Scoping",
+                    "Chapter 3: Data Acquisition and Exploration",
+                    "Chapter 4: Modelling Basics",
+                    "Chapter 5: Model Evaluation",
+                    "Chapter 6: Introduction to Python for AI",
+                    "Chapter 7: Data Science Domain",
+                    "Chapter 8: Computer Vision Basics",
+                    "Chapter 9: Natural Language Processing Basics",
+                    "Chapter 10: AI Ethics and Bias"
+                ],
+                "Class 10 (CBSE Code 417)": [
+                    "Chapter 1: AI Review and Advanced Concepts",
+                    "Chapter 2: Advanced Data Processing",
+                    "Chapter 3: Introduction to Machine Learning",
+                    "Chapter 4: Supervised Learning Techniques",
+                    "Chapter 5: Neural Networks Introduction",
+                    "Chapter 6: Computer Vision Applications",
+                    "Chapter 7: NLP Applications",
+                    "Chapter 8: AI in Healthcare",
+                    "Chapter 9: AI in Business and Finance",
+                    "Chapter 10: AI Project Implementation"
+                ],
+                "Class 11 (CBSE Code 843)": [
+                    "Chapter 1: Python Programming for AI",
+                    "Chapter 2: Statistics and Probability for AI",
+                    "Chapter 3: Data Visualization with Python",
+                    "Chapter 4: Introduction to NumPy and Pandas",
+                    "Chapter 5: Supervised Learning - Classification",
+                    "Chapter 6: Supervised Learning - Regression",
+                    "Chapter 7: Unsupervised Learning",
+                    "Chapter 8: Introduction to Neural Networks",
+                    "Chapter 9: Natural Language Processing with Python",
+                    "Chapter 10: Computer Vision with OpenCV"
+                ],
+                "Class 12 (CBSE Code 843)": [
+                    "Chapter 1: Deep Learning Fundamentals",
+                    "Chapter 2: Convolutional Neural Networks (CNNs)",
+                    "Chapter 3: Recurrent Neural Networks (RNNs)",
+                    "Chapter 4: Generative Adversarial Networks (GANs)",
+                    "Chapter 5: Transfer Learning and Fine-tuning",
+                    "Chapter 6: Advanced NLP - Transformers and BERT",
+                    "Chapter 7: Computer Vision - Object Detection and Segmentation",
+                    "Chapter 8: Reinforcement Learning Basics",
+                    "Chapter 9: AI Ethics, Bias, and Fairness",
+                    "Chapter 10: AI Capstone Project"
+                ]
+            }
+            
+            selected_chapter = st.selectbox(
+                "Select Chapter to Generate:",
+                chapter_options[selected_grade],
+                key="ai_chapter_selector",
+                help="Choose a specific chapter aligned with CBSE curriculum"
+            )
+            
+            # Store chapter info for use in prompt
+            st.session_state['ai_chapter_selected'] = selected_chapter
+            
+    elif subject_type == "Robotics":
+        # Level Selector for Robotics
         level_options = [
             "JL1 (Classes 1-3)",
             "JL2 (Classes 4-5)", 
@@ -5545,7 +5861,7 @@ with tab1:
         ]
         selected_level = st.selectbox("Select Target Level:", level_options, index=2, key="level_selector_tab1") # Default to SL1
         
-        # For AI/Robotics, use the level as grade_level for prompts
+        # For Robotics, use the level as grade_level for prompts
         selected_grade = selected_level
     else:
         # Regular Grade Selector for other subjects
@@ -5711,28 +6027,66 @@ with tab1:
                     'projects': projects_words
                 }
         elif subject_type == "Artificial Intelligence":
-            # Special word limits for AI
-            st.markdown("**Artificial Intelligence Structure**")
+            # Enhanced word limits for comprehensive AI textbook chapters
+            st.markdown("**AI Textbook Chapter Structure (O'Reilly/CBSE Standards)**")
+            st.info("📚 Creating publisher-quality AI textbook chapters with comprehensive content")
+            
             col1, col2 = st.columns(2)
             
             with col1:
-                mission_briefing_words = st.number_input("Mission Briefing (words)", min_value=200, value=300, step=25, key="ai_mission_words")
-                domain_analysis_words = st.number_input("Domain Analysis & Applications (words)", min_value=600, value=800, step=50, key="ai_domain_words")
-                core_concepts_words = st.number_input("Core Concepts (words)", min_value=2000, value=3000, step=100, key="ai_concepts_words")
+                st.markdown("**Core Content**")
+                introduction_words = st.number_input(
+                    "Chapter Introduction & Hook (words)", 
+                    min_value=300, value=400, step=50, 
+                    key="ai_intro_words",
+                    help="Real-world hook, objectives, roadmap"
+                )
+                concepts_words = st.number_input(
+                    "Core AI Concepts & Theory (words)", 
+                    min_value=2000, value=2500, step=100, 
+                    key="ai_concepts_words",
+                    help="Detailed explanations, algorithms, code examples"
+                )
+                hands_on_words = st.number_input(
+                    "Hands-On Labs & Projects (words)", 
+                    min_value=1200, value=1500, step=100, 
+                    key="ai_handson_words",
+                    help="Step-by-step project builds, experiments"
+                )
             
             with col2:
-                hands_on_project_words = st.number_input("Hands-On Project (words)", min_value=1000, value=1500, step=100, key="ai_project_words")
-                assessment_words = st.number_input("Assessment & Debrief (words)", min_value=400, value=600, step=50, key="ai_assessment_words")
-                exercises_words = st.number_input("Exercises (words)", min_value=800, value=1000, step=50, key="ai_exercises_words")
+                st.markdown("**Applications & Assessment**")
+                case_studies_words = st.number_input(
+                    "Case Studies & Applications (words)", 
+                    min_value=600, value=800, step=50, 
+                    key="ai_cases_words",
+                    help="Industry examples, Indian context"
+                )
+                exercises_words = st.number_input(
+                    "Exercises & Practice (words)", 
+                    min_value=800, value=1000, step=50, 
+                    key="ai_exercises_words",
+                    help="MCQs, coding challenges, problems"
+                )
+                projects_words = st.number_input(
+                    "Extended Projects & Resources (words)", 
+                    min_value=500, value=600, step=50, 
+                    key="ai_projects_words",
+                    help="Capstone ideas, career connections"
+                )
+            
+            # Display selected chapter info
+            if 'ai_chapter_selected' in st.session_state:
+                st.success(f"📖 Generating: {st.session_state['ai_chapter_selected']}")
             
             # Store word limits for AI
             st.session_state.word_limits = {
-                'mission_briefing': mission_briefing_words,
-                'domain_analysis': domain_analysis_words,
-                'core_concepts': core_concepts_words,
-                'hands_on_project': hands_on_project_words,
-                'assessment': assessment_words,
-                'exercises': exercises_words
+                'introduction': introduction_words,
+                'concepts': concepts_words,
+                'hands_on': hands_on_words,
+                'case_studies': case_studies_words,
+                'exercises': exercises_words,
+                'projects': projects_words
             }
         elif subject_type == "Robotics":
             # Special word limits for Robotics
