@@ -6554,9 +6554,9 @@ with tab1:
             
         # Download All Button (outside columns)
         download_all = st.button("📥 Download Complete Chapter with All Elements", key="download_all")
-            
-            # Handle button clicks and content generation
-            if generate_chapter:
+        
+        # Handle button clicks and content generation
+        if generate_chapter:
                 # Get word limits from session state
                 word_limits = st.session_state.get('word_limits', {})
                 
@@ -6725,7 +6725,7 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Chapter Content: {message}")
             
-            if generate_exercises:
+        if generate_exercises:
                 # Get word limits from session state
                 word_limits = st.session_state.get('word_limits', {})
                 
@@ -6813,7 +6813,7 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Exercises: {message}")
             
-            if generate_skills:
+        if generate_skills:
                 # Get word limits from session state
                 word_limits = st.session_state.get('word_limits', {})
                 
@@ -6901,7 +6901,7 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Skill Activities: {message}")
             
-            if generate_art:
+        if generate_art:
                 # Get word limits from session state
                 word_limits = st.session_state.get('word_limits', {})
                 
@@ -6989,7 +6989,7 @@ with tab1:
                         else:
                             st.error(f"❌ Failed to generate Art-Integrated Learning: {message}")
             
-            if download_all:
+        if download_all:
                 # Combine all generated content (if any)
                 all_content_parts = []
                 
