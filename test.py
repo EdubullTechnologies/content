@@ -3774,26 +3774,42 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
 
 **AMPLIFICATION INSTRUCTIONS**:
 
-1. **Analyze the Uploaded Chapter**:
-   - Identify the topic and learning objectives from the uploaded PDF
-   - Note the existing content structure and coverage
-   - Determine which CBSE unit/sub-units it covers
+1. **Preserve & Amplify CBSE Content**:
+   - KEEP all original CBSE concepts but AMPLIFY each with 3x more detail
+   - Take every CBSE point and expand it with examples, analogies, deeper explanations
+   - Maintain CBSE structure but enrich every section significantly
 
-2. **Expand and Enhance** (3-4x the original content):
-   - Add detailed explanations for each concept
-   - Include advanced topics related to the chapter theme
-   - Add industry examples and real-world applications
-   - Include latest AI trends and technologies
-   - Add hands-on projects and experiments
-   - Include career connections and future scope
+2. **Add Latest Technologies** (Age-Appropriate):
+   - Class 9-10: ChatGPT, DALL-E basics, Voice assistants, Simple automation
+   - Class 11-12: LLMs, Prompt engineering, RAG basics, YOLO introduction, N8N workflows
 
-3. **Add Advanced Elements**:
-   - Code examples with detailed annotations
-   - Mathematical foundations (where appropriate)
-   - Research paper references (simplified)
-   - Industry case studies
-   - Interview with AI professionals (simulated)
-   - Common pitfalls and best practices
+3. **IMAGE PROMPTS THROUGHOUT** (CRITICAL):
+   Generate detailed image prompts in this EXACT format:
+   ```
+   [IMAGE PROMPT - Location: After paragraph about X]
+   Prompt: "Create a detailed infographic showing..."
+   Style: Educational, colorful, age-appropriate
+   Size: Full-width illustration
+   Purpose: To visualize the concept of...
+   ```
+   
+   Include AT LEAST 15-20 image prompts per chapter:
+   - Concept diagrams
+   - Flowcharts
+   - Comparison tables as visuals
+   - Real-world application photos
+   - Code output screenshots
+   - Architecture diagrams
+   - Timeline infographics
+   - Mind maps
+
+4. **Content Enhancement Formula**:
+   - Original CBSE point: 1 paragraph → Your output: 3-4 paragraphs
+   - Original CBSE example: 1 → Your output: 3-4 varied examples
+   - Original CBSE activity: Basic → Your output: Basic + Intermediate + Advanced versions
+   - Add "Did You Know?" boxes with latest AI facts
+   - Add "Try This!" hands-on activities
+   - Add "Real World Connection" for every concept
 
 **Publisher Best Practices to Incorporate**:
 
@@ -3995,39 +4011,110 @@ Provide the complete AI chapter content in Markdown format.
 """
 
 def create_ai_exercises_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates Artificial Intelligence specific exercises and assessments"""
+    """Creates Artificial Intelligence super comprehensive exercises"""
     if word_limits is None:
         word_limits = {
-            'exercises': 1000
+            'exercises': 2000  # Increased for super book quality
         }
     
-    return f"""You are an Expert Artificial Intelligence Education Assessment Developer.
+    # Extract class number
+    import re
+    match = re.search(r'(\d+)', grade_level)
+    class_num = int(match.group(1)) if match else 9
+    
+    return f"""You are an Expert AI Education Assessment Developer creating SUPER BOOK quality exercises.
 
-**Subject Focus**: ARTIFICIAL INTELLIGENCE
+**Subject Focus**: ARTIFICIAL INTELLIGENCE - CBSE Enhanced Edition
 
 **Target Audience**: {grade_level}
 
-**Model Chapter Progression Context**:
----
-{model_progression_text}
----
+**IMPORTANT**: Analyze the uploaded chapter first to create exercises that:
+1. Cover ALL concepts from the original CBSE content
+2. Add exercises for the NEW technologies introduced
+3. Include practical, hands-on exercises students can actually do
 
-Create comprehensive AI exercises based on the chapter content.
-**Target Total Word Count**: {word_limits.get('exercises', 1000)} words
+**Target Total Word Count**: {word_limits.get('exercises', 2000)} words
 
-**AI Exercise Categories**:
+**SUPER BOOK EXERCISE STRUCTURE**:
 
-## 1. AI Conceptual Understanding (30%)
-- Multiple Choice Questions on AI principles, machine learning, pattern recognition (8 questions)
-- True/False with AI reasoning justification (10 statements)
-- Fill in the blanks with AI terminology (decision trees, neural networks, algorithms, etc.) (10 questions)
-- Match AI components to their functions (data, algorithms, models, predictions) (2 sets of 5 matches)
+## PART A: CBSE ALIGNED EXERCISES (40%)
 
-## 2. Algorithm Analysis & Implementation (25%)
-- AI algorithm analysis and prediction (5 exercises)
-- Debug AI code challenges (3 code blocks with logic errors)
-- Complete AI algorithm implementations (5 exercises)
-- AI decision-making problems (3 challenges)
+### 1. Multiple Choice Questions (15 questions)
+- 10 from CBSE concepts (but with deeper options)
+- 5 from new technologies added
+
+### 2. Very Short Answer (1-2 lines) - 10 questions
+- Quick recall of definitions
+- One-line explanations
+
+### 3. Short Answer (3-4 lines) - 8 questions
+- Concept explanations
+- Difference between X and Y
+
+## PART B: ENHANCED EXERCISES (30%)
+
+### 4. Application-Based Questions
+- Real-world problem solving
+- "How would you use AI to..." scenarios
+- Case study analysis
+
+### 5. Hands-On Coding Exercises
+{"- Simple Python exercises for Classes 11-12" if class_num >= 11 else "- Block-based coding for Classes 9-10"}
+{"- Teachable Machine projects" if class_num <= 10 else "- Jupyter notebook exercises"}
+- Step-by-step implementation tasks
+
+### 6. PROJECT-BASED QUESTIONS
+Create mini-projects like:
+{"- Train a simple image classifier" if class_num >= 10 else "- Create a chatbot flowchart"}
+{"- Build a recommendation system" if class_num >= 11 else "- Design an AI assistant"}
+
+## PART C: CRITICAL THINKING (20%)
+
+### 7. Analytical Questions
+- "What happens if..." scenarios
+- Debug the AI code/logic
+- Improve the algorithm
+
+### 8. Ethical AI Questions
+- Bias identification exercises
+- Privacy considerations
+- AI impact assessment
+
+## PART D: VISUAL EXERCISES (10%)
+
+### 9. Diagram-Based Questions
+Include exercises that require:
+- Completing flowcharts
+- Labeling neural network diagrams
+- Drawing decision trees
+- Creating mind maps
+
+**WITH IMAGE PROMPTS FOR EXERCISES**:
+For visual questions, provide image prompts like:
+```
+[EXERCISE IMAGE PROMPT]
+Create a: Partially completed flowchart of machine learning process
+Missing elements: Training step, validation step
+Student task: Complete the missing parts
+```
+
+## ADDITIONAL FEATURES FOR SUPER BOOK:
+
+### Answer Key Structure:
+- Brief answers for Part A
+- Detailed explanations for Part B
+- Step-by-step solutions for coding
+- Rubrics for project evaluation
+
+### Difficulty Levels:
+- 🟢 Easy (30% of questions)
+- 🟡 Medium (50% of questions)  
+- 🔴 Hard (20% of questions)
+
+### Board Exam Preparation:
+- Previous year question patterns
+- Important topics highlighted
+- Quick revision notes
 
 ## 3. Data & Pattern Recognition (20%)
 - Data analysis and interpretation (3 exercises)
@@ -4054,9 +4141,14 @@ Create comprehensive AI exercises based on the chapter content.
 - Include data visualization and interpretation exercises
 - Emphasize ethical AI considerations and responsible development
 
-Ensure all exercises relate directly to the chapter content and demonstrate practical AI concepts.
+**REMEMBER**:
+1. Base exercises on the UPLOADED chapter content
+2. Include exercises for both CBSE concepts AND new technologies added
+3. Make it comprehensive - this should be the ONLY exercise resource students need
+4. Include practical exercises students can do on their computers
+5. Add QR codes or links to online AI tools where relevant
 
-Provide comprehensive Artificial Intelligence exercises in Markdown format.
+Provide comprehensive SUPER BOOK AI exercises in Markdown format with clear section headers and numbering.
 """
 
 def create_ai_skills_prompt(grade_level, model_progression_text, word_limits=None):
