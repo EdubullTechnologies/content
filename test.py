@@ -3811,6 +3811,36 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
    - Add "Try This!" hands-on activities
    - Add "Real World Connection" for every concept
 
+5. **SOLVED EXAMPLES** (CRITICAL - Add throughout chapter):
+   After explaining each major concept, include:
+   
+   **Example Format:**
+   ```
+   📝 **Solved Example 1: [Topic Name]**
+   **Problem**: [Clear problem statement]
+   **Solution**:
+   Step 1: [Explanation]
+   Step 2: [Explanation]
+   Step 3: [Explanation]
+   **Answer**: [Final answer with explanation]
+   **Key Learning**: [What this example teaches]
+   ```
+   
+   Include AT LEAST:
+   - 3-4 solved examples per major concept
+   - Variety: Theoretical, numerical, practical, coding
+   - Progressive difficulty: Easy → Medium → Hard
+   - For Classes 9-10: Flowchart examples, decision trees, simple algorithms
+   - For Classes 11-12: Python code examples, ML model examples, data analysis
+   
+   **Types of Solved Examples to Include**:
+   - Conceptual understanding examples
+   - Mathematical/algorithmic examples
+   - Real-world application examples
+   - Debugging/error-finding examples
+   - Design/creativity examples
+   - Ethical decision-making examples
+
 **Publisher Best Practices to Incorporate**:
 
 1. **O'Reilly Style Elements**:
