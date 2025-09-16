@@ -858,6 +858,25 @@ For Artificial Intelligence, we support:
 - Projects: Creative AI applications and real-world problem solving
 
 Please use the appropriate generation option."""
+    elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+        if content_type == "chapter":
+            return create_ai_csl_chapter_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "exercises":
+            return create_ai_csl_exercises_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "skills":
+            return create_ai_csl_skills_prompt(grade_level, model_progression_text, word_limits)
+        elif content_type == "art":
+            return create_ai_csl_projects_prompt(grade_level, model_progression_text, word_limits)
+        else:
+            return f"""This content type '{content_type}' is not supported for AI Composite Skill Lab.
+            
+For AI Composite Skill Lab, we support:
+- Chapter Content: Complete AI chapter with hands-on tools and real-world applications
+- Exercises: AI model training challenges, data exercises, and concept assessments  
+- Skills: AI lab activities, machine learning projects, and tool proficiency
+- Projects: Creative AI applications and innovation challenges
+
+Please use the appropriate generation option."""
     elif subject_type == "Robotics":
         if content_type == "chapter":
             return create_robotics_chapter_prompt(grade_level, model_progression_text, word_limits)
@@ -4302,11 +4321,78 @@ def create_robotics_chapter_prompt(grade_level, model_progression_text, word_lim
     except FileNotFoundError:
         robotics_template = """Enhanced Robotics template not found. Using fallback template."""
     
-    return f"""You are an Expert Robotics Education Content Developer specializing in hands-on learning with IIT-developed kits.
+    # Determine age group and complexity level for Robotics
+    age_appropriate_robotics = ""
+    if "JL1" in grade_level:  # Classes 1-3
+        age_appropriate_robotics = """
+**Age-Appropriate Focus (Classes 1-3)**:
+- What are robots? Examples from daily life
+- Simple motors and movements
+- Basic sensors (touch, light, sound)
+- Following lines and avoiding obstacles
+- Block-based robot programming
+- Fun robot activities and games
+"""
+    elif "JL2" in grade_level:  # Classes 4-5
+        age_appropriate_robotics = """
+**Age-Appropriate Focus (Classes 4-5)**:
+- How robots help us (home, hospitals, factories)
+- Different types of sensors and actuators
+- Simple robot assembly and wiring
+- Basic programming logic for robots
+- Maze solving and line following
+- Introduction to robot competitions
+"""
+    elif "SL1" in grade_level:  # Classes 6-7
+        age_appropriate_robotics = """
+**Age-Appropriate Focus (Classes 6-7)**:
+- Understanding robot components in detail
+- Arduino programming basics
+- Multiple sensor integration
+- Simple computer vision (color detection)
+- Basic path planning concepts
+- Building functional robots for tasks
+"""
+    elif "SL2" in grade_level:  # Classes 8-9
+        age_appropriate_robotics = """
+**Age-Appropriate Focus (Classes 8-9)**:
+- Introduction to ROS concepts (simplified)
+- Computer vision with OpenCV basics
+- PID control for smooth movement
+- Simultaneous sensor processing
+- Autonomous navigation basics
+- Python/C++ for robotics
+- Simple simulation with Gazebo
+"""
+    else:  # SL3 - Class 11+
+        age_appropriate_robotics = """
+**Age-Appropriate Focus (Class 11+)**:
+- Full ROS/ROS2 development
+- Advanced computer vision integration
+- SLAM implementation
+- Complex path planning algorithms
+- Swarm robotics concepts
+- Industry 4.0 applications
+- Research-level projects
+"""
+    
+    return f"""You are an Expert Robotics Education Content Developer creating advanced robotics curriculum using WeeeMake kits as the hardware platform.
 
-**Subject Focus**: ROBOTICS - Focus on automation, sensors, actuators, mechanical systems, control systems, human-robot interaction, and physical world manipulation.
+**Subject Focus**: ROBOTICS - Teaching professional robotics (ROS, SLAM, Computer Vision, Swarm Robotics) using WeeeMake hardware as the foundation, going far beyond basic kit assembly.
 
 **Target Audience**: {grade_level}
+
+{age_appropriate_robotics}
+
+**WeeeMake Hardware Integration with Advanced Concepts**:
+- Use WeeeMake RobotStorm/WeeeBot as ROS-compatible robots
+- Install ROS nodes on ELF mainboard with ESP32
+- Connect WeeeMake sensors to ROS topics
+- Use WeeeMake camera for OpenCV and SLAM
+- Build swarm systems with multiple WeeeMake robots
+- Implement Gazebo simulations of WeeeMake robots
+- Deploy YOLO on WeeeMake for autonomous navigation
+- Create digital twins of WeeeMake robots
 
 **Enhanced Robotics Education Template**:
 ---
@@ -4325,21 +4411,55 @@ def create_robotics_chapter_prompt(grade_level, model_progression_text, word_lim
 - Hands-On Project: {word_limits.get('hands_on_project', 1500)} words
 - Assessment & Debrief: {word_limits.get('assessment', 600)} words
 
-**ROBOTICS-SPECIFIC FOCUS AREAS**:
-1. **Sensors & Perception**: How robots sense and understand their environment
-2. **Actuators & Movement**: How robots move and manipulate objects in the physical world
-3. **Control Systems**: How robots are programmed and controlled to perform tasks
-4. **Automation & Efficiency**: How robots automate repetitive tasks and improve efficiency
-5. **Human-Robot Interaction**: How robots work safely and effectively with humans
+**PROGRESSIVE ROBOTICS LEARNING**:
+
+For JL1-JL2 (Classes 1-5):
+- Basic robot movements and controls
+- Simple sensors and actuators
+- Line following and obstacle avoidance
+- Block-based programming
+- Fun challenges and competitions
+
+For SL1 (Classes 6-7):
+- Arduino programming
+- Multiple sensor integration
+- Basic autonomous behaviors
+- Simple computer vision
+- Problem-solving with robots
+
+For SL2 (Classes 8-9):
+- Introduction to ROS (simplified)
+- OpenCV basics for robots
+- PID control concepts
+- Path planning basics
+- Python for robotics
+- Gazebo simulation basics
+
+For SL3 (Class 11+):
+- Full ROS/ROS2 development
+- Advanced computer vision
+- SLAM implementation
+- Complex algorithms
+- Industry applications
 
 **CRITICAL INSTRUCTIONS**:
-1. Follow the enhanced template structure EXACTLY
-2. Preserve all original IIT code and technical content
-3. Analyze kit components to determine robotics applications (motors for movement, sensors for feedback, controllers for automation)
-4. Connect every concept to real-world robotics applications (manufacturing robots, service robots, exploration robots, etc.)
-5. Handle multiple programming languages (Scratch for beginners, Python for advanced, Arduino for hardware control)
-6. Include comprehensive troubleshooting for robotics system integration
-7. Provide multi-level extension challenges focusing on robotics capabilities
+1. **WeeeMake Foundation**: Start with WeeeMake RobotStorm/WeeeBot assembly
+2. **Advanced Integration**: Teach ROS, SLAM, OpenCV using WeeeMake hardware
+3. **Progressive Path**:
+   - JL1-JL2: WeeeMake basics + simple robotics concepts
+   - SL1-SL2: WeeeMake + Arduino/Python programming + basic ROS
+   - SL3: WeeeMake + full ROS/Gazebo/SLAM implementation
+4. **Beyond Kit Manual**: Show how to:
+   - Install ROS on WeeeMake ESP32 boards
+   - Connect WeeeMake to Gazebo simulations
+   - Implement SLAM using WeeeMake sensors
+   - Deploy YOLO for robot vision
+5. **Practical Implementation**: Every ROS concept must work on actual WeeeMake robots
+6. **Swarm Robotics**: Use multiple WeeeMake kits for swarm behaviors
+7. **Industry Bridge**: Show how WeeeMake projects scale to industrial robots
+8. **Code Progression**: WeeeCode → Arduino → Python → ROS/C++
+9. **Hardware Extensions**: Adding Raspberry Pi, Jetson Nano to WeeeMake
+10. **Real Applications**: Build actual autonomous systems, not just line followers
 
 Transform the provided PDF content into a comprehensive Robotics chapter following the enhanced template structure.
 
@@ -4580,17 +4700,532 @@ Each project should demonstrate how robotics can be applied creatively to solve 
 Provide comprehensive Robotics creative projects in Markdown format.
 """
 
+def create_ai_csl_chapter_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates an AI Composite Skill Lab chapter content prompt"""
+    # Default word limits if none provided
+    if word_limits is None:
+        word_limits = {
+            'mission_briefing': 300,
+            'ai_world': 600,
+            'core_concepts': 2500,
+            'hands_on_tools': 1200,
+            'build_project': 1500,
+            'testing': 800,
+            'ethical_ai': 500,
+            'challenge': 600
+        }
+    
+    # Try to read the AI template if available
+    try:
+        with open('ai_robo.txt', 'r', encoding='utf-8') as f:
+            ai_template = f.read()
+    except FileNotFoundError:
+        ai_template = """Enhanced AI template not found. Using fallback template."""
+    
+    # Determine age group and complexity level
+    age_appropriate_focus = ""
+    if "JL1" in grade_level:  # Classes 1-3 (Ages 6-8)
+        age_appropriate_focus = """
+**Age-Appropriate Focus (Classes 1-3)**:
+- What is AI? Simple examples like Alexa, Siri
+- Teaching computers to recognize pictures (simple image recognition)
+- Making computers talk and listen (basic voice commands)
+- Simple pattern games and puzzles
+- Block-based programming with AI features
+- Fun experiments with pre-trained models
+"""
+    elif "JL2" in grade_level:  # Classes 4-5 (Ages 9-10)
+        age_appropriate_focus = """
+**Age-Appropriate Focus (Classes 4-5)**:
+- How AI helps in daily life (smart homes, games, learning apps)
+- Basic image classification (cats vs dogs, fruits, objects)
+- Introduction to chatbots - how they work
+- Simple automation ideas (if-this-then-that concepts)
+- Scratch AI extensions and Teachable Machine
+- Creating simple AI projects with visual tools
+"""
+    elif "SL1" in grade_level:  # Classes 6-7 (Ages 11-12)
+        age_appropriate_focus = """
+**Age-Appropriate Focus (Classes 6-7)**:
+- Understanding how AI learns (simplified machine learning)
+- Introduction to YOLO - detecting objects in pictures
+- Basic prompt engineering - talking to AI effectively
+- Simple N8N workflows - connecting apps together
+- Python basics for AI (using Google Colab)
+- Building a simple chatbot or image classifier
+"""
+    elif "SL2" in grade_level:  # Classes 8-9 (Ages 13-14)
+        age_appropriate_focus = """
+**Age-Appropriate Focus (Classes 8-9)**:
+- Real YOLO implementation for object detection projects
+- Prompt engineering techniques for better AI responses
+- Creating N8N automation workflows for real tasks
+- Introduction to LLMs - how ChatGPT/Claude work
+- Basic RAG concepts - making AI use your own data
+- Python programming for AI applications
+- Deploying simple AI models online
+"""
+    else:  # SL3 - Class 11 (Ages 16+)
+        age_appropriate_focus = """
+**Age-Appropriate Focus (Class 11+)**:
+- Advanced YOLOv8/v12 for complex computer vision
+- Professional prompt engineering and LangChain
+- Complex N8N workflows with multiple integrations
+- Vector databases and embeddings
+- Full RAG system implementation
+- Edge AI deployment on Raspberry Pi
+- Production-ready AI applications
+"""
+    
+    return f"""You are an Expert AI Education Content Developer creating advanced AI curriculum using WeeeMake kits as the hardware platform.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE (Composite Skill Lab) - Teaching cutting-edge AI technologies (YOLO, N8N, RAG, LLMs, prompt engineering) using WeeeMake hardware as the foundation.
+
+**Target Audience**: {grade_level}
+
+{age_appropriate_focus}
+
+**Educational Context**: This book serves as BOTH a WeeeMake kit manual AND an advanced AI curriculum. Use WeeeMake components (ELF mainboard, sensors, WeeeCode) but teach professional AI concepts that go far beyond typical kit manuals.
+
+**WeeeMake Integration**:
+- Use WeeeMake sensors (camera module, ultrasonic, etc.) for computer vision projects
+- Connect ELF AIOT K210 board for edge AI and YOLO deployment
+- Use WeeeCode for beginners, transition to Python for advanced AI
+- Integrate WeeeMake robots with cloud AI services
+- Show how to connect WeeeMake to N8N workflows
+- Use WeeeMake hardware to build RAG systems and AI agents
+
+**Enhanced AI Education Template**:
+---
+{ai_template}
+---
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+**Word Count Targets**:
+- Mission Briefing: {word_limits.get('mission_briefing', 300)} words
+- AI in Our World: {word_limits.get('ai_world', 600)} words
+- Core AI Concepts: {word_limits.get('core_concepts', 2500)} words
+- Hands-On with AI Tools: {word_limits.get('hands_on_tools', 1200)} words
+- Build Your AI Project: {word_limits.get('build_project', 1500)} words
+- Training & Testing: {word_limits.get('testing', 800)} words
+- Ethical AI Explorer: {word_limits.get('ethical_ai', 500)} words
+- Challenge Zone: {word_limits.get('challenge', 600)} words
+
+**AI CSL CHAPTER STRUCTURE**:
+
+## 1. Mission Briefing (Target: {word_limits.get('mission_briefing', 300)} words)
+- Real-world AI challenge or problem to solve
+- Why this AI application matters
+- What students will build/create
+- Connection to daily life and future careers
+- Learning objectives clearly stated
+
+## 2. AI in Our World (Target: {word_limits.get('ai_world', 600)} words)
+- Current AI applications in the domain
+- Success stories and case studies
+- Local and global AI implementations
+- Impact on society and various industries
+- Future possibilities and emerging trends
+
+## 3. Core AI Concepts (Target: {word_limits.get('core_concepts', 2500)} words)
+**Progressive Learning Path** (adjusted by level):
+
+For JL1 (Classes 1-3):
+- What makes something "smart"?
+- Computers that can see (simple image recognition)
+- Computers that can hear and talk
+- Following patterns and rules
+- Making predictions (weather, games)
+
+For JL2 (Classes 4-5):
+- How computers learn from examples
+- Teaching computers to recognize objects
+- Simple chatbots and how they work
+- Basic automation (if-then rules)
+- AI in games and toys
+
+For SL1 (Classes 6-7):
+- Introduction to machine learning concepts
+- YOLO explained simply - finding objects in pictures
+- How to talk to AI (basic prompt engineering)
+- Connecting apps with N8N (visual automation)
+- Python basics for AI
+
+For SL2 (Classes 8-9):
+- Implementing YOLO for real projects
+- Understanding ChatGPT/Claude (LLMs basics)
+- Creating automation workflows with N8N
+- Prompt engineering techniques
+- Introduction to RAG - making AI smarter with data
+- Basic model training concepts
+
+For SL3 (Class 11+):
+- Advanced computer vision with YOLOv8/v12
+- Deep understanding of LLMs and transformers
+- Professional prompt engineering with LangChain
+- Vector databases and embeddings
+- Full RAG implementation
+- Edge AI and deployment strategies
+
+## 4. Hands-On with AI Tools (Target: {word_limits.get('hands_on_tools', 1200)} words)
+**Age-Appropriate Tools & Platforms**:
+
+For JL1 (Classes 1-3):
+- Scratch Jr with AI blocks
+- Quick, Draw! by Google
+- Teachable Machine (very basic)
+- Voice assistants exploration
+- Simple AI games and apps
+
+For JL2 (Classes 4-5):
+- Scratch AI extensions
+- Teachable Machine projects
+- Code.org AI activities
+- Simple chatbot creators
+- Basic image recognition apps
+
+For SL1 (Classes 6-7):
+- Google Colab introduction
+- Teachable Machine advanced
+- N8N visual workflows (basic)
+- Simple YOLO demos
+- Basic Python with AI libraries
+- ChatGPT/Claude for learning
+
+For SL2 (Classes 8-9):
+- YOLO implementation basics
+- N8N automation projects
+- Python AI programming
+- Google Colab projects
+- Simple API usage
+- Basic prompt engineering
+- Gradio for simple demos
+
+For SL3 (Class 11+):
+- Full YOLOv8/v12 setup
+- Advanced N8N workflows
+- LangChain implementation
+- Vector databases
+- API development
+- Model deployment
+- Edge AI projects
+
+## 5. Build Your AI Project (Target: {word_limits.get('build_project', 1500)} words)
+**Advanced Project Implementation**:
+1. **Problem Definition**: Real-world use cases (smart city, healthcare, education)
+2. **Data Pipeline**: Web scraping, APIs, sensor data, real-time streams
+3. **Model Selection**: 
+   - YOLOv8 for object detection projects
+   - Fine-tuning LLMs for domain-specific chatbots
+   - Building RAG systems for document Q&A
+4. **Implementation**:
+   - Setting up N8N automation workflows
+   - Creating prompt chains with LangChain
+   - Building vector search systems
+5. **Integration**: REST APIs, webhooks, real-time processing
+6. **Deployment**: Docker containers, cloud platforms, edge devices
+7. **Scaling**: Load balancing, caching, distributed processing
+8. **Documentation**: API docs, user guides, technical architecture
+
+## 6. Training & Testing (Target: {word_limits.get('testing', 800)} words)
+- Understanding accuracy and error
+- Training vs testing data
+- Overfitting and underfitting
+- Improving model performance
+- Validation techniques
+- Real-world testing scenarios
+
+## 7. Ethical AI Explorer (Target: {word_limits.get('ethical_ai', 500)} words)
+- Bias in AI systems
+- Privacy and data protection
+- Responsible AI use
+- AI safety considerations
+- Impact on jobs and society
+- Making AI fair and inclusive
+
+## 8. Challenge Zone (Target: {word_limits.get('challenge', 600)} words)
+**Industry-Level Challenges**:
+- Build a YOLOv12-based traffic monitoring system
+- Create an N8N workflow for automated content generation
+- Develop a RAG system for school library assistance
+- Fine-tune an LLM for local language support
+- Build a prompt engineering toolkit for educators
+- Deploy an AI model on Raspberry Pi for real-time inference
+- Create a vector database for semantic search
+- Build an AI agent using LangChain for task automation
+- Develop a computer vision pipeline for quality control
+- Implement MLOps for continuous model improvement
+
+**CRITICAL INSTRUCTIONS**:
+1. **Dual Purpose**: This is BOTH a WeeeMake kit manual AND advanced AI curriculum
+2. **Start with WeeeMake**: Always begin with kit assembly and basic operations
+3. **Then Go Beyond**: Teach YOLO, N8N, RAG, LLMs, prompt engineering using the hardware
+4. **Progressive Learning**: 
+   - JL1-JL2: WeeeMake basics + simple AI concepts
+   - SL1-SL2: WeeeMake + real AI implementations
+   - SL3: WeeeMake + professional AI/cloud integration
+5. **Practical Projects**: Every advanced concept must have hands-on WeeeMake implementation
+6. **Bridge the Gap**: Show how basic sensors connect to advanced AI systems
+7. **Real Applications**: Use WeeeMake to build actual AI products, not just demos
+8. **Code Evolution**: WeeeCode → Python → Advanced frameworks
+9. **Hardware Hacking**: Show how to extend WeeeMake with additional AI hardware
+10. **Industry Relevance**: Connect kit projects to real-world AI applications
+
+**Content Structure**:
+- Part 1: WeeeMake kit assembly and basic programming (30%)
+- Part 2: Integrating advanced AI concepts with the hardware (40%)
+- Part 3: Building professional-level projects using WeeeMake platform (30%)
+
+Provide comprehensive AI Composite Skill Lab chapter content in Markdown format.
+"""
+
+def create_ai_csl_exercises_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates AI CSL exercises and assessments"""
+    if word_limits is None:
+        word_limits = {
+            'exercises': 1200
+        }
+    
+    return f"""You are an Expert AI Education Assessment Designer for Composite Skill Lab.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE (Composite Skill Lab)
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## Comprehensive AI Exercises & Assessments (Target: {word_limits.get('exercises', 1200)} words)
+
+Create diverse, hands-on exercises that test both theoretical understanding and practical AI skills:
+
+### 1. **Conceptual Understanding** (25%)
+- Multiple choice questions on AI fundamentals
+- True/False with explanations
+- Match AI techniques to appropriate problems
+- Identify AI vs non-AI solutions
+
+### 2. **Hands-On Activities** (40%)
+- Data collection exercises
+- Model training challenges
+- Debugging AI models
+- Performance optimization tasks
+- Tool-based projects
+
+### 3. **Problem-Solving** (25%)
+- Real-world AI problem scenarios
+- Design an AI solution exercises
+- Algorithmic thinking puzzles
+- Decision tree construction
+- Pattern recognition challenges
+
+### 4. **Ethical & Social** (10%)
+- AI bias identification
+- Privacy consideration questions
+- Responsible AI scenarios
+- Impact assessment exercises
+
+**Exercise Types**:
+1. **Quick Check** (5 questions) - Basic understanding
+2. **Apply Your Knowledge** - Practical application
+3. **Build & Test** - Hands-on creation
+4. **Think & Discuss** - Critical thinking
+5. **Project Challenge** - Extended activity
+6. **Debug the AI** - Error finding and fixing
+7. **Data Detective** - Data analysis tasks
+8. **AI Designer** - System design exercises
+
+**Assessment Rubric**:
+- Technical accuracy
+- Creative problem-solving
+- Ethical consideration
+- Practical implementation
+- Collaboration skills
+
+Provide comprehensive AI CSL exercises in Markdown format.
+"""
+
+def create_ai_csl_skills_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates AI CSL skills development activities"""
+    if word_limits is None:
+        word_limits = {
+            'skill_activities': 1000
+        }
+    
+    return f"""You are an Expert AI Skills Development Facilitator for Composite Skill Lab.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE (Composite Skill Lab)
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## AI Skills Development Activities (Target: {word_limits.get('skill_activities', 1000)} words)
+
+Design progressive skill-building activities for comprehensive AI competency:
+
+### Core AI Skills to Develop:
+
+#### 1. **Data Literacy Skills**
+- Data collection techniques
+- Data cleaning and preparation
+- Data visualization
+- Understanding datasets
+- Creating training sets
+
+#### 2. **Model Building Skills**
+- Selecting appropriate algorithms
+- Training models effectively
+- Parameter tuning
+- Model evaluation
+- Iterative improvement
+
+#### 3. **Computational Thinking**
+- Problem decomposition
+- Pattern recognition
+- Abstraction
+- Algorithm design
+- Logical reasoning
+
+#### 4. **AI Tool Proficiency**
+- Platform navigation
+- Feature utilization
+- API integration
+- Code implementation
+- Deployment basics
+
+#### 5. **Critical Analysis**
+- Evaluating AI solutions
+- Identifying limitations
+- Comparing approaches
+- Performance analysis
+- Bias detection
+
+### Progressive Skill Activities:
+
+**Beginner Level**:
+- Basic classification tasks
+- Simple pattern recognition
+- Data labeling exercises
+- Pre-trained model usage
+
+**Intermediate Level**:
+- Custom model training
+- Multi-class classification
+- Feature engineering
+- Model comparison
+
+**Advanced Level**:
+- Complex problem solving
+- Model optimization
+- Ensemble methods
+- Custom implementations
+
+**Collaborative Skills**:
+- Team AI projects
+- Peer review exercises
+- Knowledge sharing
+- Documentation skills
+
+Provide comprehensive AI CSL skills activities in Markdown format.
+"""
+
+def create_ai_csl_projects_prompt(grade_level, model_progression_text, word_limits=None):
+    """Creates AI CSL creative projects and applications"""
+    if word_limits is None:
+        word_limits = {
+            'creative_projects': 800
+        }
+    
+    return f"""You are an Expert AI Innovation Mentor and Project Designer for Composite Skill Lab.
+
+**Subject Focus**: ARTIFICIAL INTELLIGENCE (Composite Skill Lab)
+
+**Target Audience**: {grade_level}
+
+**Model Chapter Progression Context**:
+---
+{model_progression_text}
+---
+
+## AI Creative Innovation Projects (Target: {word_limits.get('creative_projects', 800)} words)
+
+Create at least 4 innovative projects that showcase AI applications across domains:
+
+**Project Structure for Each**:
+1. **AI Innovation Objective** (problem-solving + creative goals)
+2. **Cross-Domain Integration** (AI + other subjects)
+3. **Technical Requirements** (tools, data, models needed)
+4. **Design Thinking Process** (empathize, define, ideate, prototype, test)
+5. **Implementation Plan** (step-by-step guide)
+6. **Testing & Validation** (how to verify success)
+7. **Social Impact Assessment** (benefits to community)
+8. **Portfolio Presentation** (showcasing the project)
+
+**Creative AI Project Categories**:
+
+### 🎯 Computer Vision Projects (YOLOv8/v12)
+- **Smart Security System**: Real-time person detection with YOLOv8
+- **Traffic Analysis**: Vehicle counting and classification
+- **Product Quality Control**: Defect detection in manufacturing
+- **Sports Analytics**: Player tracking and performance analysis
+
+### 🤖 LLM & RAG Projects
+- **Custom Knowledge Bot**: RAG system with Pinecone and GPT-4
+- **Document Intelligence**: PDF Q&A with LangChain
+- **Code Assistant**: Fine-tuned model for programming help
+- **Multi-lingual Chatbot**: LLM with translation capabilities
+
+### ⚡ Automation Projects (N8N/Zapier)
+- **AI Content Pipeline**: Automated blog writing with N8N
+- **Smart Email Responder**: GPT-powered email automation
+- **Data Processing Workflow**: ETL pipeline with AI enhancement
+- **Social Media Manager**: Automated posting with AI content
+
+### 🚀 Edge AI & IoT Projects
+- **Smart Home Assistant**: Raspberry Pi with local LLM
+- **Drone Vision System**: Object detection on edge devices
+- **Arduino AI Robot**: TensorFlow Lite implementation
+- **Wearable Health Monitor**: Real-time inference on microcontrollers
+
+### 🔧 Production AI Systems
+- **API Service**: FastAPI backend with multiple AI models
+- **Scalable ML Pipeline**: Docker + Kubernetes deployment
+- **Model Monitoring Dashboard**: MLflow tracking system
+- **A/B Testing Framework**: Compare model performances
+
+**Assessment Criteria**:
+- Innovation and creativity
+- Technical implementation
+- Problem-solving effectiveness
+- User experience design
+- Ethical considerations
+- Documentation quality
+- Presentation skills
+
+Provide comprehensive AI CSL creative projects in Markdown format.
+"""
+
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
     """Generates specific content based on content type"""
     
-    # Special handling for AI subject without PDF
-    if subject_type == "Artificial Intelligence" and pdf_bytes is None:
-        # Direct generation without PDF for AI textbook creation
+    # Special handling for AI subjects
+    if (subject_type == "Artificial Intelligence" and pdf_bytes is None) or (subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None):
+        # Direct generation without PDF for AI textbook/CSL creation
         try:
             prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
             # Show detailed info for AI chapter generation
-            if 'ai_chapter_selected' in st.session_state:
+            if subject_type == "Artificial Intelligence" and 'ai_chapter_selected' in st.session_state:
                 chapter_info = st.session_state['ai_chapter_selected']
                 st.info(f"📚 Generating {content_type} content for {grade_level}\n\n📖 Chapter: {chapter_info}")
             else:
@@ -4599,6 +5234,12 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             # Direct API call without PDF content
             messages = [{"role": "user", "content": prompt}]
             
+            # Use different max_tokens based on subject
+            if subject_type == "Artificial Intelligence":
+                max_tokens = 70000  # CBSE AI curriculum
+            else:
+                max_tokens = 80000  # AI CSL needs more for advanced topics
+            
             completion = client.chat.completions.create(
                 extra_headers={
                     "HTTP-Referer": YOUR_SITE_URL,
@@ -4606,7 +5247,7 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
                 },
                 model=MODEL_NAME,
                 messages=messages,
-                max_tokens=70000,  # Increased for comprehensive AI textbook chapters
+                max_tokens=max_tokens,
                 temperature=0.4,
             )
             
@@ -4647,8 +5288,15 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
                     }
                 ]
                 
-                # Determine max tokens based on content type
-                max_tokens = 131072 if (subject_type == "Mathematics" and content_type == "chapter") else 65536
+                # Determine max tokens based on content type and subject
+                if subject_type == "Mathematics" and content_type == "chapter":
+                    max_tokens = 131072
+                elif subject_type == "Robotics":
+                    max_tokens = 80000  # Increased for comprehensive Robotics content
+                elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+                    max_tokens = 80000  # AI CSL with advanced topics
+                else:
+                    max_tokens = 65536
                 
                 # Make API call with plugins
                 completion = client.chat.completions.create(
@@ -4682,8 +5330,15 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
                 # Create messages with PDF content
                 messages = create_messages_with_pdf_content(prompt, pdf_text, pdf_images)
                 
-                # Determine max tokens based on content type
-                max_tokens = 131072 if (subject_type == "Mathematics" and content_type == "chapter") else 65536
+                # Determine max tokens based on content type and subject
+                if subject_type == "Mathematics" and content_type == "chapter":
+                    max_tokens = 131072
+                elif subject_type == "Robotics":
+                    max_tokens = 80000  # Increased for comprehensive Robotics content
+                elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+                    max_tokens = 80000  # AI CSL with advanced topics
+                else:
+                    max_tokens = 65536
                 
                 # Make API call
                 completion = client.chat.completions.create(
@@ -5377,10 +6032,16 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     else:
         prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
-    # Special handling for AI subject without PDF
-    if subject_type == "Artificial Intelligence" and pdf_bytes is None:
-        # Direct streaming without PDF for AI textbook creation
+    # Special handling for AI subjects without PDF
+    if (subject_type == "Artificial Intelligence" and pdf_bytes is None) or (subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None):
+        # Direct streaming without PDF for AI textbook/CSL creation
         messages = [{"role": "user", "content": prompt}]
+        
+        # Determine max tokens based on subject
+        if subject_type == "Artificial Intelligence":
+            max_tokens = 70000  # CBSE AI curriculum
+        else:
+            max_tokens = 80000  # AI CSL needs more for advanced topics
         
         # Stream the response
         stream = client.chat.completions.create(
@@ -5390,7 +6051,7 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
             },
             model=MODEL_NAME,
             messages=messages,
-            max_tokens=70000,  # Increased for comprehensive AI textbook chapters
+            max_tokens=max_tokens,
             temperature=0.4,
             stream=True
         )
@@ -5428,6 +6089,10 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     # Determine max tokens based on content type and subject
     if subject_type == "Artificial Intelligence":
         max_tokens = 70000  # Maximum tokens for comprehensive AI textbook chapters
+    elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+        max_tokens = 80000  # AI CSL needs more for advanced topics
+    elif subject_type == "Robotics":
+        max_tokens = 65536  # Increased for comprehensive Robotics content
     elif subject_type == "Mathematics" and content_type == "chapter":
         max_tokens = 32768
     else:
@@ -6176,8 +6841,8 @@ with tab1:
     # Subject Type Selector
     subject_type = st.selectbox(
         "Select Subject Type:",
-        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)", "Artificial Intelligence", "Robotics"],
-        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin. AI and Robotics options are designed for hands-on learning with IIT kits.",
+        ["Science (Uses Model Chapter Progression)", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "English Communication & Grammar (Classes 1-8)", "Artificial Intelligence", "Artificial Intelligence (Composite Skill Lab)", "Robotics"],
+        help="Choose the appropriate subject type based on your needs. Science EVS options are specialized for primary grades. English option uses best practices from Oxford, Cambridge, and Wren & Martin. AI options include CBSE curriculum (9-12) and Composite Skill Lab (JL1-SL3). Robotics option is designed for hands-on learning with IIT kits.",
         key="subject_selector_tab1"
     )
 
@@ -6264,8 +6929,8 @@ with tab1:
             # Store chapter info for use in prompt
             st.session_state['ai_chapter_selected'] = selected_chapter
             
-    elif subject_type == "Robotics":
-        # Level Selector for Robotics
+    elif subject_type in ["Robotics", "Artificial Intelligence (Composite Skill Lab)"]:
+        # Level Selector for Robotics and AI Composite Skill Lab
         level_options = [
             "JL1 (Classes 1-3)",
             "JL2 (Classes 4-5)", 
@@ -6275,7 +6940,7 @@ with tab1:
         ]
         selected_level = st.selectbox("Select Target Level:", level_options, index=2, key="level_selector_tab1") # Default to SL1
         
-        # For Robotics, use the level as grade_level for prompts
+        # For Robotics/AI CSL, use the level as grade_level for prompts
         selected_grade = selected_level
     else:
         # Regular Grade Selector for other subjects
@@ -6524,6 +7189,36 @@ with tab1:
                 'core_concepts': core_concepts_words,
                 'hands_on_project': hands_on_project_words,
                 'assessment': assessment_words,
+                'exercises': exercises_words
+            }
+        elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+            # Special word limits for AI Composite Skill Lab
+            st.markdown("**AI Composite Skill Lab Structure**")
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                mission_briefing_words = st.number_input("Mission Briefing (words)", min_value=200, value=300, step=25, key="ai_csl_mission_words")
+                ai_world_words = st.number_input("AI in Our World (words)", min_value=400, value=600, step=50, key="ai_csl_world_words")
+                core_concepts_words = st.number_input("Core AI Concepts (words)", min_value=2000, value=2500, step=100, key="ai_csl_concepts_words")
+                hands_on_tools_words = st.number_input("Hands-On with AI Tools (words)", min_value=800, value=1200, step=100, key="ai_csl_tools_words")
+            
+            with col2:
+                build_project_words = st.number_input("Build Your AI Project (words)", min_value=1000, value=1500, step=100, key="ai_csl_project_words")
+                testing_words = st.number_input("Training & Testing (words)", min_value=600, value=800, step=50, key="ai_csl_testing_words")
+                ethical_ai_words = st.number_input("Ethical AI Explorer (words)", min_value=300, value=500, step=50, key="ai_csl_ethical_words")
+                challenge_words = st.number_input("Challenge Zone (words)", min_value=400, value=600, step=50, key="ai_csl_challenge_words")
+                exercises_words = st.number_input("Exercises (words)", min_value=800, value=1200, step=100, key="ai_csl_exercises_words")
+            
+            # Store word limits
+            st.session_state.word_limits = {
+                'mission_briefing': mission_briefing_words,
+                'ai_world': ai_world_words,
+                'core_concepts': core_concepts_words,
+                'hands_on_tools': hands_on_tools_words,
+                'build_project': build_project_words,
+                'testing': testing_words,
+                'ethical_ai': ethical_ai_words,
+                'challenge': challenge_words,
                 'exercises': exercises_words
             }
         else:
@@ -6787,7 +7482,7 @@ with tab1:
                 st.session_state.show_art_expander = False
                 st.rerun()
 
-        # Check if AI subject is selected - no PDF needed for AI
+        # Check if AI subject is selected - no PDF needed for regular AI (CBSE 9-12)
         if subject_type == "Artificial Intelligence":
             st.success("🎯 AI Textbook Generation Mode - No PDF Required!")
             st.markdown("""
@@ -6799,6 +7494,22 @@ with tab1:
             # Skip PDF upload and go directly to generation buttons
             uploaded_file_st = None  # No file needed
             pdf_bytes = None  # No PDF bytes needed
+        elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+            # AI CSL - Allow PDF upload for improving old books
+            st.info("📘 AI Composite Skill Lab Mode")
+            st.markdown("""
+            ### 📚 Improve Your Existing AI Lab Books or Generate New Content
+            Upload your existing AI lab book to improve it, or leave empty to generate fresh content.
+            """)
+            
+            uploaded_file_st = st.file_uploader("Upload your existing AI book (optional)", type="pdf", key="pdf_uploader_tab1")
+
+            if uploaded_file_st is not None:
+                st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade} - Will improve based on your existing content...")
+                pdf_bytes = uploaded_file_st.getvalue()
+            else:
+                st.success("No PDF uploaded - Will generate fresh AI CSL content from scratch!")
+                pdf_bytes = None
         else:
             # Regular PDF upload for other subjects
             uploaded_file_st = st.file_uploader("Upload your chapter (PDF only)", type="pdf", key="pdf_uploader_tab1")
@@ -6817,7 +7528,7 @@ with tab1:
 
         # Show buttons for all subjects including AI
         if subject_type == "Artificial Intelligence":
-            # AI-specific buttons
+            # AI-specific buttons (CBSE 9-12)
             col1, col2 = st.columns(2)
             col3, col4 = st.columns(2)
             
@@ -6832,6 +7543,35 @@ with tab1:
             
             # Generate Art Learning Button
             generate_art = col4.button("🎨 Generate AI Projects", key="gen_ai_art")
+            
+        elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+            # AI CSL-specific buttons
+            col1, col2 = st.columns(2)
+            col3, col4 = st.columns(2)
+            
+            # Generate Chapter Content Button
+            if uploaded_file_st:
+                generate_chapter = col1.button("📚 Improve AI CSL Chapter", key="gen_ai_csl_chapter")
+            else:
+                generate_chapter = col1.button("📚 Generate AI CSL Chapter", key="gen_ai_csl_chapter")
+            
+            # Generate Exercises Button
+            if uploaded_file_st:
+                generate_exercises = col2.button("📝 Improve AI CSL Exercises", key="gen_ai_csl_exercises")
+            else:
+                generate_exercises = col2.button("📝 Generate AI CSL Exercises", key="gen_ai_csl_exercises")
+            
+            # Generate Skill Activities Button
+            if uploaded_file_st:
+                generate_skills = col3.button("🤖 Improve AI CSL Skills", key="gen_ai_csl_skills")
+            else:
+                generate_skills = col3.button("🤖 Generate AI CSL Skills", key="gen_ai_csl_skills")
+            
+            # Generate Creative Projects Button
+            if uploaded_file_st:
+                generate_art = col4.button("🎨 Improve AI CSL Projects", key="gen_ai_csl_art")
+            else:
+                generate_art = col4.button("🎨 Generate AI CSL Projects", key="gen_ai_csl_art")
             
         elif subject_type == "Mathematics Primary (Classes 1-5)":
             # For primary mathematics, show chapter and exercises generation
@@ -7431,13 +8171,13 @@ with tab2:
         # Subject context first to determine grade/level options
         chat_subject = st.selectbox(
             "Subject Context:",
-            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Artificial Intelligence", "Robotics", "Social Studies", "English", "Hindi", "General Education", "Other"],
+            ["Science Education", "Mathematics", "Mathematics Primary (Classes 1-5)", "Science & E.V.S. (Classes 1-2)", "Science & E.V.S. (Classes 3-5)", "Computer Science", "Artificial Intelligence", "Artificial Intelligence (Composite Skill Lab)", "Robotics", "Social Studies", "English", "Hindi", "General Education", "Other"],
             key="chat_subject"
         )
     
     with col2:
         # Conditional Grade/Level Selection based on subject
-        if chat_subject in ["Artificial Intelligence", "Robotics"]:
+        if chat_subject in ["Artificial Intelligence (Composite Skill Lab)", "Robotics"]:
             # Level Selector for AI/Robotics
             level_options = [
                 "JL1 (Classes 1-3)",
@@ -7551,12 +8291,12 @@ with tab3:
         # Subject Selection first to determine grade/level options
         subject_checker = st.selectbox(
             "Select Subject",
-            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science", "Artificial Intelligence", "Robotics"],
+            options=["Science", "Mathematics", "English", "Social Studies", "Computer Science", "Artificial Intelligence", "Artificial Intelligence (Composite Skill Lab)", "Robotics"],
             key="subject_checker"
         )
         
         # Conditional Grade/Level Selection
-        if subject_checker in ["Artificial Intelligence", "Robotics"]:
+        if subject_checker in ["Artificial Intelligence (Composite Skill Lab)", "Robotics"]:
             # Level Selector for AI/Robotics
             level_options = [
                 "JL1 (Classes 1-3)",
