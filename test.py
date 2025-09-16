@@ -3688,7 +3688,7 @@ CBSE_AI_CLASS_10_CURRICULUM = {
 }
 
 def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=None):
-    """Creates an Artificial Intelligence chapter content prompt aligned with CBSE curriculum and publisher best practices"""
+    """Creates an Artificial Intelligence chapter amplification prompt for CBSE content"""
     
     # Extract class number from grade level
     import re
@@ -3761,112 +3761,39 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
                 'projects': 800
             }
     
-    # Get selected chapter from session state if available
+    # No chapter selection needed - will amplify uploaded PDF content
     import streamlit as st
-    selected_chapter = ""
-    chapter_directive = ""
-    curriculum_details = ""
     
-    if 'ai_chapter_selected' in st.session_state:
-        selected_chapter = st.session_state['ai_chapter_selected']
-        # Extract just the chapter topic without the number
-        chapter_topic = selected_chapter.split(': ', 1)[1] if ': ' in selected_chapter else selected_chapter
-        chapter_num = selected_chapter.split(':')[0] if ':' in selected_chapter else "Chapter"
-        
-        # Map chapter to curriculum unit and get detailed structure
-        if class_num == 10:
-            # Map chapters to units based on topic
-            chapter_to_unit_map = {
-                "Introduction to AI": "Unit 1: Introduction to Artificial Intelligence",
-                "AI Basics": "Unit 1: Introduction to Artificial Intelligence",
-                "AI Project Cycle": "Unit 2: AI Project Cycle",
-                "Data Acquisition": "Unit 2: AI Project Cycle",
-                "AI Modeling": "Unit 2: AI Project Cycle",
-                "Advanced Python": "Unit 3: Advance Python",
-                "Data Science": "Unit 4: Data Sciences",
-                "Computer Vision": "Unit 5: Computer Vision",
-                "Natural Language Processing": "Unit 6: Natural Language Processing",
-                "Model Evaluation": "Unit 7: Evaluation",
-                "AI Ethics": "Unit 1: Introduction to Artificial Intelligence"
-            }
-            
-            # Find matching unit
-            unit_key = None
-            for key_phrase, unit in chapter_to_unit_map.items():
-                if key_phrase.lower() in chapter_topic.lower():
-                    unit_key = unit
-                    break
-            
-            if unit_key and unit_key in CBSE_AI_CLASS_10_CURRICULUM:
-                unit_data = CBSE_AI_CLASS_10_CURRICULUM[unit_key]
-                sub_units_text = "\n\n**CBSE CURRICULUM SUB-UNITS TO COVER:**\n\n"
-                
-                # Process regular sub_units
-                if "sub_units" in unit_data:
-                    for sub_unit in unit_data["sub_units"]:
-                        sub_units_text += f"\n**{sub_unit['name']}**\n"
-                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
-                        sub_units_text += "- Activities:\n"
-                        for activity in sub_unit['activities']:
-                            sub_units_text += f"  • {activity}\n"
-                
-                # Process theory and practical sub_units separately if they exist
-                if "theory_sub_units" in unit_data:
-                    sub_units_text += "\n**THEORY COMPONENTS:**\n"
-                    for sub_unit in unit_data["theory_sub_units"]:
-                        sub_units_text += f"\n**{sub_unit['name']}**\n"
-                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
-                        sub_units_text += "- Activities:\n"
-                        for activity in sub_unit['activities']:
-                            sub_units_text += f"  • {activity}\n"
-                
-                if "practical_sub_units" in unit_data:
-                    sub_units_text += "\n**PRACTICAL COMPONENTS:**\n"
-                    for sub_unit in unit_data["practical_sub_units"]:
-                        sub_units_text += f"\n**{sub_unit['name']}**\n"
-                        sub_units_text += f"- Learning Outcome: {sub_unit['learning_outcomes']}\n"
-                        sub_units_text += "- Activities:\n"
-                        for activity in sub_unit['activities']:
-                            sub_units_text += f"  • {activity}\n"
-                
-                curriculum_details = sub_units_text
-        
-        chapter_directive = f"""
+    return f"""You are an Expert AI Textbook Amplifier specializing in enhancing CBSE AI curriculum content with advanced concepts and industry best practices.
 
-**CHAPTER TO GENERATE**: 
-{selected_chapter}
-
-**IMPORTANT**: 
-- Focus ONLY on this specific chapter topic: {chapter_topic}
-- This is a standalone chapter - do not reference other chapters
-- All content must be directly relevant to {chapter_topic}
-- Provide comprehensive, in-depth coverage of this single topic
-{curriculum_details}
-
-**INSTRUCTIONS**:
-1. Cover ALL the sub-units and learning outcomes listed above
-2. Include ALL the activities and sessions mentioned
-3. Add clickable links for online tools where provided
-4. THEN go BEYOND the curriculum by adding:
-   - Additional real-world examples
-   - Extra hands-on projects
-   - Industry case studies
-   - Advanced optional topics
-   - Career connections
-   - Latest AI trends related to the topic"""
-    else:
-        # If no chapter selected, provide a default
-        chapter_directive = """
-
-**NOTE**: No specific chapter selected. Please generate a foundational AI chapter appropriate for the grade level."""
-    
-    return f"""You are an Expert AI Textbook Author specializing in creating high-quality educational content aligned with CBSE curriculum requirements.
-
-**Your Mission**: Create a single, comprehensive AI textbook chapter that meets the highest educational standards.
+**Your Mission**: Take the uploaded CBSE AI chapter and AMPLIFY it into a comprehensive, enriched textbook chapter that goes far beyond the basic curriculum while maintaining alignment with CBSE requirements.
 
 **Target Audience**: {grade_level} (CBSE AI Curriculum)
 
-{curriculum_focus}{chapter_directive}
+{curriculum_focus}
+
+**AMPLIFICATION INSTRUCTIONS**:
+
+1. **Analyze the Uploaded Chapter**:
+   - Identify the topic and learning objectives from the uploaded PDF
+   - Note the existing content structure and coverage
+   - Determine which CBSE unit/sub-units it covers
+
+2. **Expand and Enhance** (3-4x the original content):
+   - Add detailed explanations for each concept
+   - Include advanced topics related to the chapter theme
+   - Add industry examples and real-world applications
+   - Include latest AI trends and technologies
+   - Add hands-on projects and experiments
+   - Include career connections and future scope
+
+3. **Add Advanced Elements**:
+   - Code examples with detailed annotations
+   - Mathematical foundations (where appropriate)
+   - Research paper references (simplified)
+   - Industry case studies
+   - Interview with AI professionals (simulated)
+   - Common pitfalls and best practices
 
 **Publisher Best Practices to Incorporate**:
 
@@ -5218,18 +5145,14 @@ Provide comprehensive AI CSL creative projects in Markdown format.
 def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level, model_progression_text, subject_type="Science", word_limits=None, use_chunked=False, use_openrouter_method=False, pdf_method="Text Extraction (Original)"):
     """Generates specific content based on content type"""
     
-    # Special handling for AI subjects
-    if (subject_type == "Artificial Intelligence" and pdf_bytes is None) or (subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None):
+    # Special handling for AI Composite Skill Lab without PDF
+    if subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None:
         # Direct generation without PDF for AI textbook/CSL creation
         try:
             prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
-            # Show detailed info for AI chapter generation
-            if subject_type == "Artificial Intelligence" and 'ai_chapter_selected' in st.session_state:
-                chapter_info = st.session_state['ai_chapter_selected']
-                st.info(f"📚 Generating {content_type} content for {grade_level}\n\n📖 Chapter: {chapter_info}")
-            else:
-                st.info(f"Generating {content_type} content for {grade_level}...")
+            # Show info for content generation
+            st.info(f"Generating {content_type} content for {grade_level}...")
             
             # Direct API call without PDF content
             messages = [{"role": "user", "content": prompt}]
@@ -5267,12 +5190,8 @@ def generate_specific_content(content_type, pdf_bytes, pdf_filename, grade_level
             else:
                 prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
             
-            # Show detailed info for AI chapter generation
-            if subject_type == "Artificial Intelligence" and 'ai_chapter_selected' in st.session_state:
-                chapter_info = st.session_state['ai_chapter_selected']
-                st.info(f"📚 Generating {content_type} content for {grade_level}\n\n📖 Chapter: {chapter_info}")
-            else:
-                st.info(f"Generating {content_type} content for {grade_level}...")
+            # Show info for content generation
+            st.info(f"Generating {content_type} content for {grade_level}...")
             
             if use_openrouter_method:
                 # Use OpenRouter's recommended direct PDF upload
@@ -6032,8 +5951,8 @@ def generate_specific_content_streaming(content_type, pdf_bytes, pdf_filename, g
     else:
         prompt = create_specific_prompt(content_type, grade_level, model_progression_text, subject_type, word_limits)
     
-    # Special handling for AI subjects without PDF
-    if (subject_type == "Artificial Intelligence" and pdf_bytes is None) or (subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None):
+    # Special handling for AI Composite Skill Lab without PDF
+    if subject_type == "Artificial Intelligence (Composite Skill Lab)" and pdf_bytes is None:
         # Direct streaming without PDF for AI textbook/CSL creation
         messages = [{"role": "user", "content": prompt}]
         
@@ -6848,86 +6767,22 @@ with tab1:
 
     # Grade/Level Selector - Show appropriate options based on subject
     if subject_type == "Artificial Intelligence":
-        # CBSE Grade Selector for AI (Classes 9-12)
-        col1, col2 = st.columns(2)
+        # CBSE Grade Selector for AI (Classes 9-12) - Only grade selection, no chapter dropdown
+        grade_options = [
+            "Class 9 (CBSE Code 417)",
+            "Class 10 (CBSE Code 417)",
+            "Class 11 (CBSE Code 843)",
+            "Class 12 (CBSE Code 843)"
+        ]
+        selected_grade = st.selectbox(
+            "Select CBSE Grade:", 
+            grade_options, 
+            index=0,
+            key="ai_grade_selector",
+            help="Select the CBSE grade level for AI content amplification"
+        )
         
-        with col1:
-            grade_options = [
-                "Class 9 (CBSE Code 417)",
-                "Class 10 (CBSE Code 417)",
-                "Class 11 (CBSE Code 843)",
-                "Class 12 (CBSE Code 843)"
-            ]
-            selected_grade = st.selectbox(
-                "Select CBSE Grade:", 
-                grade_options, 
-                index=0,
-                key="ai_grade_selector",
-                help="Select the CBSE grade level for AI content generation"
-            )
-        
-        with col2:
-            # Chapter selection based on grade
-            chapter_options = {
-                "Class 9 (CBSE Code 417)": [
-                    "Chapter 1: Introduction to AI - Foundational Concepts",
-                    "Chapter 2: AI Project Cycle - Problem Scoping",
-                    "Chapter 3: Data Acquisition and Exploration",
-                    "Chapter 4: Modelling Basics",
-                    "Chapter 5: Model Evaluation",
-                    "Chapter 6: Introduction to Python for AI",
-                    "Chapter 7: Data Science Domain",
-                    "Chapter 8: Computer Vision Basics",
-                    "Chapter 9: Natural Language Processing Basics",
-                    "Chapter 10: AI Ethics and Bias"
-                ],
-                "Class 10 (CBSE Code 417)": [
-                    "Chapter 1: Introduction to AI - Foundational Concepts, Intelligence & Decision Making",
-                    "Chapter 2: AI Basics - AI vs ML vs DL, AI Domains & Applications",
-                    "Chapter 3: AI Project Cycle - Problem Scoping & SDGs",
-                    "Chapter 4: Data Acquisition & Data Exploration - Visualizing Data",
-                    "Chapter 5: AI Modeling - Rule-Based vs Learning-Based, Supervised & Unsupervised Learning",
-                    "Chapter 6: Advanced Python & Data Science - NumPy, Pandas, Matplotlib",
-                    "Chapter 7: Computer Vision - Image Basics, Pixels, RGB, OpenCV Introduction",
-                    "Chapter 8: Natural Language Processing - Chatbots, Text Processing, Bag of Words",
-                    "Chapter 9: Model Evaluation - Confusion Matrix, Accuracy, Precision, Recall, F1 Score",
-                    "Chapter 10: AI Ethics, Bias & Real-World Applications"
-                ],
-                "Class 11 (CBSE Code 843)": [
-                    "Chapter 1: Python Programming for AI",
-                    "Chapter 2: Statistics and Probability for AI",
-                    "Chapter 3: Data Visualization with Python",
-                    "Chapter 4: Introduction to NumPy and Pandas",
-                    "Chapter 5: Supervised Learning - Classification",
-                    "Chapter 6: Supervised Learning - Regression",
-                    "Chapter 7: Unsupervised Learning",
-                    "Chapter 8: Introduction to Neural Networks",
-                    "Chapter 9: Natural Language Processing with Python",
-                    "Chapter 10: Computer Vision with OpenCV"
-                ],
-                "Class 12 (CBSE Code 843)": [
-                    "Chapter 1: Deep Learning Fundamentals",
-                    "Chapter 2: Convolutional Neural Networks (CNNs)",
-                    "Chapter 3: Recurrent Neural Networks (RNNs)",
-                    "Chapter 4: Generative Adversarial Networks (GANs)",
-                    "Chapter 5: Transfer Learning and Fine-tuning",
-                    "Chapter 6: Advanced NLP - Transformers and BERT",
-                    "Chapter 7: Computer Vision - Object Detection and Segmentation",
-                    "Chapter 8: Reinforcement Learning Basics",
-                    "Chapter 9: AI Ethics, Bias, and Fairness",
-                    "Chapter 10: AI Capstone Project"
-                ]
-            }
-            
-            selected_chapter = st.selectbox(
-                "Select Chapter to Generate:",
-                chapter_options[selected_grade],
-                key="ai_chapter_selector",
-                help="Choose a specific chapter aligned with CBSE curriculum"
-            )
-            
-            # Store chapter info for use in prompt
-            st.session_state['ai_chapter_selected'] = selected_chapter
+        st.info("📚 Upload your CBSE AI chapter PDF below. The content will be amplified and enhanced based on the selected grade level.")
             
     elif subject_type in ["Robotics", "Artificial Intelligence (Composite Skill Lab)"]:
         # Level Selector for Robotics and AI Composite Skill Lab
@@ -7154,9 +7009,6 @@ with tab1:
                     help="Capstone ideas, career connections"
                 )
             
-            # Display selected chapter info
-            if 'ai_chapter_selected' in st.session_state:
-                st.success(f"📖 Generating: {st.session_state['ai_chapter_selected']}")
             
             # Store word limits for AI
             st.session_state.word_limits = {
@@ -7264,8 +7116,20 @@ with tab1:
                 'art_learning': art_learning_words
             }
 
-    # Only show analysis and PDF processing options for non-AI subjects
-    if subject_type != "Artificial Intelligence":
+    # Determine when to show PDF processing options
+    show_pdf_options = False
+    
+    if subject_type == "Artificial Intelligence":
+        # CBSE AI always needs PDF, so show options
+        show_pdf_options = True
+    elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
+        # AI CSL only shows options if PDF is uploaded
+        show_pdf_options = bool(uploaded_file_st)
+    else:
+        # All other subjects show options
+        show_pdf_options = True
+    
+    if show_pdf_options:
         # Analysis Method Selector
         analysis_method = st.radio(
             "Choose Analysis Method:",
@@ -7287,7 +7151,7 @@ with tab1:
             st.info("🔬 **Mistral OCR Features:** Preserves document structure, handles complex layouts, extracts text from images, maintains tables and formulas in markdown format")
             st.info("📋 **Requirements:** Mistral API key (add MISTRAL_API_KEY to Streamlit secrets)")
     else:
-        # Set defaults for AI subject
+        # Set defaults when no PDF options shown
         analysis_method = "Standard (Full Document)"
         pdf_method = "Text Extraction (Original)"
 
@@ -7482,18 +7346,27 @@ with tab1:
                 st.session_state.show_art_expander = False
                 st.rerun()
 
-        # Check if AI subject is selected - no PDF needed for regular AI (CBSE 9-12)
+        # Check if AI subject is selected - PDF required for amplification
         if subject_type == "Artificial Intelligence":
-            st.success("🎯 AI Textbook Generation Mode - No PDF Required!")
+            st.success("🎯 CBSE AI Content Amplification Mode")
             st.markdown("""
-            ### 📚 Generate Original AI Content
-            You're creating a fresh AI textbook chapter from scratch based on CBSE curriculum.
-            Select the content type below to generate:
+            ### 📚 Enhance Your CBSE AI Textbook
+            Upload a chapter from your CBSE AI textbook to amplify and enhance it with:
+            - More detailed explanations
+            - Additional examples and projects
+            - Advanced concepts and applications
+            - Industry connections and real-world use cases
             """)
             
-            # Skip PDF upload and go directly to generation buttons
-            uploaded_file_st = None  # No file needed
-            pdf_bytes = None  # No PDF bytes needed
+            # PDF upload for CBSE AI chapters
+            uploaded_file_st = st.file_uploader("Upload your CBSE AI chapter (PDF)", type="pdf", key="pdf_uploader_tab1")
+            
+            if uploaded_file_st is not None:
+                st.info(f"Processing '{uploaded_file_st.name}' for {selected_grade} - Will amplify and enhance the content...")
+                pdf_bytes = uploaded_file_st.getvalue()
+            else:
+                st.warning("Please upload a CBSE AI chapter PDF to amplify")
+                pdf_bytes = None
         elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
             # AI CSL - Allow PDF upload for improving old books
             st.info("📘 AI Composite Skill Lab Mode")
@@ -7528,21 +7401,29 @@ with tab1:
 
         # Show buttons for all subjects including AI
         if subject_type == "Artificial Intelligence":
-            # AI-specific buttons (CBSE 9-12)
-            col1, col2 = st.columns(2)
-            col3, col4 = st.columns(2)
-            
-            # Generate Chapter Content Button
-            generate_chapter = col1.button("📚 Generate AI Chapter", key="gen_ai_chapter")
-            
-            # Generate Exercises Button
-            generate_exercises = col2.button("📝 Generate AI Exercises", key="gen_ai_exercises")
-            
-            # Generate Skill Activities Button
-            generate_skills = col3.button("🤖 Generate AI Labs", key="gen_ai_skills")
-            
-            # Generate Art Learning Button
-            generate_art = col4.button("🎨 Generate AI Projects", key="gen_ai_art")
+            # Check if PDF is uploaded for CBSE AI
+            if uploaded_file_st is None:
+                st.info("⚠️ Please upload a CBSE AI chapter PDF first to enable amplification options")
+                generate_chapter = False
+                generate_exercises = False
+                generate_skills = False
+                generate_art = False
+            else:
+                # AI-specific buttons (CBSE 9-12) for amplification
+                col1, col2 = st.columns(2)
+                col3, col4 = st.columns(2)
+                
+                # Amplify Chapter Content Button
+                generate_chapter = col1.button("📚 Amplify AI Chapter", key="gen_ai_chapter")
+                
+                # Generate Enhanced Exercises Button
+                generate_exercises = col2.button("📝 Generate Enhanced Exercises", key="gen_ai_exercises")
+                
+                # Generate Advanced Labs Button
+                generate_skills = col3.button("🤖 Generate Advanced AI Labs", key="gen_ai_skills")
+                
+                # Generate Industry Projects Button
+                generate_art = col4.button("🎨 Generate Industry Projects", key="gen_ai_art")
             
         elif subject_type == "Artificial Intelligence (Composite Skill Lab)":
             # AI CSL-specific buttons
