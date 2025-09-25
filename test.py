@@ -13,7 +13,10 @@ import re
 from typing import List, Dict, Any
 import hashlib
 from datetime import datetime
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
 
 # --- Streamlit Cloud Content Protection System ---
 def save_content_safely(content_type, content, grade_level=None):
@@ -170,6 +173,7 @@ def display_content_status():
             st.rerun()
 
 # --- Configuration ---
+<<<<<<< HEAD
 # Get API key from environment variables first, then fall back to Streamlit secrets
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 YOUR_SITE_URL = os.getenv("YOUR_SITE_URL", "https://your-site.com")
@@ -198,17 +202,49 @@ if not OPENROUTER_API_KEY:
     - `YOUR_SITE_NAME` = EeeBee Content Suite (optional)
 
     **Method 2: Streamlit Secrets (For local development)**
+=======
+# Get API key from Streamlit secrets
+try:
+    OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"]
+    YOUR_SITE_URL = st.secrets.get("YOUR_SITE_URL", "https://your-site.com")
+    YOUR_SITE_NAME = st.secrets.get("YOUR_SITE_NAME", "EeeBee Content Suite")
+except KeyError:
+    st.error("""
+    🔑 **OpenRouter API Key Not Found!**
+    
+    Please add your OpenRouter API key to Streamlit secrets:
+    
+    **For local development:**
+>>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
     Create a `.streamlit/secrets.toml` file in your project directory with:
     ```toml
     OPENROUTER_API_KEY = "your_openrouter_api_key_here"
     YOUR_SITE_URL = "https://your-site.com"  # Optional
     YOUR_SITE_NAME = "EeeBee Content Suite"  # Optional
     ```
+<<<<<<< HEAD
 
     **How to get an OpenRouter API Key:**
     1. Go to [OpenRouter](https://openrouter.ai/)
     2. Sign up and create an API key
     3. Copy the key and add it to your environment
+=======
+    
+    **For Streamlit Cloud deployment:**
+    1. Go to your app's settings in Streamlit Cloud
+    2. Click on "Secrets" 
+    3. Add the following:
+    ```toml
+    OPENROUTER_API_KEY = "your_openrouter_api_key_here"
+    YOUR_SITE_URL = "https://your-site.com"
+    YOUR_SITE_NAME = "EeeBee Content Suite"
+    ```
+    
+    **How to get an OpenRouter API Key:**
+    1. Go to [OpenRouter](https://openrouter.ai/)
+    2. Sign up and create an API key
+    3. Copy the key and add it to your secrets
+>>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
     """)
     st.stop()
 
@@ -316,6 +352,7 @@ def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
         import base64
         import os
         
+<<<<<<< HEAD
         # Get Mistral API key from environment variables first, then fall back to Streamlit secrets
         mistral_api_key = os.getenv("MISTRAL_API_KEY")
 
@@ -328,6 +365,14 @@ def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
         if not mistral_api_key:
             st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to your environment")
             st.info("📋 **How to add:** Set the environment variable `MISTRAL_API_KEY` or add it to `.streamlit/secrets.toml`")
+=======
+        # Get Mistral API key from Streamlit secrets
+        try:
+            mistral_api_key = st.secrets["MISTRAL_API_KEY"]
+        except KeyError:
+            st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to Streamlit secrets")
+            st.info("📋 **How to add:** Create `.streamlit/secrets.toml` file with: `MISTRAL_API_KEY = \"your-key-here\"`")
+>>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
             return None, None
         
         # Encode PDF to base64
@@ -8741,4 +8786,8 @@ Make it hands-on, interactive, and age-appropriate."""
                 st.error(f"Error generating content: {str(e)}")
 
 st.sidebar.markdown("---")
+<<<<<<< HEAD
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
+=======
+st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
+>>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
