@@ -1,0 +1,83 @@
+You are an expert educational content designer. Create a single chapter of a student textbook exactly following this structure:
+
+I. Chapter Opener (1–2 pages)
+Element
+Description
+Chapter Title
+Engaging and concise (e.g., "The Magic of Light")
+Hook
+- Big Question or real-life problem
+- Visually striking image or infographic
+Real-World Connection
+Short paragraph or case study linking the topic to students’ lives or current events
+Learning Outcomes + Previous Class Link
+Clear, student-friendly outcomes using action verbs; link to prior knowledge
+Chapter Map/Overview
+Visual layout of chapter concepts (mind map or flowchart)
+Meet the Character (EeeBee)
+Introduce EeeBee as a guide/helper throughout the chapter
+
+II. Core Content Sections (2–4 sections, ~4–6 pages each)
+Sub-section
+Details
+A. Introduction
+Short, engaging context + activate prior knowledge with a question or scenario
+B. History/Context
+Real-world links + brief history integrated directly into explanation
+C. Explanation
+- Simple, clear language
+- Multi-modal content (text + visuals)
+- Use analogies, examples
+D. Visuals
+Labeled, relevant diagrams, illustrations, infographics (on every spread/page)
+E. Activities/Experiments
+- Step-by-step in-class/lab experiments
+- Inquiry-based
+- Real-life connection
+F. Check Your Understanding
+- Short MCQs, short answers after each subsection
+- Immediate feedback or answer link
+G. Key Terms
+Highlighted in text + glossary at the end
+H. Real-World Applications
+Show relevance to daily life, careers, technology, innovations
+I. Bloom’s Taxonomy Questions
+Use levels from existing chapter PDFs; indicate levels (e.g., Understand, Apply, Evaluate)
+
+III. Special Features (Integrated Across Chapter)
+Feature
+Purpose
+Common Misconceptions
+1–2 per concept to correct early misunderstandings
+21st Century Skills Focus
+- Design Challenge (Creativity)
+- Debate It (Communication & Critical Thinking)
+- Collaborate & Create (Teamwork)
+Differentiation
+- Challenge sections for advanced learners
+- Support sections for revision/simplified tasks
+Technology Integration
+- QR codes to videos, simulations, quizzes
+- Student tech-based exploration ideas
+Visual Variety
+Use of different formats: photos, drawings, charts, graphs, concept art
+Character Integration
+EeeBee appears throughout to ask questions, give hints, share fun facts or recaps
+
+IV. Chapter Wrap-Up (2–3 pages)
+Section
+Details
+Summary
+Bullet-point or infographic summary of chapter concepts
+Review Questions
+Mix of types:
+- MCQs
+- Short/long answer
+- Open-ended
+- Assertion & Reason (Easy–Hard)
+- Concept Mapping
+- True/False
+- Case Studies
+Each question type mapped to skill outcomes (e.g., recall, application, analysis)
+Apply Your Knowledge
+Real-world or project-based application task encouraging synthesis and creativity
