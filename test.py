@@ -14,6 +14,47 @@ from typing import List, Dict, Any
 import hashlib
 from datetime import datetime
 
+# --- Authentication ---
+def check_password():
+    """Returns True if the user has entered the correct password."""
+
+    def password_entered():
+        """Checks whether password entered is correct."""
+        if st.session_state["password"] == st.secrets.get("APP_PASSWORD", "eeebee123"):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password
+        st.markdown("## 🔐 EeeBee Content Suite")
+        st.text_input(
+            "Enter password to access the app:",
+            type="password",
+            on_change=password_entered,
+            key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password incorrect, show input + error
+        st.markdown("## 🔐 EeeBee Content Suite")
+        st.text_input(
+            "Enter password to access the app:",
+            type="password",
+            on_change=password_entered,
+            key="password"
+        )
+        st.error("❌ Incorrect password. Please try again.")
+        return False
+    else:
+        # Password correct
+        return True
+
+# Check authentication before running the app
+if not check_password():
+    st.stop()
+
 # --- Streamlit Cloud Content Protection System ---
 def save_content_safely(content_type, content, grade_level=None):
     """Save content with multiple backup strategies for Streamlit Cloud"""
@@ -8409,7 +8450,9 @@ with tab4:
     with col2:
         # Determine available subjects based on grade
         grade_num = int(grade_remedial.split()[-1])
-        if grade_num <= 2:
+        if grade_num == 1 or grade_num == 5:
+            subjects = ["Mathematics", "Environmental Studies (EVS)"]
+        elif grade_num <= 2:
             subjects = ["Mathematics"]
         else:
             subjects = ["Science", "Mathematics"]
@@ -8423,7 +8466,7 @@ with tab4:
     # Concept input
     concept_name = st.text_input(
         "Enter the concept name",
-        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'Fractions'}",
+        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'My Family' if subject_remedial == 'Environmental Studies (EVS)' else 'Fractions'}",
         key="concept_input"
     )
     
@@ -8440,7 +8483,18 @@ with tab4:
         with col2:
             gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_science")
             gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_science")
-            
+
+    elif subject_remedial == "Environmental Studies (EVS)":
+        # EVS content options for Class 1 and 5
+        col1, col2 = st.columns(2)
+        with col1:
+            gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_evs")
+            gen_notes = st.checkbox("Detailed Notes", value=True, key="gen_notes_evs")
+            gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_evs")
+        with col2:
+            gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_evs")
+            gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_evs")
+
     else:  # Mathematics
         if grade_num <= 2:
             # Class 1-2 Mathematics options
@@ -8480,6 +8534,17 @@ with tab4:
                     if st.session_state.get("gen_mcq_science", False):
                         content_to_generate.append("mcq_bank")
                     if st.session_state.get("gen_summary_science", False):
+                        content_to_generate.append("summary")
+                elif subject_remedial == "Environmental Studies (EVS)":
+                    if st.session_state.get("gen_video_evs", False):
+                        content_to_generate.append("video_script")
+                    if st.session_state.get("gen_notes_evs", False):
+                        content_to_generate.append("notes")
+                    if st.session_state.get("gen_worksheet_evs", False):
+                        content_to_generate.append("worksheet")
+                    if st.session_state.get("gen_mcq_evs", False):
+                        content_to_generate.append("mcq_bank")
+                    if st.session_state.get("gen_summary_evs", False):
                         content_to_generate.append("summary")
                 else:  # Mathematics
                     if grade_num <= 2:
