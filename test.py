@@ -8499,6 +8499,9 @@ with tab4:
         grade_num = int(grade_remedial.split()[-1])
         if grade_num <= 2:
             subjects = ["Mathematics"]
+        elif grade_num <= 5:
+            # Class 3, 4, 5 - both Science and EVS available
+            subjects = ["Science", "EVS", "Mathematics"]
         else:
             subjects = ["Science", "Mathematics"]
             
@@ -8511,7 +8514,7 @@ with tab4:
     # Concept input
     concept_name = st.text_input(
         "Enter the concept name",
-        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'Fractions'}",
+        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'Our Environment' if subject_remedial == 'EVS' else 'Fractions'}",
         key="concept_input"
     )
     
@@ -8528,7 +8531,18 @@ with tab4:
         with col2:
             gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_science")
             gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_science")
-            
+
+    elif subject_remedial == "EVS":
+        # EVS content options (similar to Science)
+        col1, col2 = st.columns(2)
+        with col1:
+            gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_evs")
+            gen_notes = st.checkbox("Detailed Notes", value=True, key="gen_notes_evs")
+            gen_worksheet = st.checkbox("Worksheet", value=True, key="gen_worksheet_evs")
+        with col2:
+            gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_evs")
+            gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_evs")
+
     else:  # Mathematics
         if grade_num <= 2:
             # Class 1-2 Mathematics options
@@ -8568,6 +8582,17 @@ with tab4:
                     if st.session_state.get("gen_mcq_science", False):
                         content_to_generate.append("mcq_bank")
                     if st.session_state.get("gen_summary_science", False):
+                        content_to_generate.append("summary")
+                elif subject_remedial == "EVS":
+                    if st.session_state.get("gen_video_evs", False):
+                        content_to_generate.append("video_script")
+                    if st.session_state.get("gen_notes_evs", False):
+                        content_to_generate.append("notes")
+                    if st.session_state.get("gen_worksheet_evs", False):
+                        content_to_generate.append("worksheet")
+                    if st.session_state.get("gen_mcq_evs", False):
+                        content_to_generate.append("mcq_bank")
+                    if st.session_state.get("gen_summary_evs", False):
                         content_to_generate.append("summary")
                 else:  # Mathematics
                     if grade_num <= 2:
