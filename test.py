@@ -13,10 +13,47 @@ import re
 from typing import List, Dict, Any
 import hashlib
 from datetime import datetime
-<<<<<<< HEAD
-import os
-=======
->>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
+
+# --- Authentication ---
+def check_password():
+    """Returns True if the user has entered the correct password."""
+
+    def password_entered():
+        """Checks whether password entered is correct."""
+        if st.session_state["password"] == st.secrets.get("APP_PASSWORD", "eeebee123"):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password
+        st.markdown("## 🔐 EeeBee Content Suite")
+        st.text_input(
+            "Enter password to access the app:",
+            type="password",
+            on_change=password_entered,
+            key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password incorrect, show input + error
+        st.markdown("## 🔐 EeeBee Content Suite")
+        st.text_input(
+            "Enter password to access the app:",
+            type="password",
+            on_change=password_entered,
+            key="password"
+        )
+        st.error("❌ Incorrect password. Please try again.")
+        return False
+    else:
+        # Password correct
+        return True
+
+# Check authentication before running the app
+if not check_password():
+    st.stop()
 
 # --- Streamlit Cloud Content Protection System ---
 def save_content_safely(content_type, content, grade_level=None):
@@ -173,36 +210,6 @@ def display_content_status():
             st.rerun()
 
 # --- Configuration ---
-<<<<<<< HEAD
-# Get API key from environment variables first, then fall back to Streamlit secrets
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-YOUR_SITE_URL = os.getenv("YOUR_SITE_URL", "https://your-site.com")
-YOUR_SITE_NAME = os.getenv("YOUR_SITE_NAME", "EeeBee Content Suite")
-
-# Fall back to Streamlit secrets if environment variables are not set
-if not OPENROUTER_API_KEY:
-    try:
-        OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"]
-        YOUR_SITE_URL = st.secrets.get("YOUR_SITE_URL", YOUR_SITE_URL)
-        YOUR_SITE_NAME = st.secrets.get("YOUR_SITE_NAME", YOUR_SITE_NAME)
-    except (KeyError, FileNotFoundError):
-        pass
-
-# Check if API key is available from either source
-if not OPENROUTER_API_KEY:
-    st.error("""
-    🔑 **OpenRouter API Key Not Found!**
-
-    Please add your OpenRouter API key using one of these methods:
-
-    **Method 1: Environment Variables (Recommended for Railway)**
-    Set the following environment variables:
-    - `OPENROUTER_API_KEY` = your_openrouter_api_key_here
-    - `YOUR_SITE_URL` = https://your-site.com (optional)
-    - `YOUR_SITE_NAME` = EeeBee Content Suite (optional)
-
-    **Method 2: Streamlit Secrets (For local development)**
-=======
 # Get API key from Streamlit secrets
 try:
     OPENROUTER_API_KEY = st.secrets["OPENROUTER_API_KEY"]
@@ -215,20 +222,12 @@ except KeyError:
     Please add your OpenRouter API key to Streamlit secrets:
     
     **For local development:**
->>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
     Create a `.streamlit/secrets.toml` file in your project directory with:
     ```toml
     OPENROUTER_API_KEY = "your_openrouter_api_key_here"
     YOUR_SITE_URL = "https://your-site.com"  # Optional
     YOUR_SITE_NAME = "EeeBee Content Suite"  # Optional
     ```
-<<<<<<< HEAD
-
-    **How to get an OpenRouter API Key:**
-    1. Go to [OpenRouter](https://openrouter.ai/)
-    2. Sign up and create an API key
-    3. Copy the key and add it to your environment
-=======
     
     **For Streamlit Cloud deployment:**
     1. Go to your app's settings in Streamlit Cloud
@@ -244,7 +243,6 @@ except KeyError:
     1. Go to [OpenRouter](https://openrouter.ai/)
     2. Sign up and create an API key
     3. Copy the key and add it to your secrets
->>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
     """)
     st.stop()
 
@@ -261,7 +259,7 @@ except Exception as e:
     st.stop()
 
 # Model to use
-MODEL_NAME = "google/gemini-2.5-pro"
+MODEL_NAME = "google/gemini-3-pro-preview"
 # --- Helper Functions ---
 
 def load_model_chapter_progression(file_path="Model Chapter Progression and Elements.txt"):
@@ -352,27 +350,12 @@ def process_pdf_with_mistral_ocr(pdf_bytes, pdf_filename):
         import base64
         import os
         
-<<<<<<< HEAD
-        # Get Mistral API key from environment variables first, then fall back to Streamlit secrets
-        mistral_api_key = os.getenv("MISTRAL_API_KEY")
-
-        if not mistral_api_key:
-            try:
-                mistral_api_key = st.secrets["MISTRAL_API_KEY"]
-            except (KeyError, FileNotFoundError):
-                pass
-
-        if not mistral_api_key:
-            st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to your environment")
-            st.info("📋 **How to add:** Set the environment variable `MISTRAL_API_KEY` or add it to `.streamlit/secrets.toml`")
-=======
         # Get Mistral API key from Streamlit secrets
         try:
             mistral_api_key = st.secrets["MISTRAL_API_KEY"]
         except KeyError:
             st.error("❌ **Mistral API Key Required:** Please add MISTRAL_API_KEY to Streamlit secrets")
             st.info("📋 **How to add:** Create `.streamlit/secrets.toml` file with: `MISTRAL_API_KEY = \"your-key-here\"`")
->>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
             return None, None
         
         # Encode PDF to base64
@@ -3868,36 +3851,6 @@ def create_ai_chapter_prompt(grade_level, model_progression_text, word_limits=No
    - Add "Did You Know?" boxes with latest AI facts
    - Add "Try This!" hands-on activities
    - Add "Real World Connection" for every concept
-
-5. **SOLVED EXAMPLES** (CRITICAL - Add throughout chapter):
-   After explaining each major concept, include:
-   
-   **Example Format:**
-   ```
-   📝 **Solved Example 1: [Topic Name]**
-   **Problem**: [Clear problem statement]
-   **Solution**:
-   Step 1: [Explanation]
-   Step 2: [Explanation]
-   Step 3: [Explanation]
-   **Answer**: [Final answer with explanation]
-   **Key Learning**: [What this example teaches]
-   ```
-   
-   Include AT LEAST:
-   - 3-4 solved examples per major concept
-   - Variety: Theoretical, numerical, practical, coding
-   - Progressive difficulty: Easy → Medium → Hard
-   - For Classes 9-10: Flowchart examples, decision trees, simple algorithms
-   - For Classes 11-12: Python code examples, ML model examples, data analysis
-   
-   **Types of Solved Examples to Include**:
-   - Conceptual understanding examples
-   - Mathematical/algorithmic examples
-   - Real-world application examples
-   - Debugging/error-finding examples
-   - Design/creativity examples
-   - Ethical decision-making examples
 
 **Publisher Best Practices to Incorporate**:
 
@@ -8498,10 +8451,11 @@ with tab4:
         # Determine available subjects based on grade
         grade_num = int(grade_remedial.split()[-1])
         if grade_num <= 2:
-            subjects = ["Mathematics"]
+            # Class 1-2: Mathematics and EVS
+            subjects = ["Mathematics", "Environmental Studies (EVS)"]
         elif grade_num <= 5:
-            # Class 3, 4, 5 - both Science and EVS available
-            subjects = ["Science", "EVS", "Mathematics"]
+            # Class 3, 4, 5 - Science and EVS both available
+            subjects = ["Science", "Environmental Studies (EVS)", "Mathematics"]
         else:
             subjects = ["Science", "Mathematics"]
             
@@ -8514,7 +8468,7 @@ with tab4:
     # Concept input
     concept_name = st.text_input(
         "Enter the concept name",
-        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'Our Environment' if subject_remedial == 'EVS' else 'Fractions'}",
+        placeholder=f"e.g., {'Photosynthesis' if subject_remedial == 'Science' else 'My Family' if subject_remedial == 'Environmental Studies (EVS)' else 'Fractions'}",
         key="concept_input"
     )
     
@@ -8532,8 +8486,8 @@ with tab4:
             gen_mcq_bank = st.checkbox("MCQ Question Bank (40 Questions)", value=True, key="gen_mcq_science")
             gen_summary = st.checkbox("Summary Points", value=True, key="gen_summary_science")
 
-    elif subject_remedial == "EVS":
-        # EVS content options (similar to Science)
+    elif subject_remedial == "Environmental Studies (EVS)":
+        # EVS content options
         col1, col2 = st.columns(2)
         with col1:
             gen_video_script = st.checkbox("Video Script with Narration", value=True, key="gen_video_evs")
@@ -8583,7 +8537,7 @@ with tab4:
                         content_to_generate.append("mcq_bank")
                     if st.session_state.get("gen_summary_science", False):
                         content_to_generate.append("summary")
-                elif subject_remedial == "EVS":
+                elif subject_remedial == "Environmental Studies (EVS)":
                     if st.session_state.get("gen_video_evs", False):
                         content_to_generate.append("video_script")
                     if st.session_state.get("gen_notes_evs", False):
@@ -8811,8 +8765,4 @@ Make it hands-on, interactive, and age-appropriate."""
                 st.error(f"Error generating content: {str(e)}")
 
 st.sidebar.markdown("---")
-<<<<<<< HEAD
 st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
-=======
-st.sidebar.info("This app uses the Claude API via OpenRouter for AI-powered content analysis and generation.")
->>>>>>> 5bb0e64cd32df33ba6fa6ced14932fe5a757f593
